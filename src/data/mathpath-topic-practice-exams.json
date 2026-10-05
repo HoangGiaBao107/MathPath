@@ -1,0 +1,3631 @@
+{
+  "formatVersion": 1,
+  "sources": [
+    {
+      "topicId": "dao_ham",
+      "topic": "Đạo hàm",
+      "file": "De_Dao_Ham_2_De_40_Cau.docx",
+      "sha256": "41cc6ab72db981ee3e7f5a72b9417000f1ad1a936f2796b6f05ee56c1f29da02"
+    },
+    {
+      "topicId": "nguyen_ham",
+      "topic": "Nguyên hàm",
+      "file": "De_Nguyen_Ham_2_De_40_Cau.docx",
+      "sha256": "4f74398bd587e7947a8679377a204d12ea3be3e68ff83a93f61599cc48f7e6db"
+    }
+  ],
+  "exams": [
+    {
+      "id": "practice-dao_ham-1",
+      "slug": "practice-dao_ham-1",
+      "title": "Đề ôn tập Đạo hàm số 1",
+      "description": "40 câu · 10 điểm · Ôn tập Đạo hàm theo đề Word đã nhập.",
+      "language": "vi",
+      "mode": "practice",
+      "demo": false,
+      "category": "topic_review",
+      "topicId": "dao_ham",
+      "topic": "Đạo hàm",
+      "sourceFile": "De_Dao_Ham_2_De_40_Cau.docx",
+      "sourceExamNumber": 1,
+      "timingMode": "elapsed",
+      "durationSeconds": null,
+      "totalScore": 10,
+      "questionCount": 40,
+      "sections": [
+        {
+          "id": "part_1",
+          "title": "Phần I · Trắc nghiệm nhiều lựa chọn",
+          "description": "",
+          "maxScore": 5.0
+        },
+        {
+          "id": "part_2",
+          "title": "Phần II · Đúng / Sai",
+          "description": "",
+          "maxScore": 2.5
+        },
+        {
+          "id": "part_3",
+          "title": "Phần III · Trả lời ngắn",
+          "description": "",
+          "maxScore": 2.5
+        }
+      ],
+      "questions": [
+        {
+          "id": "a26877d4-f8bd-5e73-a530-bfec6d86da03",
+          "sectionId": "part_1",
+          "number": "1",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm của hàm số y = 3x⁴ − 5x² + 7.",
+          "options": [
+            {
+              "key": "A",
+              "text": "y′ = 12x³ − 10x"
+            },
+            {
+              "key": "B",
+              "text": "y′ = 12x³ − 5x"
+            },
+            {
+              "key": "C",
+              "text": "y′ = 3x³ − 10x"
+            },
+            {
+              "key": "D",
+              "text": "y′ = 12x⁴ − 10x²"
+            }
+          ]
+        },
+        {
+          "id": "333f6f11-5f04-52fe-bfa9-e6da360ea9fc",
+          "sectionId": "part_1",
+          "number": "2",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm của y = (x² + 1)eˣ.",
+          "options": [
+            {
+              "key": "A",
+              "text": "y′ = eˣ(x + 1)²"
+            },
+            {
+              "key": "B",
+              "text": "y′ = eˣ(x² + 1)"
+            },
+            {
+              "key": "C",
+              "text": "y′ = 2xeˣ"
+            },
+            {
+              "key": "D",
+              "text": "y′ = eˣ(x² + 2x)"
+            }
+          ]
+        },
+        {
+          "id": "d8064994-8f00-50b3-bb6b-fd6030e349aa",
+          "sectionId": "part_1",
+          "number": "3",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm của y = ln(x² + 1).",
+          "options": [
+            {
+              "key": "A",
+              "text": "y′ = 1/(x² + 1)"
+            },
+            {
+              "key": "B",
+              "text": "y′ = 2x/(x² + 1)"
+            },
+            {
+              "key": "C",
+              "text": "y′ = 2/(x² + 1)"
+            },
+            {
+              "key": "D",
+              "text": "y′ = ln(2x)"
+            }
+          ]
+        },
+        {
+          "id": "f6f1fa31-2b3d-5e9e-8392-a616d00bec91",
+          "sectionId": "part_1",
+          "number": "4",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm của y = √(3x + 1).",
+          "options": [
+            {
+              "key": "A",
+              "text": "3/√(3x + 1)"
+            },
+            {
+              "key": "B",
+              "text": "1/(2√(3x + 1))"
+            },
+            {
+              "key": "C",
+              "text": "3/[2√(3x + 1)]"
+            },
+            {
+              "key": "D",
+              "text": "3√(3x + 1)/2"
+            }
+          ]
+        },
+        {
+          "id": "bdda5947-66c4-5886-80a6-7307f0f1c417",
+          "sectionId": "part_1",
+          "number": "5",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm của y = x/(x + 1).",
+          "options": [
+            {
+              "key": "A",
+              "text": "1/(x + 1)"
+            },
+            {
+              "key": "B",
+              "text": "x/(x + 1)²"
+            },
+            {
+              "key": "C",
+              "text": "−1/(x + 1)²"
+            },
+            {
+              "key": "D",
+              "text": "1/(x + 1)²"
+            }
+          ]
+        },
+        {
+          "id": "40e2c4b9-c98b-5bdb-be4e-85107f1704c1",
+          "sectionId": "part_1",
+          "number": "6",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f(x) = x³ − 6x² + 9x. Hàm số đồng biến trên khoảng nào?",
+          "options": [
+            {
+              "key": "A",
+              "text": "(−∞; 1) và (3; +∞)"
+            },
+            {
+              "key": "B",
+              "text": "(1; 3)"
+            },
+            {
+              "key": "C",
+              "text": "(−∞; 3)"
+            },
+            {
+              "key": "D",
+              "text": "(1; +∞)"
+            }
+          ]
+        },
+        {
+          "id": "ec65516e-e83f-58ff-b89b-62412b77c7bd",
+          "sectionId": "part_1",
+          "number": "7",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f(x) = x³ − 3x² + 1. Giá trị cực đại của hàm số bằng",
+          "options": [
+            {
+              "key": "A",
+              "text": "1"
+            },
+            {
+              "key": "B",
+              "text": "−3"
+            },
+            {
+              "key": "C",
+              "text": "2"
+            },
+            {
+              "key": "D",
+              "text": "−2"
+            }
+          ]
+        },
+        {
+          "id": "023d791c-0762-5ec5-9981-ed03f7da7026",
+          "sectionId": "part_1",
+          "number": "8",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Phương trình tiếp tuyến của đồ thị y = x² − 2x + 3 tại điểm có hoành độ x = 2 là",
+          "options": [
+            {
+              "key": "A",
+              "text": "y = 2x + 1"
+            },
+            {
+              "key": "B",
+              "text": "y = −2x + 7"
+            },
+            {
+              "key": "C",
+              "text": "y = 2x − 1"
+            },
+            {
+              "key": "D",
+              "text": "y = −x + 5"
+            }
+          ]
+        },
+        {
+          "id": "3b4994a9-db95-5291-bf0a-0336b3d42286",
+          "sectionId": "part_1",
+          "number": "9",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Giá trị nhỏ nhất của f(x) = x + 1/x trên (0; +∞) là",
+          "options": [
+            {
+              "key": "A",
+              "text": "1"
+            },
+            {
+              "key": "B",
+              "text": "2"
+            },
+            {
+              "key": "C",
+              "text": "3"
+            },
+            {
+              "key": "D",
+              "text": "4"
+            }
+          ]
+        },
+        {
+          "id": "b2e64eb0-54b2-5c61-b7ed-1538483d39d6",
+          "sectionId": "part_1",
+          "number": "10",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tiếp tuyến của y = x³ − 3x tại x = 1 có phương trình là",
+          "options": [
+            {
+              "key": "A",
+              "text": "y = −2"
+            },
+            {
+              "key": "B",
+              "text": "y = 3x − 5"
+            },
+            {
+              "key": "C",
+              "text": "y = x − 2"
+            },
+            {
+              "key": "D",
+              "text": "y = 2x − 4"
+            }
+          ]
+        },
+        {
+          "id": "ab71aec1-59b8-54ce-bc51-4201c705a1fb",
+          "sectionId": "part_1",
+          "number": "11",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f(x) = x³ − 3x² + mx. Biết f′(1)=0. Giá trị của m là",
+          "options": [
+            {
+              "key": "A",
+              "text": "1"
+            },
+            {
+              "key": "B",
+              "text": "2"
+            },
+            {
+              "key": "C",
+              "text": "3"
+            },
+            {
+              "key": "D",
+              "text": "4"
+            }
+          ]
+        },
+        {
+          "id": "39ed4d40-f31d-5c09-be0a-b0e65d9f1e56",
+          "sectionId": "part_1",
+          "number": "12",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Trên (0; +∞), hàm số f(x)=ln x − x đạt giá trị lớn nhất bằng",
+          "options": [
+            {
+              "key": "A",
+              "text": "0"
+            },
+            {
+              "key": "B",
+              "text": "1"
+            },
+            {
+              "key": "C",
+              "text": "−1"
+            },
+            {
+              "key": "D",
+              "text": "ln 2 − 1"
+            }
+          ]
+        },
+        {
+          "id": "221c36cc-1bd0-5078-9154-339393869bc4",
+          "sectionId": "part_1",
+          "number": "13",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Hàm số f(x) có đạo hàm f′(x)=eˣ(2x+1). Điểm cực tiểu của f có hoành độ là",
+          "options": [
+            {
+              "key": "A",
+              "text": "−1/2"
+            },
+            {
+              "key": "B",
+              "text": "0"
+            },
+            {
+              "key": "C",
+              "text": "1/2"
+            },
+            {
+              "key": "D",
+              "text": "−1"
+            }
+          ]
+        },
+        {
+          "id": "3e9dea0e-7a5d-549e-a7da-c52b0a14f3d6",
+          "sectionId": "part_1",
+          "number": "14",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Một vật chuyển động với s(t)=t³−6t²+9t (m). Gia tốc tại t=1 s là",
+          "options": [
+            {
+              "key": "A",
+              "text": "−12 m/s²"
+            },
+            {
+              "key": "B",
+              "text": "−6 m/s²"
+            },
+            {
+              "key": "C",
+              "text": "0 m/s²"
+            },
+            {
+              "key": "D",
+              "text": "6 m/s²"
+            }
+          ]
+        },
+        {
+          "id": "9199c0b0-103c-56d8-8903-96e08b74f50c",
+          "sectionId": "part_1",
+          "number": "15",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Một vật có gia tốc a(t)=6t−4 và vận tốc ban đầu v(0)=2 m/s. Vận tốc là",
+          "options": [
+            {
+              "key": "A",
+              "text": "v(t)=3t²−4t+2"
+            },
+            {
+              "key": "B",
+              "text": "v(t)=6t²−4t+2"
+            },
+            {
+              "key": "C",
+              "text": "v(t)=3t²−4"
+            },
+            {
+              "key": "D",
+              "text": "v(t)=6t−2"
+            }
+          ]
+        },
+        {
+          "id": "71b9fc3b-a322-500b-b819-8443ed0eafc9",
+          "sectionId": "part_1",
+          "number": "16",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f(x)=(2x−1)/(x+1), x≠−1. Hàm số đồng biến trên khoảng nào?",
+          "options": [
+            {
+              "key": "A",
+              "text": "(−∞;−1)"
+            },
+            {
+              "key": "B",
+              "text": "(−1;1/2)"
+            },
+            {
+              "key": "C",
+              "text": "(1/2;+∞)"
+            },
+            {
+              "key": "D",
+              "text": "Cả (−∞;−1) và (−1;+∞)"
+            }
+          ]
+        },
+        {
+          "id": "660dcdaa-8cc2-56e9-82ba-1b091fe10efc",
+          "sectionId": "part_1",
+          "number": "17",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho y = x³ + mx. Đồ thị có tiếp tuyến tại x=1 có hệ số góc bằng 5. Giá trị của m là",
+          "options": [
+            {
+              "key": "A",
+              "text": "−2"
+            },
+            {
+              "key": "B",
+              "text": "1"
+            },
+            {
+              "key": "C",
+              "text": "2"
+            },
+            {
+              "key": "D",
+              "text": "5"
+            }
+          ]
+        },
+        {
+          "id": "636d9adc-4715-576f-b012-e9be5e4e1265",
+          "sectionId": "part_1",
+          "number": "18",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Một hình chữ nhật có chu vi 20. Diện tích lớn nhất của hình chữ nhật là",
+          "options": [
+            {
+              "key": "A",
+              "text": "20"
+            },
+            {
+              "key": "B",
+              "text": "24"
+            },
+            {
+              "key": "C",
+              "text": "25"
+            },
+            {
+              "key": "D",
+              "text": "30"
+            }
+          ]
+        },
+        {
+          "id": "b864cbe7-8efc-5ac5-8b36-15a3e361e484",
+          "sectionId": "part_1",
+          "number": "19",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Từ một tấm bìa hình vuông cạnh 12 cm, cắt bốn hình vuông cạnh x ở bốn góc rồi gấp thành hộp không nắp. Thể tích lớn nhất là",
+          "options": [
+            {
+              "key": "A",
+              "text": "96 cm³"
+            },
+            {
+              "key": "B",
+              "text": "128 cm³"
+            },
+            {
+              "key": "C",
+              "text": "144 cm³"
+            },
+            {
+              "key": "D",
+              "text": "160 cm³"
+            }
+          ]
+        },
+        {
+          "id": "b0dff7cd-31d8-5d45-b482-473e7765cdff",
+          "sectionId": "part_1",
+          "number": "20",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f′(x)=(x−1)(x−3). Mệnh đề nào đúng?",
+          "options": [
+            {
+              "key": "A",
+              "text": "f tăng trên (1;3) và giảm ngoài khoảng đó"
+            },
+            {
+              "key": "B",
+              "text": "f có cực tiểu tại x=1 và cực đại tại x=3"
+            },
+            {
+              "key": "C",
+              "text": "f có cực đại tại x=1 và cực tiểu tại x=3"
+            },
+            {
+              "key": "D",
+              "text": "f không có cực trị"
+            }
+          ]
+        },
+        {
+          "id": "d1e46f2c-a2c3-5dd3-85c5-4e44fa508295",
+          "sectionId": "part_2",
+          "number": "1",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x³−3x²+2.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=3x²−6x."
+            },
+            {
+              "key": "b",
+              "text": "Phương trình f′(x)=0 có nghiệm x=0 và x=2."
+            },
+            {
+              "key": "c",
+              "text": "Hàm số đồng biến trên (0;2)."
+            },
+            {
+              "key": "d",
+              "text": "f đạt cực đại tại x=0 và giá trị cực đại bằng 2."
+            }
+          ]
+        },
+        {
+          "id": "747a5d9f-67d2-56ac-9e01-ea2529659ce1",
+          "sectionId": "part_2",
+          "number": "2",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=(x²+1)/(x−1), x≠1.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Tập xác định là R\\{1}."
+            },
+            {
+              "key": "b",
+              "text": "f′(x)=(x²−2x−1)/(x−1)²."
+            },
+            {
+              "key": "c",
+              "text": "f′(0)=1."
+            },
+            {
+              "key": "d",
+              "text": "Tiếp tuyến tại x=0 là y=−x−1."
+            }
+          ]
+        },
+        {
+          "id": "346e6731-b123-5f43-ae70-d3cb30a539ed",
+          "sectionId": "part_2",
+          "number": "3",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=ln(x²+1).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Tập xác định của f là R."
+            },
+            {
+              "key": "b",
+              "text": "f′(x)=2x/(x²+1)."
+            },
+            {
+              "key": "c",
+              "text": "f giảm trên (−∞;0) và tăng trên (0;+∞)."
+            },
+            {
+              "key": "d",
+              "text": "Giá trị nhỏ nhất của f là 0."
+            }
+          ]
+        },
+        {
+          "id": "b350bfdf-10a5-5f32-8bdf-e2aac112367c",
+          "sectionId": "part_2",
+          "number": "4",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x+1/x trên (0;+∞).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=1−1/x²."
+            },
+            {
+              "key": "b",
+              "text": "f giảm trên (0;1) và tăng trên (1;+∞)."
+            },
+            {
+              "key": "c",
+              "text": "f đạt GTNN bằng 2."
+            },
+            {
+              "key": "d",
+              "text": "f″(x)=−2/x³."
+            }
+          ]
+        },
+        {
+          "id": "8d8cb22a-ade8-53e0-8f72-354e234e3b4d",
+          "sectionId": "part_2",
+          "number": "5",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho s(t)=t³−6t²+9t, t≥0.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "v(t)=3t²−12t+9."
+            },
+            {
+              "key": "b",
+              "text": "Vật dừng tại t=1 và t=3."
+            },
+            {
+              "key": "c",
+              "text": "Tại t=2, vật chuyển động theo chiều dương."
+            },
+            {
+              "key": "d",
+              "text": "a(t)=6t−12."
+            }
+          ]
+        },
+        {
+          "id": "fa0884f6-4445-589e-b06c-eeb7d30c1112",
+          "sectionId": "part_2",
+          "number": "6",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f_m(x)=x³−3mx.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′_m(x)=3x²−3m."
+            },
+            {
+              "key": "b",
+              "text": "Nếu m>0 thì có hai điểm tới hạn x=±√m."
+            },
+            {
+              "key": "c",
+              "text": "Với m>0, x=−√m là điểm cực đại."
+            },
+            {
+              "key": "d",
+              "text": "Nếu m<0 thì hàm có hai điểm tới hạn thực."
+            }
+          ]
+        },
+        {
+          "id": "0dfc2967-7d6f-5038-8726-b89c4ecc917c",
+          "sectionId": "part_2",
+          "number": "7",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x²+2x+1.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Tiếp tuyến tại x=−1 có hệ số góc 0."
+            },
+            {
+              "key": "b",
+              "text": "Tiếp tuyến tại x=−1 là y=0."
+            },
+            {
+              "key": "c",
+              "text": "Pháp tuyến tại x=−1 là x=−1."
+            },
+            {
+              "key": "d",
+              "text": "Điểm tiếp xúc là (−1;1)."
+            }
+          ]
+        },
+        {
+          "id": "24154623-214a-5b1d-bbce-ed6cffd99d8b",
+          "sectionId": "part_2",
+          "number": "8",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x⁴−2x².",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=4x(x²−1)."
+            },
+            {
+              "key": "b",
+              "text": "Các điểm tới hạn là −1,0,1."
+            },
+            {
+              "key": "c",
+              "text": "x=0 là điểm cực tiểu."
+            },
+            {
+              "key": "d",
+              "text": "Giá trị cực tiểu là −1."
+            }
+          ]
+        },
+        {
+          "id": "6684cacd-dc99-5383-8f84-9bfe98de191a",
+          "sectionId": "part_2",
+          "number": "9",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Hình chữ nhật có chu vi 24, gọi một cạnh là x (0<x<12).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Diện tích A(x)=x(12−x)."
+            },
+            {
+              "key": "b",
+              "text": "A′(x)=12−2x."
+            },
+            {
+              "key": "c",
+              "text": "Diện tích lớn nhất bằng 36."
+            },
+            {
+              "key": "d",
+              "text": "Diện tích lớn nhất đạt khi hai cạnh bằng 4 và 8."
+            }
+          ]
+        },
+        {
+          "id": "f372f797-d222-5534-8b94-12fa87c5347e",
+          "sectionId": "part_2",
+          "number": "10",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho bảng dấu của f′: f′>0 trên (−∞;−1), f′<0 trên (−1;2), f′>0 trên (2;+∞).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f tăng trên (−∞;−1)."
+            },
+            {
+              "key": "b",
+              "text": "f giảm trên (−1;2)."
+            },
+            {
+              "key": "c",
+              "text": "f có cực đại tại x=−1."
+            },
+            {
+              "key": "d",
+              "text": "f có cực tiểu tại x=2."
+            }
+          ]
+        },
+        {
+          "id": "1dc26dc4-65d5-5816-a485-024db087b7b4",
+          "sectionId": "part_3",
+          "number": "1",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho f(x)=x⁴−3x²+2x+5. Tính f′(2)."
+        },
+        {
+          "id": "67d0c033-c40f-5fd9-bba3-5c02d8b102b6",
+          "sectionId": "part_3",
+          "number": "2",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho f(x)=x³−6x²+9x. Hàm số có bao nhiêu điểm cực trị?"
+        },
+        {
+          "id": "ca703426-35de-55f1-86c5-ae88c77d8ee1",
+          "sectionId": "part_3",
+          "number": "3",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Trên (0;+∞), cho f(x)=ln x−x/2. Tính GTLN của f."
+        },
+        {
+          "id": "21f699c9-3a52-51a9-84e5-992d8e547c26",
+          "sectionId": "part_3",
+          "number": "4",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Viết hệ số góc của tiếp tuyến đồ thị y=(x²+1)/(x−1) tại x=0."
+        },
+        {
+          "id": "a5c61dc3-c2f6-53c3-9582-d11650e8926c",
+          "sectionId": "part_3",
+          "number": "5",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho f_m(x)=x³+3mx²+3x. Biết f′_m(1)=0. Tìm m."
+        },
+        {
+          "id": "0fb5fb60-3372-57c9-8be1-b40baabadcfc",
+          "sectionId": "part_3",
+          "number": "6",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một vật có s(t)=t³−6t²+9t trên [0;4]. Tính tổng quãng đường vật đi được."
+        },
+        {
+          "id": "4d9e439c-1b2c-5bd0-aaa3-7e41e81ca82b",
+          "sectionId": "part_3",
+          "number": "7",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Hình chữ nhật có diện tích 48. Chu vi nhỏ nhất bằng bao nhiêu?"
+        },
+        {
+          "id": "4c8e61bc-df06-5600-b3f1-62f3a586da17",
+          "sectionId": "part_3",
+          "number": "8",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Biết f′(x)=(x−2)(x+1) và f(0)=5. Tính f(3)−f(−1)."
+        },
+        {
+          "id": "c403bde8-3390-5136-b520-25ccd644eb3c",
+          "sectionId": "part_3",
+          "number": "9",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Viết phương trình tiếp tuyến của y=x+1/x tại x=1, với x>0."
+        },
+        {
+          "id": "e630e517-4714-5f77-8514-f6bee0ef85aa",
+          "sectionId": "part_3",
+          "number": "10",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Từ tấm bìa vuông cạnh 12 cm cắt bốn ô vuông cạnh x để làm hộp không nắp. Tính thể tích lớn nhất."
+        }
+      ],
+      "contentStatus": "owner_approved",
+      "publicationRightsStatus": "owner_confirmed",
+      "sourceSha256": "41cc6ab72db981ee3e7f5a72b9417000f1ad1a936f2796b6f05ee56c1f29da02"
+    },
+    {
+      "id": "practice-dao_ham-2",
+      "slug": "practice-dao_ham-2",
+      "title": "Đề ôn tập Đạo hàm số 2",
+      "description": "40 câu · 10 điểm · Ôn tập Đạo hàm theo đề Word đã nhập.",
+      "language": "vi",
+      "mode": "practice",
+      "demo": false,
+      "category": "topic_review",
+      "topicId": "dao_ham",
+      "topic": "Đạo hàm",
+      "sourceFile": "De_Dao_Ham_2_De_40_Cau.docx",
+      "sourceExamNumber": 2,
+      "timingMode": "elapsed",
+      "durationSeconds": null,
+      "totalScore": 10,
+      "questionCount": 40,
+      "sections": [
+        {
+          "id": "part_1",
+          "title": "Phần I · Trắc nghiệm nhiều lựa chọn",
+          "description": "",
+          "maxScore": 5.0
+        },
+        {
+          "id": "part_2",
+          "title": "Phần II · Đúng / Sai",
+          "description": "",
+          "maxScore": 2.5
+        },
+        {
+          "id": "part_3",
+          "title": "Phần III · Trả lời ngắn",
+          "description": "",
+          "maxScore": 2.5
+        }
+      ],
+      "questions": [
+        {
+          "id": "e6ca947e-2b38-5bd9-8fb2-eea410f7bbe5",
+          "sectionId": "part_1",
+          "number": "1",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm y=ln(x²−4x+5).",
+          "options": [
+            {
+              "key": "A",
+              "text": "(2x−4)/(x²−4x+5)"
+            },
+            {
+              "key": "B",
+              "text": "1/(x²−4x+5)"
+            },
+            {
+              "key": "C",
+              "text": "(2x+4)/(x²−4x+5)"
+            },
+            {
+              "key": "D",
+              "text": "2/(x−2)"
+            }
+          ]
+        },
+        {
+          "id": "13711ca2-9917-55a7-b3cd-5be59bbccbe6",
+          "sectionId": "part_1",
+          "number": "2",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm y=(2x+1)/(x−1).",
+          "options": [
+            {
+              "key": "A",
+              "text": "3/(x−1)²"
+            },
+            {
+              "key": "B",
+              "text": "−3/(x−1)²"
+            },
+            {
+              "key": "C",
+              "text": "−1/(x−1)"
+            },
+            {
+              "key": "D",
+              "text": "2/(x−1)²"
+            }
+          ]
+        },
+        {
+          "id": "6bdf331e-bdec-5bd2-837b-cee232b5ca02",
+          "sectionId": "part_1",
+          "number": "3",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính đạo hàm y=e^(x²−3x).",
+          "options": [
+            {
+              "key": "A",
+              "text": "(2x−3)e^(x²−3x)"
+            },
+            {
+              "key": "B",
+              "text": "e^(x²−3x)"
+            },
+            {
+              "key": "C",
+              "text": "(x²−3x)e^(x²−3x)"
+            },
+            {
+              "key": "D",
+              "text": "2xe^(x²−3x)"
+            }
+          ]
+        },
+        {
+          "id": "02fe1ba3-d9a9-5256-9f8e-eedd74b77980",
+          "sectionId": "part_1",
+          "number": "4",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Với x>0, đạo hàm của y=xˣ là",
+          "options": [
+            {
+              "key": "A",
+              "text": "y′=xˣ ln x"
+            },
+            {
+              "key": "B",
+              "text": "y′=xˣ/x"
+            },
+            {
+              "key": "C",
+              "text": "y′=xˣ(ln x+1)"
+            },
+            {
+              "key": "D",
+              "text": "y′=xˣ(x+1)"
+            }
+          ]
+        },
+        {
+          "id": "70eb1b84-658e-554f-95ad-a9be7133b134",
+          "sectionId": "part_1",
+          "number": "5",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Đường tròn x²+y²=25 có hệ số góc tiếp tuyến tại (3;4) bằng",
+          "options": [
+            {
+              "key": "A",
+              "text": "3/4"
+            },
+            {
+              "key": "B",
+              "text": "−3/4"
+            },
+            {
+              "key": "C",
+              "text": "4/3"
+            },
+            {
+              "key": "D",
+              "text": "−4/3"
+            }
+          ]
+        },
+        {
+          "id": "f9940161-759e-5d6b-879c-fbfd97801cdf",
+          "sectionId": "part_1",
+          "number": "6",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f(x)=x⁴−4x²+1. Giá trị nhỏ nhất của f là",
+          "options": [
+            {
+              "key": "A",
+              "text": "−4"
+            },
+            {
+              "key": "B",
+              "text": "−3"
+            },
+            {
+              "key": "C",
+              "text": "−1"
+            },
+            {
+              "key": "D",
+              "text": "1"
+            }
+          ]
+        },
+        {
+          "id": "2625f0af-39fc-5187-af93-9d5773522a3b",
+          "sectionId": "part_1",
+          "number": "7",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f_m(x)=x³−3mx²+9x. Biết tiếp tuyến tại x=2 nằm ngang. Khi đó m bằng",
+          "options": [
+            {
+              "key": "A",
+              "text": "1"
+            },
+            {
+              "key": "B",
+              "text": "3/2"
+            },
+            {
+              "key": "C",
+              "text": "7/4"
+            },
+            {
+              "key": "D",
+              "text": "2"
+            }
+          ]
+        },
+        {
+          "id": "f0bc2ccc-9fa1-5d50-a167-ca0991a8cf79",
+          "sectionId": "part_1",
+          "number": "8",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Trên (0;+∞), GTNN của f(x)=x+4/x bằng",
+          "options": [
+            {
+              "key": "A",
+              "text": "2"
+            },
+            {
+              "key": "B",
+              "text": "3"
+            },
+            {
+              "key": "C",
+              "text": "4"
+            },
+            {
+              "key": "D",
+              "text": "5"
+            }
+          ]
+        },
+        {
+          "id": "ea24659d-660b-5205-af56-9e69bce4da66",
+          "sectionId": "part_1",
+          "number": "9",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Trên (0;+∞), GTNN của f(x)=x²+4/x bằng",
+          "options": [
+            {
+              "key": "A",
+              "text": "3∛4"
+            },
+            {
+              "key": "B",
+              "text": "4∛3"
+            },
+            {
+              "key": "C",
+              "text": "6"
+            },
+            {
+              "key": "D",
+              "text": "4"
+            }
+          ]
+        },
+        {
+          "id": "40f71ae5-26a4-5a70-a9de-11a022e2a404",
+          "sectionId": "part_1",
+          "number": "10",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Lợi nhuận P(x)=−0,02x²+8x−100 (x≥0). Lợi nhuận lớn nhất là",
+          "options": [
+            {
+              "key": "A",
+              "text": "600"
+            },
+            {
+              "key": "B",
+              "text": "700"
+            },
+            {
+              "key": "C",
+              "text": "800"
+            },
+            {
+              "key": "D",
+              "text": "900"
+            }
+          ]
+        },
+        {
+          "id": "07e3094e-14dc-5690-8a7b-1164107fdf62",
+          "sectionId": "part_1",
+          "number": "11",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f(x)=x³−2x². Khoảng mà đồ thị lõm xuống là",
+          "options": [
+            {
+              "key": "A",
+              "text": "(−∞;2/3)"
+            },
+            {
+              "key": "B",
+              "text": "(2/3;+∞)"
+            },
+            {
+              "key": "C",
+              "text": "R"
+            },
+            {
+              "key": "D",
+              "text": "(−∞;0)"
+            }
+          ]
+        },
+        {
+          "id": "7ad9809c-f850-5a75-a4f0-e25066ade5ca",
+          "sectionId": "part_1",
+          "number": "12",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Phương trình tiếp tuyến của y=ln x tại x=e là",
+          "options": [
+            {
+              "key": "A",
+              "text": "y=x/e"
+            },
+            {
+              "key": "B",
+              "text": "y=ex"
+            },
+            {
+              "key": "C",
+              "text": "y=x/e+1"
+            },
+            {
+              "key": "D",
+              "text": "y=x−e+1"
+            }
+          ]
+        },
+        {
+          "id": "87a65d96-3250-58f1-b9b4-419f23ab14ac",
+          "sectionId": "part_1",
+          "number": "13",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f_m(x)=x³−3x²+3mx. Điều kiện để f_m có đúng hai điểm tới hạn là",
+          "options": [
+            {
+              "key": "A",
+              "text": "m>1"
+            },
+            {
+              "key": "B",
+              "text": "m=1"
+            },
+            {
+              "key": "C",
+              "text": "m<1"
+            },
+            {
+              "key": "D",
+              "text": "m≤1"
+            }
+          ]
+        },
+        {
+          "id": "7bbbfb83-6ecf-5fb4-86e4-1327d0a5f7f1",
+          "sectionId": "part_1",
+          "number": "14",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Trên (0;+∞), hàm số f(x)=ln x−x/2 đồng biến trên khoảng",
+          "options": [
+            {
+              "key": "A",
+              "text": "(0;1)"
+            },
+            {
+              "key": "B",
+              "text": "(0;2)"
+            },
+            {
+              "key": "C",
+              "text": "(2;+∞)"
+            },
+            {
+              "key": "D",
+              "text": "R"
+            }
+          ]
+        },
+        {
+          "id": "a22530dc-f258-5a55-a49c-8ca0df0e51a7",
+          "sectionId": "part_1",
+          "number": "15",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Hàm số f(x)=(x−1)eˣ đạt giá trị nhỏ nhất tại",
+          "options": [
+            {
+              "key": "A",
+              "text": "x=−1"
+            },
+            {
+              "key": "B",
+              "text": "x=0"
+            },
+            {
+              "key": "C",
+              "text": "x=1"
+            },
+            {
+              "key": "D",
+              "text": "x=2"
+            }
+          ]
+        },
+        {
+          "id": "28a1d99b-9d61-56a9-b5a7-c90a019f9b0c",
+          "sectionId": "part_1",
+          "number": "16",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Hàm số f(x) xác định bởi f(x)=x²+ax khi x<1 và f(x)=2x+b khi x≥1. Để f khả vi tại x=1, cặp (a,b) là",
+          "options": [
+            {
+              "key": "A",
+              "text": "(0;−1)"
+            },
+            {
+              "key": "B",
+              "text": "(1;0)"
+            },
+            {
+              "key": "C",
+              "text": "(−1;0)"
+            },
+            {
+              "key": "D",
+              "text": "(0;1)"
+            }
+          ]
+        },
+        {
+          "id": "7b6a53c9-31aa-5de0-b820-25f92431ac43",
+          "sectionId": "part_1",
+          "number": "17",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho f′(x)=(x+2)(x−1)². Kết luận đúng là",
+          "options": [
+            {
+              "key": "A",
+              "text": "f có cực đại tại x=−2"
+            },
+            {
+              "key": "B",
+              "text": "f có cực tiểu tại x=−2"
+            },
+            {
+              "key": "C",
+              "text": "f có cực trị tại x=1"
+            },
+            {
+              "key": "D",
+              "text": "f có cực đại tại cả −2 và 1"
+            }
+          ]
+        },
+        {
+          "id": "cab66622-aa45-553d-8179-61d0e0c0699a",
+          "sectionId": "part_1",
+          "number": "18",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Một vật có v(t)=t²−6t+8 trên [0;6]. Tổng quãng đường vật đi được là",
+          "options": [
+            {
+              "key": "A",
+              "text": "16 m"
+            },
+            {
+              "key": "B",
+              "text": "18 m"
+            },
+            {
+              "key": "C",
+              "text": "20 m"
+            },
+            {
+              "key": "D",
+              "text": "24 m"
+            }
+          ]
+        },
+        {
+          "id": "69693911-33d3-5385-954c-19b1bb82e8dd",
+          "sectionId": "part_1",
+          "number": "19",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Số dân N(t) (nghìn người) có N′(t)=0,02t+1,4 và N(0)=50. Sau 10 năm số dân là",
+          "options": [
+            {
+              "key": "A",
+              "text": "60"
+            },
+            {
+              "key": "B",
+              "text": "64"
+            },
+            {
+              "key": "C",
+              "text": "65"
+            },
+            {
+              "key": "D",
+              "text": "66"
+            }
+          ]
+        },
+        {
+          "id": "db5fe8ee-c5e0-5b4c-bdb6-8a806c35a647",
+          "sectionId": "part_1",
+          "number": "20",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Một hình chữ nhật có diện tích 48. Chu vi nhỏ nhất khi hai cạnh bằng nhau. Giá trị chu vi nhỏ nhất là",
+          "options": [
+            {
+              "key": "A",
+              "text": "8√3"
+            },
+            {
+              "key": "B",
+              "text": "12√3"
+            },
+            {
+              "key": "C",
+              "text": "16√3"
+            },
+            {
+              "key": "D",
+              "text": "24√3"
+            }
+          ]
+        },
+        {
+          "id": "3963b5bb-41ff-5ad0-849e-51482957c430",
+          "sectionId": "part_2",
+          "number": "1",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x⁴−4x²+1.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=4x(x²−2)."
+            },
+            {
+              "key": "b",
+              "text": "Các điểm tới hạn là −√2,0,√2."
+            },
+            {
+              "key": "c",
+              "text": "x=0 là điểm cực tiểu."
+            },
+            {
+              "key": "d",
+              "text": "Giá trị cực tiểu bằng −3."
+            }
+          ]
+        },
+        {
+          "id": "1a0d1254-2a59-57b8-a90f-6bef44599b1c",
+          "sectionId": "part_2",
+          "number": "2",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho y=(2x+1)/(x−1).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Tập xác định là R\\{1}."
+            },
+            {
+              "key": "b",
+              "text": "y′=−3/(x−1)²."
+            },
+            {
+              "key": "c",
+              "text": "Hàm số đồng biến trên mọi khoảng thuộc miền xác định."
+            },
+            {
+              "key": "d",
+              "text": "Đồ thị có tiệm cận đứng x=1."
+            }
+          ]
+        },
+        {
+          "id": "4f5865a0-5332-5487-9737-1b93f2fd8e50",
+          "sectionId": "part_2",
+          "number": "3",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=e^(x²−3x).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=(2x−3)e^(x²−3x)."
+            },
+            {
+              "key": "b",
+              "text": "f′(3/2)=0."
+            },
+            {
+              "key": "c",
+              "text": "f giảm trên (−∞;3/2)."
+            },
+            {
+              "key": "d",
+              "text": "f đạt cực đại tại x=3/2."
+            }
+          ]
+        },
+        {
+          "id": "bf8f2507-e0a4-528c-9f55-7945578c0dfd",
+          "sectionId": "part_2",
+          "number": "4",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Với x>0, f(x)=xˣ.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=xˣ(ln x+1)."
+            },
+            {
+              "key": "b",
+              "text": "f′(1)=1."
+            },
+            {
+              "key": "c",
+              "text": "f giảm trên (0;e⁻¹)."
+            },
+            {
+              "key": "d",
+              "text": "f có cực đại tại x=e⁻¹."
+            }
+          ]
+        },
+        {
+          "id": "b0f14937-a72b-5172-a7a4-7f09e2bdf2e1",
+          "sectionId": "part_2",
+          "number": "5",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f_m(x)=x³−3mx²+9x.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′_m(x)=3x²−6mx+9."
+            },
+            {
+              "key": "b",
+              "text": "f′_m(2)=21−12m."
+            },
+            {
+              "key": "c",
+              "text": "f′_m(2)=0 khi m=7/4."
+            },
+            {
+              "key": "d",
+              "text": "Với m=7/4, tiếp tuyến tại x=2 có hệ số góc 7/4."
+            }
+          ]
+        },
+        {
+          "id": "ad320bf3-c76f-5031-9629-dbe0f12388ef",
+          "sectionId": "part_2",
+          "number": "6",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x²+4/x trên (0;+∞).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=2x−4/x²."
+            },
+            {
+              "key": "b",
+              "text": "f′(x)=0 khi x=∛2."
+            },
+            {
+              "key": "c",
+              "text": "f đạt GTNN tại x=∛2."
+            },
+            {
+              "key": "d",
+              "text": "GTNN bằng 4∛2."
+            }
+          ]
+        },
+        {
+          "id": "1014b477-de9f-50c5-b3f0-40539bac5e4d",
+          "sectionId": "part_2",
+          "number": "7",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho y=ln x−x/2 trên (0;+∞).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "y′=1/x−1/2."
+            },
+            {
+              "key": "b",
+              "text": "y tăng trên (0;2)."
+            },
+            {
+              "key": "c",
+              "text": "y có GTLN tại x=2."
+            },
+            {
+              "key": "d",
+              "text": "GTLN bằng ln2+1."
+            }
+          ]
+        },
+        {
+          "id": "3fb841e0-5db5-5022-a0e7-789d4186d304",
+          "sectionId": "part_2",
+          "number": "8",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho s(t)=t³−3t²+2t, t≥0.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "v(t)=3t²−6t+2."
+            },
+            {
+              "key": "b",
+              "text": "a(t)=6t−6."
+            },
+            {
+              "key": "c",
+              "text": "Vật dừng khi t=1."
+            },
+            {
+              "key": "d",
+              "text": "Tại t=1, gia tốc bằng 0."
+            }
+          ]
+        },
+        {
+          "id": "15f38c8f-0786-5b62-88b3-621f3b05d15d",
+          "sectionId": "part_2",
+          "number": "9",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho hàm số f thỏa f′(x)=x²−4x+3.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "f′(x)=(x−1)(x−3)."
+            },
+            {
+              "key": "b",
+              "text": "f tăng trên (−∞;1)."
+            },
+            {
+              "key": "c",
+              "text": "f giảm trên (1;3)."
+            },
+            {
+              "key": "d",
+              "text": "f có cực đại tại x=3."
+            }
+          ]
+        },
+        {
+          "id": "0fc1e371-91b0-5ff2-9f5a-5098ee350892",
+          "sectionId": "part_2",
+          "number": "10",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Một lợi nhuận có dạng P(x)=−0,02x²+8x−100.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "P′(x)=−0,04x+8."
+            },
+            {
+              "key": "b",
+              "text": "P′(x)=0 tại x=200."
+            },
+            {
+              "key": "c",
+              "text": "P đạt GTLN bằng 700."
+            },
+            {
+              "key": "d",
+              "text": "P tăng trên (200;+∞)."
+            }
+          ]
+        },
+        {
+          "id": "51e3879c-61db-53cd-809e-860ad947f213",
+          "sectionId": "part_3",
+          "number": "1",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho f(x)=e^(x²). Tính f′(1)."
+        },
+        {
+          "id": "f39c6cf1-4032-5466-a0cb-eb5357f46b14",
+          "sectionId": "part_3",
+          "number": "2",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Trên đường tròn x²+y²=25, tính hệ số góc tiếp tuyến tại (3;4)."
+        },
+        {
+          "id": "7f072d91-0e74-53b5-b4da-b63dfe0cd843",
+          "sectionId": "part_3",
+          "number": "3",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho f(x)=x⁴−4x²+1. Tính hiệu giữa giá trị cực đại và giá trị cực tiểu."
+        },
+        {
+          "id": "41f14943-0fc2-5668-9e9d-f0d690d2d100",
+          "sectionId": "part_3",
+          "number": "4",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Trên (0;+∞), tính GTNN của f(x)=x²+4/x."
+        },
+        {
+          "id": "5db1d3a9-ffa7-52b2-a3d1-618903ee5866",
+          "sectionId": "part_3",
+          "number": "5",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho f_m(x)=x³−3mx²+9x. Biết tiếp tuyến tại x=2 nằm ngang. Tìm m."
+        },
+        {
+          "id": "9ff37a51-089d-576a-85d9-8004786a6ded",
+          "sectionId": "part_3",
+          "number": "6",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Biết f′(x)=x²−4x+3 và f(0)=2. Tính f(4)−f(0)."
+        },
+        {
+          "id": "42c633be-cfd5-5a61-9565-ad176314b2e9",
+          "sectionId": "part_3",
+          "number": "7",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một vật có v(t)=t²−6t+8 trên [0;6]. Tính tổng quãng đường vật đi được."
+        },
+        {
+          "id": "b2f5085e-52bf-591a-9937-c997b674341a",
+          "sectionId": "part_3",
+          "number": "8",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Số dân N(t) có N′(t)=0,02t+1,4 và N(0)=50 (nghìn người). Tính N(10)."
+        },
+        {
+          "id": "94ff2ff5-27a4-58f4-9b78-a100a54de079",
+          "sectionId": "part_3",
+          "number": "9",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Hình chữ nhật có diện tích 48. Tính chu vi nhỏ nhất."
+        },
+        {
+          "id": "21ed059b-8288-536f-a173-ab34f7c14d62",
+          "sectionId": "part_3",
+          "number": "10",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Với P(x)=−0,02x²+8x−100, tính lợi nhuận lớn nhất."
+        }
+      ],
+      "contentStatus": "owner_approved",
+      "publicationRightsStatus": "owner_confirmed",
+      "sourceSha256": "41cc6ab72db981ee3e7f5a72b9417000f1ad1a936f2796b6f05ee56c1f29da02"
+    },
+    {
+      "id": "practice-nguyen_ham-1",
+      "slug": "practice-nguyen_ham-1",
+      "title": "Đề ôn tập Nguyên hàm số 1",
+      "description": "40 câu · 10 điểm · Ôn tập Nguyên hàm theo đề Word đã nhập.",
+      "language": "vi",
+      "mode": "practice",
+      "demo": false,
+      "category": "topic_review",
+      "topicId": "nguyen_ham",
+      "topic": "Nguyên hàm",
+      "sourceFile": "De_Nguyen_Ham_2_De_40_Cau.docx",
+      "sourceExamNumber": 1,
+      "timingMode": "elapsed",
+      "durationSeconds": null,
+      "totalScore": 10,
+      "questionCount": 40,
+      "sections": [
+        {
+          "id": "part_1",
+          "title": "Phần I · Trắc nghiệm nhiều lựa chọn",
+          "description": "",
+          "maxScore": 5.0
+        },
+        {
+          "id": "part_2",
+          "title": "Phần II · Đúng / Sai",
+          "description": "",
+          "maxScore": 2.5
+        },
+        {
+          "id": "part_3",
+          "title": "Phần III · Trả lời ngắn",
+          "description": "",
+          "maxScore": 2.5
+        }
+      ],
+      "questions": [
+        {
+          "id": "6fa12c60-6f4a-545c-992e-64b2bc91a7cf",
+          "sectionId": "part_1",
+          "number": "1",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(3x²−4x+1)dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "x³−2x²+x+C"
+            },
+            {
+              "key": "B",
+              "text": "3x³−2x²+x+C"
+            },
+            {
+              "key": "C",
+              "text": "x³−4x²+x+C"
+            },
+            {
+              "key": "D",
+              "text": "x²−2x+1+C"
+            }
+          ]
+        },
+        {
+          "id": "6df88a02-7c11-52f5-b4dc-3b0685c3b579",
+          "sectionId": "part_1",
+          "number": "2",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ dx/(5x−2).",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln|5x−2|+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/5)ln|5x−2|+C"
+            },
+            {
+              "key": "C",
+              "text": "5ln|5x−2|+C"
+            },
+            {
+              "key": "D",
+              "text": "−(1/5)ln|5x−2|+C"
+            }
+          ]
+        },
+        {
+          "id": "7e808fba-38b4-5bc4-b89d-a7c73621aeed",
+          "sectionId": "part_1",
+          "number": "3",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫√x dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "(1/2) x³ᐟ²+C"
+            },
+            {
+              "key": "B",
+              "text": "(2/3)x³ᐟ²+C"
+            },
+            {
+              "key": "C",
+              "text": "(3/2)x¹ᐟ²+C"
+            },
+            {
+              "key": "D",
+              "text": "x²/2+C"
+            }
+          ]
+        },
+        {
+          "id": "8517fb63-2d67-59d5-a9c6-2685d1553ef9",
+          "sectionId": "part_1",
+          "number": "4",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫e³ˣ dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "e³ˣ+C"
+            },
+            {
+              "key": "B",
+              "text": "3e³ˣ+C"
+            },
+            {
+              "key": "C",
+              "text": "(1/3)e³ˣ+C"
+            },
+            {
+              "key": "D",
+              "text": "eˣ/3+C"
+            }
+          ]
+        },
+        {
+          "id": "f892df4d-c12e-52ac-9a34-dd5ab7f74484",
+          "sectionId": "part_1",
+          "number": "5",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫cos2x dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "sin2x+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)sin2x+C"
+            },
+            {
+              "key": "C",
+              "text": "2sin2x+C"
+            },
+            {
+              "key": "D",
+              "text": "−(1/2)sin2x+C"
+            }
+          ]
+        },
+        {
+          "id": "5ae52c59-dbc2-5d78-b9fe-cb832a1672b0",
+          "sectionId": "part_1",
+          "number": "6",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ x/(x²+1) dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln(x²+1)+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)ln(x²+1)+C"
+            },
+            {
+              "key": "C",
+              "text": "2ln(x²+1)+C"
+            },
+            {
+              "key": "D",
+              "text": "x²/(x²+1)+C"
+            }
+          ]
+        },
+        {
+          "id": "9a66295d-cef1-5214-9184-7489d4f9e344",
+          "sectionId": "part_1",
+          "number": "7",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(2x−3)^4 dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "(2x−3)^5/5+C"
+            },
+            {
+              "key": "B",
+              "text": "(2x−3)^5/8+C"
+            },
+            {
+              "key": "C",
+              "text": "(2x−3)^5/10+C"
+            },
+            {
+              "key": "D",
+              "text": "(2x−3)^4/8+C"
+            }
+          ]
+        },
+        {
+          "id": "d67fe5b2-7279-5aae-b7ba-8c1d8c272d26",
+          "sectionId": "part_1",
+          "number": "8",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(x+1)^5 dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "(x+1)^6/6+C"
+            },
+            {
+              "key": "B",
+              "text": "(x+1)^5/5+C"
+            },
+            {
+              "key": "C",
+              "text": "6(x+1)^5+C"
+            },
+            {
+              "key": "D",
+              "text": "(x+1)^6/5+C"
+            }
+          ]
+        },
+        {
+          "id": "fc3ca168-dc72-5218-9275-91254556ec29",
+          "sectionId": "part_1",
+          "number": "9",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫x eˣ dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "eˣ(x+1)+C"
+            },
+            {
+              "key": "B",
+              "text": "xeˣ+C"
+            },
+            {
+              "key": "C",
+              "text": "eˣ(x−1)+C"
+            },
+            {
+              "key": "D",
+              "text": "eˣ(x²−1)+C"
+            }
+          ]
+        },
+        {
+          "id": "cc266c82-dfd0-51be-85fe-804a9e764c9a",
+          "sectionId": "part_1",
+          "number": "10",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ln x dx trên (0;+∞).",
+          "options": [
+            {
+              "key": "A",
+              "text": "xlnx+C"
+            },
+            {
+              "key": "B",
+              "text": "xlnx−x+C"
+            },
+            {
+              "key": "C",
+              "text": "lnx/x+C"
+            },
+            {
+              "key": "D",
+              "text": "x/lnx+C"
+            }
+          ]
+        },
+        {
+          "id": "1290693a-63de-5f65-b29b-f5555be94811",
+          "sectionId": "part_1",
+          "number": "11",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ dx/(x²−4).",
+          "options": [
+            {
+              "key": "A",
+              "text": "(1/2)ln|(x−2)/(x+2)|+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/4)ln|(x−2)/(x+2)|+C"
+            },
+            {
+              "key": "C",
+              "text": "(1/4)ln|x²−4|+C"
+            },
+            {
+              "key": "D",
+              "text": "ln|x²−4|+C"
+            }
+          ]
+        },
+        {
+          "id": "6e3d9f0b-e62d-58fd-8550-a257a1f5432d",
+          "sectionId": "part_1",
+          "number": "12",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(3x+5)/(x+1) dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "3x+5ln|x+1|+C"
+            },
+            {
+              "key": "B",
+              "text": "3x+2ln|x+1|+C"
+            },
+            {
+              "key": "C",
+              "text": "3x−2ln|x+1|+C"
+            },
+            {
+              "key": "D",
+              "text": "x+2ln|x+1|+C"
+            }
+          ]
+        },
+        {
+          "id": "22359ee6-460c-566d-bb18-703eeb95e841",
+          "sectionId": "part_1",
+          "number": "13",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫sinx cosx dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "sin²x+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)sin²x+C"
+            },
+            {
+              "key": "C",
+              "text": "−(1/2)cos²x+C"
+            },
+            {
+              "key": "D",
+              "text": "−cosx sinx+C"
+            }
+          ]
+        },
+        {
+          "id": "36a3133c-79a4-57cf-a837-50813ffcb116",
+          "sectionId": "part_1",
+          "number": "14",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫tanx dx trên khoảng cosx≠0.",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln|cosx|+C"
+            },
+            {
+              "key": "B",
+              "text": "−ln|cosx|+C"
+            },
+            {
+              "key": "C",
+              "text": "ln|sinx|+C"
+            },
+            {
+              "key": "D",
+              "text": "tanx+C"
+            }
+          ]
+        },
+        {
+          "id": "5a55c443-30e3-52d2-b269-35fbdd76dd93",
+          "sectionId": "part_1",
+          "number": "15",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho F′(x)=2x+1/x, F(1)=2 trên (0;+∞). Khi đó F(x) là",
+          "options": [
+            {
+              "key": "A",
+              "text": "x²+lnx+2"
+            },
+            {
+              "key": "B",
+              "text": "x²+lnx+1"
+            },
+            {
+              "key": "C",
+              "text": "2x+lnx+1"
+            },
+            {
+              "key": "D",
+              "text": "x²+1/x+1"
+            }
+          ]
+        },
+        {
+          "id": "addfd7d8-0530-53aa-b381-4a944a044d72",
+          "sectionId": "part_1",
+          "number": "16",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ dx/[√x(1+√x)] trên (0;+∞).",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln(1+√x)+C"
+            },
+            {
+              "key": "B",
+              "text": "2ln(1+√x)+C"
+            },
+            {
+              "key": "C",
+              "text": "√x−ln(1+√x)+C"
+            },
+            {
+              "key": "D",
+              "text": "2√x+ln(1+√x)+C"
+            }
+          ]
+        },
+        {
+          "id": "807ea5be-dddd-57df-8f15-400a68664bae",
+          "sectionId": "part_1",
+          "number": "17",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ dx/(x ln x), với x>1.",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln x+C"
+            },
+            {
+              "key": "B",
+              "text": "1/lnx+C"
+            },
+            {
+              "key": "C",
+              "text": "ln(lnx)+C"
+            },
+            {
+              "key": "D",
+              "text": "xlnx−x+C"
+            }
+          ]
+        },
+        {
+          "id": "df2225b6-4878-5eb8-8374-77b9489662b9",
+          "sectionId": "part_1",
+          "number": "18",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫x/(x²−1) dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln|x²−1|+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)ln|x²−1|+C"
+            },
+            {
+              "key": "C",
+              "text": "−(1/2)ln|x²−1|+C"
+            },
+            {
+              "key": "D",
+              "text": "x²/(x²−1)+C"
+            }
+          ]
+        },
+        {
+          "id": "d3dd8a35-cb37-5b81-b67c-3fe705f15871",
+          "sectionId": "part_1",
+          "number": "19",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ dx/[x(x+1)].",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln|x(x+1)|+C"
+            },
+            {
+              "key": "B",
+              "text": "ln|x|+ln|x+1|+C"
+            },
+            {
+              "key": "C",
+              "text": "ln|x|−ln|x+1|+C"
+            },
+            {
+              "key": "D",
+              "text": "1/x−1/(x+1)+C"
+            }
+          ]
+        },
+        {
+          "id": "4b40ce32-feca-5ee0-ace1-9f41f8c09d27",
+          "sectionId": "part_1",
+          "number": "20",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho F′(x)=(2x−1)^3 và F(2)=10. Tổng các hệ số của đa thức F(x) bằng",
+          "options": [
+            {
+              "key": "A",
+              "text": "0"
+            },
+            {
+              "key": "B",
+              "text": "1/8"
+            },
+            {
+              "key": "C",
+              "text": "1"
+            },
+            {
+              "key": "D",
+              "text": "10"
+            }
+          ]
+        },
+        {
+          "id": "6f7a489a-736f-5eb2-8cb9-d30dd1a95011",
+          "sectionId": "part_2",
+          "number": "1",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=3x²−4x+1.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "F(x)=x³−2x²+x+C là họ nguyên hàm của f."
+            },
+            {
+              "key": "b",
+              "text": "Mọi nguyên hàm của f trên một khoảng chỉ khác nhau bởi một hằng số."
+            },
+            {
+              "key": "c",
+              "text": "F′(x)=0 với mọi F là nguyên hàm của f."
+            },
+            {
+              "key": "d",
+              "text": "Nếu F(0)=5 thì F(x)=x³−2x²+x+5."
+            }
+          ]
+        },
+        {
+          "id": "0f49fb34-1aba-56c3-a180-34859beb80de",
+          "sectionId": "part_2",
+          "number": "2",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Xét f(x)=1/(5x−2).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm là (1/5)ln|5x−2|."
+            },
+            {
+              "key": "b",
+              "text": "Hàm số có nguyên hàm trên toàn R."
+            },
+            {
+              "key": "c",
+              "text": "Hai nguyên hàm bất kỳ của f trên cùng một khoảng chênh nhau một hằng số."
+            },
+            {
+              "key": "d",
+              "text": "Đạo hàm của ln|5x−2| là 1/(5x−2)."
+            }
+          ]
+        },
+        {
+          "id": "af97ce3c-1375-53cb-91a7-423bfb143653",
+          "sectionId": "part_2",
+          "number": "3",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=eˣ.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm của f là eˣ."
+            },
+            {
+              "key": "b",
+              "text": "∫eˣdx=eˣ+C."
+            },
+            {
+              "key": "c",
+              "text": "Một nguyên hàm của e²ˣ là e²ˣ."
+            },
+            {
+              "key": "d",
+              "text": "Nếu F′=eˣ thì F=eˣ+C."
+            }
+          ]
+        },
+        {
+          "id": "9669abfd-7472-5741-b297-a379767a0edd",
+          "sectionId": "part_2",
+          "number": "4",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x/(x²+1).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "∫f(x)dx=(1/2)ln(x²+1)+C."
+            },
+            {
+              "key": "b",
+              "text": "Có thể viết ln|x²+1| thay cho ln(x²+1)."
+            },
+            {
+              "key": "c",
+              "text": "Đạo hàm của (1/2)ln(x²+1) là x/(x²+1)."
+            },
+            {
+              "key": "d",
+              "text": "∫f(x)dx=ln(x²+1)+C."
+            }
+          ]
+        },
+        {
+          "id": "c21da8f2-b92f-5be9-b291-a78a8d8fa402",
+          "sectionId": "part_2",
+          "number": "5",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=1/(x²−4).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Tập xác định là R\\{−2,2}."
+            },
+            {
+              "key": "b",
+              "text": "Một nguyên hàm là (1/4)ln|(x−2)/(x+2)|."
+            },
+            {
+              "key": "c",
+              "text": "Có thể bỏ dấu giá trị tuyệt đối với mọi x thuộc tập xác định."
+            },
+            {
+              "key": "d",
+              "text": "Đạo hàm của nguyên hàm trên bằng f(x)."
+            }
+          ]
+        },
+        {
+          "id": "a15f68cc-55c9-5376-a749-9e10a9518df7",
+          "sectionId": "part_2",
+          "number": "6",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Tính chất nguyên hàm từng phần với ∫x eˣdx.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm là eˣ(x−1)."
+            },
+            {
+              "key": "b",
+              "text": "∫x eˣdx=xeˣ+C."
+            },
+            {
+              "key": "c",
+              "text": "Có thể dùng công thức ∫u dv=uv−∫v du."
+            },
+            {
+              "key": "d",
+              "text": "Một nguyên hàm khác chỉ khác biểu thức trên bởi một hằng số."
+            }
+          ]
+        },
+        {
+          "id": "d4ca00fe-f034-52b9-984a-95f6f1b23067",
+          "sectionId": "part_2",
+          "number": "7",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho F′(x)=2x+1/x và F(1)=2 trên (0;+∞).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "F(x)=x²+lnx+1."
+            },
+            {
+              "key": "b",
+              "text": "F(2)=5+ln2."
+            },
+            {
+              "key": "c",
+              "text": "F(1)=1."
+            },
+            {
+              "key": "d",
+              "text": "Nếu G cũng là nguyên hàm của 2x+1/x thì F−G là hằng số."
+            }
+          ]
+        },
+        {
+          "id": "1d349bc8-9cd3-5d10-b5f1-a950e82a2adf",
+          "sectionId": "part_2",
+          "number": "8",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho ∫dx/(x ln x) với x>1.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Đặt u=lnx thì du=dx/x."
+            },
+            {
+              "key": "b",
+              "text": "Một nguyên hàm là ln(lnx)."
+            },
+            {
+              "key": "c",
+              "text": "Một nguyên hàm là 1/lnx."
+            },
+            {
+              "key": "d",
+              "text": "Hàm số tích phân xác định tại x=1."
+            }
+          ]
+        },
+        {
+          "id": "fe699950-d176-5511-8012-50fb1273159f",
+          "sectionId": "part_2",
+          "number": "9",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Một vật chuyển động với vận tốc v(t)=3t²+2 (m/s), s(0)=5 m.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "s(t)=t³+2t+5."
+            },
+            {
+              "key": "b",
+              "text": "s(4)=73 m."
+            },
+            {
+              "key": "c",
+              "text": "Gia tốc a(t)=6t+2."
+            },
+            {
+              "key": "d",
+              "text": "s(4)−s(0)=68 m."
+            }
+          ]
+        },
+        {
+          "id": "e21b0102-517a-56e0-91eb-242e99f1b87f",
+          "sectionId": "part_2",
+          "number": "10",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho F(x) là nguyên hàm của f(x).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "∫f(x)dx=F(x)+C."
+            },
+            {
+              "key": "b",
+              "text": "(∫f(x)dx)′=f(x)."
+            },
+            {
+              "key": "c",
+              "text": "(∫f(x)dx)′=f′(x)."
+            },
+            {
+              "key": "d",
+              "text": "Hai nguyên hàm của cùng một hàm liên tục có thể khác nhau theo x."
+            }
+          ]
+        },
+        {
+          "id": "f7d1bc9b-4f4e-5a69-9d9a-97c0ee636039",
+          "sectionId": "part_3",
+          "number": "1",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho F′(x)=3x²−4x+1, F(0)=2. Tính F(2)."
+        },
+        {
+          "id": "d1d6e61b-7146-53cb-b5b1-da1db67ca547",
+          "sectionId": "part_3",
+          "number": "2",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho F′(x)=(2x−1)^3. Tính F(2)−F(1), không cần biết hằng số C."
+        },
+        {
+          "id": "6ad3f202-0046-55f9-8dc7-a0d24f1cb769",
+          "sectionId": "part_3",
+          "number": "3",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho F′(x)=2x+1/x trên (0;+∞), F(1)=0. Tính F(e)."
+        },
+        {
+          "id": "68278a38-d5ea-52a6-bf8f-daff690e15dc",
+          "sectionId": "part_3",
+          "number": "4",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một nguyên hàm của f(x)=(x+2)/(x+1) thỏa F(0)=1. Tính F(1)."
+        },
+        {
+          "id": "7266ac67-f3d5-55dc-ad36-a574d1e22e72",
+          "sectionId": "part_3",
+          "number": "5",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một vật có vận tốc v(t)=t²−4t+5 (m/s) trên [0;2]. Tính quãng đường đi được trong 2 giây đầu."
+        },
+        {
+          "id": "90a2a818-4231-595b-b3d2-230489639e40",
+          "sectionId": "part_3",
+          "number": "6",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Tính ∫₀¹ dx/(1+x)."
+        },
+        {
+          "id": "4600f330-c69d-50bc-9bdf-c5c2d4d3f249",
+          "sectionId": "part_3",
+          "number": "7",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một vật có vận tốc v(t)=3t²+2 m/s và s(0)=5 m. Tính s(4)."
+        },
+        {
+          "id": "ec6c0b8f-369f-5bf2-940e-787f3462feea",
+          "sectionId": "part_3",
+          "number": "8",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Tính ∫₁² x/(x²+1) dx."
+        },
+        {
+          "id": "868b8a00-b6ec-524d-9a16-0406ef30d60b",
+          "sectionId": "part_3",
+          "number": "9",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Diện tích hình phẳng giới hạn bởi y=x², trục Ox, x=0 và x=3 bằng bao nhiêu?"
+        },
+        {
+          "id": "6df53cac-0fb0-5016-b7da-0e82ee4b7060",
+          "sectionId": "part_3",
+          "number": "10",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một vật có gia tốc a(t)=2t+3, vận tốc đầu v(0)=5. Tính vận tốc tại t=4."
+        }
+      ],
+      "contentStatus": "owner_approved",
+      "publicationRightsStatus": "owner_confirmed",
+      "sourceSha256": "4f74398bd587e7947a8679377a204d12ea3be3e68ff83a93f61599cc48f7e6db"
+    },
+    {
+      "id": "practice-nguyen_ham-2",
+      "slug": "practice-nguyen_ham-2",
+      "title": "Đề ôn tập Nguyên hàm số 2",
+      "description": "40 câu · 10 điểm · Ôn tập Nguyên hàm theo đề Word đã nhập.",
+      "language": "vi",
+      "mode": "practice",
+      "demo": false,
+      "category": "topic_review",
+      "topicId": "nguyen_ham",
+      "topic": "Nguyên hàm",
+      "sourceFile": "De_Nguyen_Ham_2_De_40_Cau.docx",
+      "sourceExamNumber": 2,
+      "timingMode": "elapsed",
+      "durationSeconds": null,
+      "totalScore": 10,
+      "questionCount": 40,
+      "sections": [
+        {
+          "id": "part_1",
+          "title": "Phần I · Trắc nghiệm nhiều lựa chọn",
+          "description": "",
+          "maxScore": 5.0
+        },
+        {
+          "id": "part_2",
+          "title": "Phần II · Đúng / Sai",
+          "description": "",
+          "maxScore": 2.5
+        },
+        {
+          "id": "part_3",
+          "title": "Phần III · Trả lời ngắn",
+          "description": "",
+          "maxScore": 2.5
+        }
+      ],
+      "questions": [
+        {
+          "id": "4b2911a0-b034-5a9a-8cd4-8d04f225deb9",
+          "sectionId": "part_1",
+          "number": "1",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(x²+1)/x dx trên (0;+∞).",
+          "options": [
+            {
+              "key": "A",
+              "text": "x²/2+lnx+C"
+            },
+            {
+              "key": "B",
+              "text": "x²/2+1/x+C"
+            },
+            {
+              "key": "C",
+              "text": "x³/3+lnx+C"
+            },
+            {
+              "key": "D",
+              "text": "x²+lnx+C"
+            }
+          ]
+        },
+        {
+          "id": "9e8884da-5387-598a-8781-57dd325b31bf",
+          "sectionId": "part_1",
+          "number": "2",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(6x²+1)/(2x³+x) dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln|2x³+x|+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)ln|2x³+x|+C"
+            },
+            {
+              "key": "C",
+              "text": "2ln|2x³+x|+C"
+            },
+            {
+              "key": "D",
+              "text": "x³+x+C"
+            }
+          ]
+        },
+        {
+          "id": "83fad606-6e3b-5c24-8e92-90cc16e19074",
+          "sectionId": "part_1",
+          "number": "3",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫x√(x²+1)dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "(x²+1)³ᐟ²/3+C"
+            },
+            {
+              "key": "B",
+              "text": "(x²+1)²/4+C"
+            },
+            {
+              "key": "C",
+              "text": "√(x²+1)+C"
+            },
+            {
+              "key": "D",
+              "text": "x²√(x²+1)+C"
+            }
+          ]
+        },
+        {
+          "id": "9d8147cb-4846-5abd-a10f-0765f84ae1cc",
+          "sectionId": "part_1",
+          "number": "4",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫x eˣ² dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "eˣ²+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)eˣ²+C"
+            },
+            {
+              "key": "C",
+              "text": "xeˣ²+C"
+            },
+            {
+              "key": "D",
+              "text": "2eˣ²+C"
+            }
+          ]
+        },
+        {
+          "id": "e8f7efca-1df4-54aa-9b41-9a43428e61a0",
+          "sectionId": "part_1",
+          "number": "5",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫x ln x dx trên (0;+∞).",
+          "options": [
+            {
+              "key": "A",
+              "text": "(x²/2)lnx−x²/4+C"
+            },
+            {
+              "key": "B",
+              "text": "x²lnx−x²/2+C"
+            },
+            {
+              "key": "C",
+              "text": "(x²/2)lnx+x²/4+C"
+            },
+            {
+              "key": "D",
+              "text": "xlnx−x+C"
+            }
+          ]
+        },
+        {
+          "id": "adec5cba-cb0a-5332-ac06-b984d220673f",
+          "sectionId": "part_1",
+          "number": "6",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ ln(x+1)/(x+1) dx trên (−1;+∞).",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln(x+1)+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)ln²(x+1)+C"
+            },
+            {
+              "key": "C",
+              "text": "(ln(x+1))²+C"
+            },
+            {
+              "key": "D",
+              "text": "(x+1)ln(x+1)+C"
+            }
+          ]
+        },
+        {
+          "id": "fe68d7f4-58d1-5fef-b1ad-88be8124d995",
+          "sectionId": "part_1",
+          "number": "7",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫dx/(4−x²).",
+          "options": [
+            {
+              "key": "A",
+              "text": "(1/4)ln|(2+x)/(2−x)|+C"
+            },
+            {
+              "key": "B",
+              "text": "(1/2)ln|(2+x)/(2−x)|+C"
+            },
+            {
+              "key": "C",
+              "text": "−(1/4)ln|(2+x)/(2−x)|+C"
+            },
+            {
+              "key": "D",
+              "text": "ln|4−x²|+C"
+            }
+          ]
+        },
+        {
+          "id": "00fc8c13-59f4-59d8-b37e-91aa9cf1f1ae",
+          "sectionId": "part_1",
+          "number": "8",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫dx/(x+2)².",
+          "options": [
+            {
+              "key": "A",
+              "text": "1/(x+2)+C"
+            },
+            {
+              "key": "B",
+              "text": "−1/(x+2)+C"
+            },
+            {
+              "key": "C",
+              "text": "ln|x+2|+C"
+            },
+            {
+              "key": "D",
+              "text": "−1/(x+2)²+C"
+            }
+          ]
+        },
+        {
+          "id": "4403fdbd-d0d1-5202-91ad-71358c93fb03",
+          "sectionId": "part_1",
+          "number": "9",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫cos³x dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "sinx+sin³x/3+C"
+            },
+            {
+              "key": "B",
+              "text": "sinx−sin³x/3+C"
+            },
+            {
+              "key": "C",
+              "text": "−cos³x/3+C"
+            },
+            {
+              "key": "D",
+              "text": "cosx−cos³x/3+C"
+            }
+          ]
+        },
+        {
+          "id": "645b348b-6e1f-5190-8796-a7d7324eb812",
+          "sectionId": "part_1",
+          "number": "10",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫sin²x dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "x/2+sin2x/4+C"
+            },
+            {
+              "key": "B",
+              "text": "x/2−sin2x/4+C"
+            },
+            {
+              "key": "C",
+              "text": "sin²x/2+C"
+            },
+            {
+              "key": "D",
+              "text": "x−sin2x/2+C"
+            }
+          ]
+        },
+        {
+          "id": "97ef33c0-78ae-574f-917c-9f3871e53fef",
+          "sectionId": "part_1",
+          "number": "11",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫eˣ sinx dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "(1/2)eˣ(sinx−cosx)+C"
+            },
+            {
+              "key": "B",
+              "text": "eˣ(sinx+cosx)+C"
+            },
+            {
+              "key": "C",
+              "text": "(1/2)eˣ(sinx+cosx)+C"
+            },
+            {
+              "key": "D",
+              "text": "eˣ(sinx−cosx)+C"
+            }
+          ]
+        },
+        {
+          "id": "df36e4e6-ca4b-598c-a2a0-ece9abb08df6",
+          "sectionId": "part_1",
+          "number": "12",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫x²lnx dx trên (0;+∞).",
+          "options": [
+            {
+              "key": "A",
+              "text": "x³lnx/3−x³/9+C"
+            },
+            {
+              "key": "B",
+              "text": "x³lnx−x³/3+C"
+            },
+            {
+              "key": "C",
+              "text": "x²lnx−x²/2+C"
+            },
+            {
+              "key": "D",
+              "text": "x³lnx/3+x³/9+C"
+            }
+          ]
+        },
+        {
+          "id": "f9648c24-f1c3-5a7f-8516-0419d49b88e7",
+          "sectionId": "part_1",
+          "number": "13",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫2x/(x²+3)² dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "1/(x²+3)+C"
+            },
+            {
+              "key": "B",
+              "text": "−1/(x²+3)+C"
+            },
+            {
+              "key": "C",
+              "text": "ln(x²+3)+C"
+            },
+            {
+              "key": "D",
+              "text": "−2/(x²+3)+C"
+            }
+          ]
+        },
+        {
+          "id": "3174d236-93ff-5f8b-99b3-82e39873b807",
+          "sectionId": "part_1",
+          "number": "14",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(lnx)/x² dx trên (0;+∞).",
+          "options": [
+            {
+              "key": "A",
+              "text": "(lnx−1)/x+C"
+            },
+            {
+              "key": "B",
+              "text": "−(lnx+1)/x+C"
+            },
+            {
+              "key": "C",
+              "text": "ln²x/x+C"
+            },
+            {
+              "key": "D",
+              "text": "−lnx/x+C"
+            }
+          ]
+        },
+        {
+          "id": "c27ffea1-03bf-5695-b210-7a8cbc7ae709",
+          "sectionId": "part_1",
+          "number": "15",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho F′(x)=x/(x²+1), F(0)=3. Tính F(1).",
+          "options": [
+            {
+              "key": "A",
+              "text": "3+ln2"
+            },
+            {
+              "key": "B",
+              "text": "3+(1/2)ln2"
+            },
+            {
+              "key": "C",
+              "text": "3+2ln2"
+            },
+            {
+              "key": "D",
+              "text": "(1/2)ln2"
+            }
+          ]
+        },
+        {
+          "id": "b7d17c1d-5745-5c8f-a99c-969311fae1bf",
+          "sectionId": "part_1",
+          "number": "16",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫ dx/[x(lnx)²], với x>1.",
+          "options": [
+            {
+              "key": "A",
+              "text": "1/lnx+C"
+            },
+            {
+              "key": "B",
+              "text": "−1/lnx+C"
+            },
+            {
+              "key": "C",
+              "text": "ln|lnx|+C"
+            },
+            {
+              "key": "D",
+              "text": "−ln|lnx|+C"
+            }
+          ]
+        },
+        {
+          "id": "00175b1b-3b7d-5057-8670-131a82cd84c3",
+          "sectionId": "part_1",
+          "number": "17",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Một nguyên hàm của |x| trên R có thể viết là",
+          "options": [
+            {
+              "key": "A",
+              "text": "x²/2+C"
+            },
+            {
+              "key": "B",
+              "text": "x|x|/2+C"
+            },
+            {
+              "key": "C",
+              "text": "|x|²+C"
+            },
+            {
+              "key": "D",
+              "text": "x|x|+C"
+            }
+          ]
+        },
+        {
+          "id": "59687edb-7d95-5a40-b2a7-65650dba72a1",
+          "sectionId": "part_1",
+          "number": "18",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫dx/(x ln x), x>1.",
+          "options": [
+            {
+              "key": "A",
+              "text": "lnx+C"
+            },
+            {
+              "key": "B",
+              "text": "ln(lnx)+C"
+            },
+            {
+              "key": "C",
+              "text": "1/lnx+C"
+            },
+            {
+              "key": "D",
+              "text": "xlnx−x+C"
+            }
+          ]
+        },
+        {
+          "id": "8d37cf78-748d-57fa-9f4b-e22a48423446",
+          "sectionId": "part_1",
+          "number": "19",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Tính ∫(3x²+2x+1)/(x³+x²+x) dx.",
+          "options": [
+            {
+              "key": "A",
+              "text": "ln|x³+x²+x|+C"
+            },
+            {
+              "key": "B",
+              "text": "3ln|x³+x²+x|+C"
+            },
+            {
+              "key": "C",
+              "text": "x³+x²+x+C"
+            },
+            {
+              "key": "D",
+              "text": "1/(x³+x²+x)+C"
+            }
+          ]
+        },
+        {
+          "id": "eb24f355-57c2-57a8-87c5-e352b248e104",
+          "sectionId": "part_1",
+          "number": "20",
+          "points": 0.25,
+          "type": "multiple_choice",
+          "stem": "Cho F′(x)=x²+2x, F(0)=1. Giá trị F(2) là",
+          "options": [
+            {
+              "key": "A",
+              "text": "25/3"
+            },
+            {
+              "key": "B",
+              "text": "16/3"
+            },
+            {
+              "key": "C",
+              "text": "13/3"
+            },
+            {
+              "key": "D",
+              "text": "7"
+            }
+          ]
+        },
+        {
+          "id": "012ddfab-3701-5ec5-be33-7f5f41dade41",
+          "sectionId": "part_2",
+          "number": "1",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=(x²+1)/x trên (0;+∞).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm là x²/2+lnx."
+            },
+            {
+              "key": "b",
+              "text": "Đạo hàm của x²/2+lnx bằng f."
+            },
+            {
+              "key": "c",
+              "text": "Một nguyên hàm là x²/2−lnx."
+            },
+            {
+              "key": "d",
+              "text": "F(1)=1 nếu F=x²/2+lnx."
+            }
+          ]
+        },
+        {
+          "id": "4de5c732-34fb-5e3c-a0e1-970724f71c7f",
+          "sectionId": "part_2",
+          "number": "2",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho g(x)=(6x²+1)/(2x³+x).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm là ln|2x³+x|."
+            },
+            {
+              "key": "b",
+              "text": "G′(x)=g(x) với G=ln|2x³+x|."
+            },
+            {
+              "key": "c",
+              "text": "Một nguyên hàm là (1/2)ln|2x³+x|."
+            },
+            {
+              "key": "d",
+              "text": "Cần xét điều kiện 2x³+x≠0."
+            }
+          ]
+        },
+        {
+          "id": "8a9da959-2ad8-5b6a-b4dd-eda1e0df820c",
+          "sectionId": "part_2",
+          "number": "3",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=x√(x²+1).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm là (x²+1)³ᐟ²/3."
+            },
+            {
+              "key": "b",
+              "text": "Đạo hàm biểu thức trên là x√(x²+1)."
+            },
+            {
+              "key": "c",
+              "text": "Một nguyên hàm là (x²+1)²/4."
+            },
+            {
+              "key": "d",
+              "text": "Hằng số C có thể chọn tùy ý."
+            }
+          ]
+        },
+        {
+          "id": "b54bd4e2-f119-5cf8-a725-51e5ae621428",
+          "sectionId": "part_2",
+          "number": "4",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho F′(x)=xeˣ.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm là eˣ(x−1)."
+            },
+            {
+              "key": "b",
+              "text": "Một nguyên hàm là xeˣ."
+            },
+            {
+              "key": "c",
+              "text": "Hai nguyên hàm bất kỳ chênh nhau một hằng số."
+            },
+            {
+              "key": "d",
+              "text": "F(0)=0 tự động với mọi nguyên hàm."
+            }
+          ]
+        },
+        {
+          "id": "7c639909-c86e-54fd-b7be-490eba64e772",
+          "sectionId": "part_2",
+          "number": "5",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=lnx trên (0;+∞).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một nguyên hàm là xlnx−x."
+            },
+            {
+              "key": "b",
+              "text": "Đạo hàm của xlnx−x bằng lnx."
+            },
+            {
+              "key": "c",
+              "text": "Một nguyên hàm là xlnx+x."
+            },
+            {
+              "key": "d",
+              "text": "Mọi nguyên hàm đều có dạng xlnx−x+C."
+            }
+          ]
+        },
+        {
+          "id": "39e525b4-95df-57f7-99db-b114c509f746",
+          "sectionId": "part_2",
+          "number": "6",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho f(x)=1/(4−x²).",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Tập xác định là R\\{−2,2}."
+            },
+            {
+              "key": "b",
+              "text": "Một nguyên hàm là (1/4)ln|(2+x)/(2−x)|."
+            },
+            {
+              "key": "c",
+              "text": "(1/4)ln|(2+x)/(2−x)| có đạo hàm đúng bằng f."
+            },
+            {
+              "key": "d",
+              "text": "Một nguyên hàm là ln|4−x²|."
+            }
+          ]
+        },
+        {
+          "id": "e6b80d50-4c98-54f7-a2c4-bb0f47e198c3",
+          "sectionId": "part_2",
+          "number": "7",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho F′(x)=x/(x²+1), F(0)=3.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "F(x)=(1/2)ln(x²+1)+3."
+            },
+            {
+              "key": "b",
+              "text": "F(1)=3+(1/2)ln2."
+            },
+            {
+              "key": "c",
+              "text": "F(0)=3+(1/2)ln2."
+            },
+            {
+              "key": "d",
+              "text": "F(x)−(1/2)ln(x²+1) là hằng số."
+            }
+          ]
+        },
+        {
+          "id": "bd5333db-4193-5853-a8af-8ca67e3770c4",
+          "sectionId": "part_2",
+          "number": "8",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho I=∫dx/[x(lnx)²], x>1.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Đặt u=lnx là hợp lý."
+            },
+            {
+              "key": "b",
+              "text": "I=−1/lnx+C."
+            },
+            {
+              "key": "c",
+              "text": "I=ln(lnx)+C."
+            },
+            {
+              "key": "d",
+              "text": "Hàm số dưới dấu tích phân xác định tại x=e."
+            }
+          ]
+        },
+        {
+          "id": "fa911677-511c-5d3c-a5ea-1507e13432ec",
+          "sectionId": "part_2",
+          "number": "9",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Một vật chuyển động với vận tốc v(t)=t²−6t+8 trên [0;6].",
+          "statements": [
+            {
+              "key": "a",
+              "text": "Một hàm vị trí có thể là s(t)=t³/3−3t²+8t+C."
+            },
+            {
+              "key": "b",
+              "text": "v đổi dấu tại t=2 và t=4."
+            },
+            {
+              "key": "c",
+              "text": "Tổng quãng đường đi được là 20 m nếu lấy C tùy ý."
+            },
+            {
+              "key": "d",
+              "text": "Vật không đổi chiều trong [0;6]."
+            }
+          ]
+        },
+        {
+          "id": "40920dd7-a425-5ede-be9d-9cb6d2de79f9",
+          "sectionId": "part_2",
+          "number": "10",
+          "points": 0.25,
+          "type": "true_false",
+          "stem": "Cho F′(x)=x²+2x và F(0)=1.",
+          "statements": [
+            {
+              "key": "a",
+              "text": "F(x)=x³/3+x²+1."
+            },
+            {
+              "key": "b",
+              "text": "F(2)=25/3."
+            },
+            {
+              "key": "c",
+              "text": "F(−1)=−1/3+1+1=5/3."
+            },
+            {
+              "key": "d",
+              "text": "F(x)=x³/3+x²−1 cũng thỏa F(0)=1."
+            }
+          ]
+        },
+        {
+          "id": "22de6b9f-b105-5813-b832-00944894cccf",
+          "sectionId": "part_3",
+          "number": "1",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho F′(x)=2x+1/x trên (0;+∞), F(1)=0. Tính F(2)."
+        },
+        {
+          "id": "c9550e41-453f-5563-81aa-7773c89c4ed8",
+          "sectionId": "part_3",
+          "number": "2",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Tính ∫₀¹ cos²x dx."
+        },
+        {
+          "id": "47a0cec8-101b-593d-bf73-a0286055cb4a",
+          "sectionId": "part_3",
+          "number": "3",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Tính ∫ₑ^{e²} dx/[x(lnx)²]."
+        },
+        {
+          "id": "21f119cf-5e8a-5c9c-a0dd-46b185d40989",
+          "sectionId": "part_3",
+          "number": "4",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho F′(x)=xeˣ, F(0)=0. Tính F(1)."
+        },
+        {
+          "id": "ccbb02bd-5a87-5469-ae35-caf7514101d3",
+          "sectionId": "part_3",
+          "number": "5",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một vật có v(t)=t²−6t+8 trên [0;6]. Tính tổng quãng đường đi được."
+        },
+        {
+          "id": "1f9ca131-0bd9-5ac4-a57d-e0137ec6fa99",
+          "sectionId": "part_3",
+          "number": "6",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Số dân N(t) có N′(t)=0,02t+1,4 và N(0)=50 (nghìn người). Tính N(10)."
+        },
+        {
+          "id": "c1e70382-660c-5169-b587-12da9f393888",
+          "sectionId": "part_3",
+          "number": "7",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Tính ∫₀¹ x/(x²+1) dx."
+        },
+        {
+          "id": "1cbaad48-843f-50da-b925-2082480ce4e9",
+          "sectionId": "part_3",
+          "number": "8",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Tính diện tích hình phẳng giới hạn bởi y=x², Ox, x=0 và x=3."
+        },
+        {
+          "id": "fc2937ee-7ed3-5b85-bcb5-3714b513b2ca",
+          "sectionId": "part_3",
+          "number": "9",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Cho F′(x)=x²+2x, F(0)=1. Tính F(2)."
+        },
+        {
+          "id": "7dde3dca-e507-55ee-a50d-80d438efda91",
+          "sectionId": "part_3",
+          "number": "10",
+          "points": 0.25,
+          "type": "short_answer",
+          "stem": "Một nguyên hàm của (3x+1)² được chọn không có hằng số cộng. Tính tổng các hệ số của đa thức nguyên hàm đó."
+        }
+      ],
+      "contentStatus": "owner_approved",
+      "publicationRightsStatus": "owner_confirmed",
+      "sourceSha256": "4f74398bd587e7947a8679377a204d12ea3be3e68ff83a93f61599cc48f7e6db"
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "source": {
+    "file": "Đề thi.docx",
+    "sha256": "fc59d067eb0a0a107748d26a4fac64c8ec740c7c2ad2e45abca1ccfa61c25183"
+  },
+  "figures": [
+    {
+      "examSlug": "exam-1",
+      "examTitle": "Đề thi thử số 1",
+      "questionId": "word-exam-1-q4-1",
+      "outputPath": "public/mathpath-word-figures/exam-1/word-exam-1-q4-1.png",
+      "prompt": "A 2D mathematical line plot of a cubic function y = x^3 - 27x. The curve has a local maximum at x = -3 and a local minimum at x = 3. The coordinate system includes the x-axis and y-axis. The function increases from -\\infty to x=-3, decreases from x=-3 to x=3, and increases from x=3 to +\\infty.",
+      "promptForImageGeneration": "A 2D mathematical line plot of a cubic function y = x^3 - 27x. The curve has a local maximum at x = -3 and a local minimum at x = 3. The coordinate system includes the x-axis and y-axis. The function increases from -\\infty to x=-3, decreases from x=-3 to x=3, and increases from x=3 to +\\infty.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-1",
+      "examTitle": "Đề thi thử số 1",
+      "questionId": "word-exam-1-q8-1",
+      "outputPath": "public/mathpath-word-figures/exam-1/word-exam-1-q8-1.png",
+      "prompt": "A 2D coordinate system with two exponential curves. One curve y = c^x represents exponential growth (monotonically increasing, passing through (0,1)). The other curve y = q^x represents exponential decay (monotonically decreasing, passing through (0,1)).",
+      "promptForImageGeneration": "A 2D coordinate system with two exponential curves. One curve y = c^x represents exponential growth (monotonically increasing, passing through (0,1)). The other curve y = q^x represents exponential decay (monotonically decreasing, passing through (0,1)).\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-1",
+      "examTitle": "Đề thi thử số 1",
+      "questionId": "word-exam-1-q11-1",
+      "outputPath": "public/mathpath-word-figures/exam-1/word-exam-1-q11-1.png",
+      "prompt": "A variation table (bảng biến thiên) for a rational function. Row 1 (x): -\\infty, 5, +\\infty. Row 2 (y'): -, ||, -. Row 3 (y): decreases from -7 to -\\infty || from +\\infty decreases to -7. The double vertical line is at x=5.",
+      "promptForImageGeneration": "A variation table (bảng biến thiên) for a rational function. Row 1 (x): -\\infty, 5, +\\infty. Row 2 (y'): -, ||, -. Row 3 (y): decreases from -7 to -\\infty || from +\\infty decreases to -7. The double vertical line is at x=5.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-1",
+      "examTitle": "Đề thi thử số 1",
+      "questionId": "word-exam-1-q4-2",
+      "outputPath": "public/mathpath-word-figures/exam-1/word-exam-1-q4-2.png",
+      "prompt": "A histogram showing study hours per week. X-axis bins: 0-4, 4-8, 8-12, 12-16, 16-20. Y-axis: Frequency. Bar heights respectively: 5, 12, 15, 6, 2. Add title 'Số giờ tự học trong tuần'.",
+      "promptForImageGeneration": "A histogram showing study hours per week. X-axis bins: 0-4, 4-8, 8-12, 12-16, 16-20. Y-axis: Frequency. Bar heights respectively: 5, 12, 15, 6, 2. Add title 'Số giờ tự học trong tuần'.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-1",
+      "examTitle": "Đề thi thử số 1",
+      "questionId": "word-exam-1-q2-3",
+      "outputPath": "public/mathpath-word-figures/exam-1/word-exam-1-q2-3.png",
+      "prompt": "A 3D right circular cone intersected by a vertical plane passing through its apex and the center of its base. The cross-section is highlighted as an equilateral triangle with side length 6.",
+      "promptForImageGeneration": "A 3D right circular cone intersected by a vertical plane passing through its apex and the center of its base. The cross-section is highlighted as an equilateral triangle with side length 6.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-2",
+      "examTitle": "Đề thi thử số 2",
+      "questionId": "word-exam-2-q2-2",
+      "outputPath": "public/mathpath-word-figures/exam-2/word-exam-2-q2-2.png",
+      "prompt": "A 3D square pyramid S.ABCD. The base ABCD is a square. The edge SA is perpendicular to the base ABCD at A. Label all vertices S, A, B, C, D. SA is a vertical line. Add a right angle symbol at A for the edge SA.",
+      "promptForImageGeneration": "A 3D square pyramid S.ABCD. The base ABCD is a square. The edge SA is perpendicular to the base ABCD at A. Label all vertices S, A, B, C, D. SA is a vertical line. Add a right angle symbol at A for the edge SA.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-2",
+      "examTitle": "Đề thi thử số 2",
+      "questionId": "word-exam-2-q5-3",
+      "outputPath": "public/mathpath-word-figures/exam-2/word-exam-2-q5-3.png",
+      "prompt": "A 2D coordinate system showing a parabola y = x^2 and a straight line y = 2x. Shade the region enclosed between the two graphs from x=0 to x=2. Add a circular arrow around the x-axis.",
+      "promptForImageGeneration": "A 2D coordinate system showing a parabola y = x^2 and a straight line y = 2x. Shade the region enclosed between the two graphs from x=0 to x=2. Add a circular arrow around the x-axis.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-3",
+      "examTitle": "Đề thi thử số 3",
+      "questionId": "word-exam-3-q12-1",
+      "outputPath": "public/mathpath-word-figures/exam-3/word-exam-3-q12-1.png",
+      "prompt": "A 3D regular square pyramid S.ABCD. Show 4 planes of symmetry passing through the apex S. Two planes should pass through the diagonals of the base (SAC and SBD). The other two planes should pass through the midpoints of opposite sides of the base square.",
+      "promptForImageGeneration": "A 3D regular square pyramid S.ABCD. Show 4 planes of symmetry passing through the apex S. Two planes should pass through the diagonals of the base (SAC and SBD). The other two planes should pass through the midpoints of opposite sides of the base square.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-3",
+      "examTitle": "Đề thi thử số 3",
+      "questionId": "word-exam-3-q2-3",
+      "outputPath": "public/mathpath-word-figures/exam-3/word-exam-3-q2-3.png",
+      "prompt": "A 2D coordinate system plotting the parabola y = x^2 - 4x + 3. The parabola opens upwards and crosses the x-axis at x=1 and x=3. The region between the parabola and the x-axis (from x=1 to x=3) is shaded.",
+      "promptForImageGeneration": "A 2D coordinate system plotting the parabola y = x^2 - 4x + 3. The parabola opens upwards and crosses the x-axis at x=1 and x=3. The region between the parabola and the x-axis (from x=1 to x=3) is shaded.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-4",
+      "examTitle": "Đề thi thử số 4",
+      "questionId": "word-exam-4-q1-2",
+      "outputPath": "public/mathpath-word-figures/exam-4/word-exam-4-q1-2.png",
+      "prompt": "A variation table for the function y = (x^2 - x + 1)/(x - 1). The derivative y' has roots at x = 0 and x = 2. The function has a local maximum at (0, -1) and a local minimum at (2, 3). The vertical asymptote is x = 1.",
+      "promptForImageGeneration": "A variation table for the function y = (x^2 - x + 1)/(x - 1). The derivative y' has roots at x = 0 and x = 2. The function has a local maximum at (0, -1) and a local minimum at (2, 3). The vertical asymptote is x = 1.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-4",
+      "examTitle": "Đề thi thử số 4",
+      "questionId": "word-exam-4-q2-2",
+      "outputPath": "public/mathpath-word-figures/exam-4/word-exam-4-q2-2.png",
+      "prompt": "A 3D right triangular prism ABC.A'B'C'. The base ABC is a right-angled triangle at B. The vertical edges AA', BB', CC' are perpendicular to the bases.",
+      "promptForImageGeneration": "A 3D right triangular prism ABC.A'B'C'. The base ABC is a right-angled triangle at B. The vertical edges AA', BB', CC' are perpendicular to the bases.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-5",
+      "examTitle": "Đề thi thử số 5",
+      "questionId": "word-exam-5-q1-2",
+      "outputPath": "public/mathpath-word-figures/exam-5/word-exam-5-q1-2.png",
+      "prompt": "A 2D coordinate system plotting the cubic function y = x^3 - 3x^2 + 2. The curve has a local maximum at (0, 2) and a local minimum at (2, -2). The graph crosses the x-axis at three distinct points.",
+      "promptForImageGeneration": "A 2D coordinate system plotting the cubic function y = x^3 - 3x^2 + 2. The curve has a local maximum at (0, 2) and a local minimum at (2, -2). The graph crosses the x-axis at three distinct points.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-5",
+      "examTitle": "Đề thi thử số 5",
+      "questionId": "word-exam-5-q4-2",
+      "outputPath": "public/mathpath-word-figures/exam-5/word-exam-5-q4-2.png",
+      "prompt": "A 3D regular quadrangular prism (a rectangular cuboid with a square base) ABCD.A'B'C'D'. The base ABCD is a square with side 'a'. The vertical edges are labeled '2a'. Show the diagonal AC and the diagonal B'D' on the top base.",
+      "promptForImageGeneration": "A 3D regular quadrangular prism (a rectangular cuboid with a square base) ABCD.A'B'C'D'. The base ABCD is a square with side 'a'. The vertical edges are labeled '2a'. Show the diagonal AC and the diagonal B'D' on the top base.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-6",
+      "examTitle": "Đề thi thử số 6",
+      "questionId": "word-exam-6-q1-1",
+      "outputPath": "public/mathpath-word-figures/exam-6/word-exam-6-q1-1.png",
+      "prompt": "A standard mathematical 2D line plot of a cubic function y = x^3 - 3x. The curve has a local maximum at (-1, 2) and a local minimum at (1, -2). The axes are labeled x and y, and the origin is marked O. The function increases from negative infinity to x=-1, decreases from x=-1 to x=1, and increases from x=1 to positive infinity.",
+      "promptForImageGeneration": "A standard mathematical 2D line plot of a cubic function y = x^3 - 3x. The curve has a local maximum at (-1, 2) and a local minimum at (1, -2). The axes are labeled x and y, and the origin is marked O. The function increases from negative infinity to x=-1, decreases from x=-1 to x=1, and increases from x=1 to positive infinity.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-6",
+      "examTitle": "Đề thi thử số 6",
+      "questionId": "word-exam-6-q1-2",
+      "outputPath": "public/mathpath-word-figures/exam-6/word-exam-6-q1-2.png",
+      "prompt": "Create a mathematical variation table (bảng biến thiên) for the rational function y = (x^2 - 2x + 2)/(x - 1). Row 1 (x): -\\infty, 0, 1, 2, +\\infty. Row 2 (y'): +, 0, -, ||, -, 0, +. Row 3 (y): increases to -2, decreases to -\\infty || from +\\infty decreases to 2, increases to +\\infty. Include double vertical lines (||) at x=1 for undefined.",
+      "promptForImageGeneration": "Create a mathematical variation table (bảng biến thiên) for the rational function y = (x^2 - 2x + 2)/(x - 1). Row 1 (x): -\\infty, 0, 1, 2, +\\infty. Row 2 (y'): +, 0, -, ||, -, 0, +. Row 3 (y): increases to -2, decreases to -\\infty || from +\\infty decreases to 2, increases to +\\infty. Include double vertical lines (||) at x=1 for undefined.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-6",
+      "examTitle": "Đề thi thử số 6",
+      "questionId": "word-exam-6-q2-2",
+      "outputPath": "public/mathpath-word-figures/exam-6/word-exam-6-q2-2.png",
+      "prompt": "Draw a 3D geometric figure of a cube ABCD.A'B'C'D'. The bottom face is ABCD and the top face is A'B'C'D'. Draw the diagonal lines AC and A'C'. Use dashed lines for hidden edges (AD, DC, DD'). Clearly label all 8 vertices.",
+      "promptForImageGeneration": "Draw a 3D geometric figure of a cube ABCD.A'B'C'D'. The bottom face is ABCD and the top face is A'B'C'D'. Draw the diagonal lines AC and A'C'. Use dashed lines for hidden edges (AD, DC, DD'). Clearly label all 8 vertices.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-7",
+      "examTitle": "Đề thi thử số 7",
+      "questionId": "word-exam-7-q1-2",
+      "outputPath": "public/mathpath-word-figures/exam-7/word-exam-7-q1-2.png",
+      "prompt": "A variation table for the function y = (2x + 1)/(x - 1). The derivative y' is always negative. The function decreases on (-\\infty, 1) and (1, +\\infty). Vertical asymptote x = 1, horizontal asymptote y = 2.",
+      "promptForImageGeneration": "A variation table for the function y = (2x + 1)/(x - 1). The derivative y' is always negative. The function decreases on (-\\infty, 1) and (1, +\\infty). Vertical asymptote x = 1, horizontal asymptote y = 2.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-7",
+      "examTitle": "Đề thi thử số 7",
+      "questionId": "word-exam-7-q3-2",
+      "outputPath": "public/mathpath-word-figures/exam-7/word-exam-7-q3-2.png",
+      "prompt": "A 3D cube ABCD.A'B'C'D' with edge length 'a'. Highlight the space diagonal AC'. Show the diagonal BD on the bottom base.",
+      "promptForImageGeneration": "A 3D cube ABCD.A'B'C'D' with edge length 'a'. Highlight the space diagonal AC'. Show the diagonal BD on the bottom base.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-8",
+      "examTitle": "Đề thi thử số 8",
+      "questionId": "word-exam-8-q1-1",
+      "outputPath": "public/mathpath-word-figures/exam-8/word-exam-8-q1-1.png",
+      "prompt": "A 2D line plot of a cubic function with a positive leading coefficient, having a local maximum and a local minimum, crossing the y-axis at a positive value.",
+      "promptForImageGeneration": "A 2D line plot of a cubic function with a positive leading coefficient, having a local maximum and a local minimum, crossing the y-axis at a positive value.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-8",
+      "examTitle": "Đề thi thử số 8",
+      "questionId": "word-exam-8-q1-2",
+      "outputPath": "public/mathpath-word-figures/exam-8/word-exam-8-q1-2.png",
+      "prompt": "A variation table for the rational function y = (x - 2)/(x + 1). The derivative y' is always positive on each interval. The vertical asymptote is x = -1, and the horizontal asymptote is y = 1.",
+      "promptForImageGeneration": "A variation table for the rational function y = (x - 2)/(x + 1). The derivative y' is always positive on each interval. The vertical asymptote is x = -1, and the horizontal asymptote is y = 1.\n\nMathPath visual direction: pure white background; draw the graph and axes in MathPath red (#D71920), make every plotted point black, and use black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact mathematical relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_graph_black_points_white_background",
+      "status": "pending_generation"
+    },
+    {
+      "examSlug": "exam-8",
+      "examTitle": "Đề thi thử số 8",
+      "questionId": "word-exam-8-q3-2",
+      "outputPath": "public/mathpath-word-figures/exam-8/word-exam-8-q3-2.png",
+      "prompt": "A 3D regular square pyramid S.ABCD with all edges equal to 'a'. The base ABCD is a square with side 'a'. Show the slant height and height from the apex S.",
+      "promptForImageGeneration": "A 3D regular square pyramid S.ABCD with all edges equal to 'a'. The base ABCD is a square with side 'a'. Show the slant height and height from the apex S.\n\nMathPath visual direction: pure white background with restrained MathPath red (#D71920) geometry/highlights, black points and black labels. Clean, accurate high-school exam diagram, crisp vector-like lines, no decoration, no logo, no watermark. Preserve the exact geometric relationships and all named points from the source prompt; add no unrequested values.",
+      "visualStyle": "red_black_white_mathpath",
+      "status": "pending_generation"
+    }
+  ]
+}

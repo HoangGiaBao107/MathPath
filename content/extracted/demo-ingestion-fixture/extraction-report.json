@@ -1,0 +1,69 @@
+{
+  "status": "completed_with_review_items",
+  "fixture_label": "DEMO INGESTION FIXTURE — NOT OFFICIAL",
+  "pdf_path": "content/fixtures/demo-ingestion-fixture.pdf",
+  "source_sha256": "348e1d0cbe2519ca71d4cd9487f9e727b4b315257d9b7fd08ed5de15fe2d110b",
+  "page_count": 4,
+  "detected_sections": [
+    {
+      "section": "part_1",
+      "question_count": 3
+    },
+    {
+      "section": "part_2",
+      "question_count": 2
+    },
+    {
+      "section": "part_3",
+      "question_count": 2
+    }
+  ],
+  "questions_detected": 7,
+  "source_pages": {
+    "e8e23173-2e78-5414-9f84-ce0c9982195f": [
+      1
+    ],
+    "e539e4ba-876c-5fe0-b869-69de7501a629": [
+      1
+    ],
+    "add29b2f-c3b1-5747-ad62-c9af7853a700": [
+      1,
+      2
+    ],
+    "7dbefaf2-86c5-5d3e-813a-bd258fa5792f": [
+      2
+    ],
+    "2af98934-7080-5d78-b616-d7f6d71547e4": [
+      2
+    ],
+    "5cf84bf5-182d-575e-b2df-aa2ee50635bf": [
+      3
+    ],
+    "389a1fc5-1081-5859-847c-aa6f1a456d01": [
+      3
+    ]
+  },
+  "answer_key_count": 7,
+  "question_images_generated": 7,
+  "illustrations_present": 1,
+  "illustrations_missing": 1,
+  "multi_page_questions": 1,
+  "needs_review": [
+    "2af98934-7080-5d78-b616-d7f6d71547e4"
+  ],
+  "questions_requiring_review": [
+    "e8e23173-2e78-5414-9f84-ce0c9982195f",
+    "e539e4ba-876c-5fe0-b869-69de7501a629",
+    "add29b2f-c3b1-5747-ad62-c9af7853a700",
+    "7dbefaf2-86c5-5d3e-813a-bd258fa5792f",
+    "2af98934-7080-5d78-b616-d7f6d71547e4",
+    "5cf84bf5-182d-575e-b2df-aa2ee50635bf",
+    "389a1fc5-1081-5859-847c-aa6f1a456d01"
+  ],
+  "warnings": [],
+  "errors": [],
+  "render_dpi": 180,
+  "unique_pages_rendered": 3,
+  "approx_rendered_rgb_megabytes": 26.0,
+  "processing_time_ms": 2386
+}

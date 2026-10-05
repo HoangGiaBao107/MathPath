@@ -1,0 +1,54 @@
+{
+  "name": "mathpath",
+  "version": "0.1.0",
+  "private": true,
+  "allowScripts": {
+    "esbuild": true,
+    "unrs-resolver": true
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "ingest:pdf": "node scripts/ingest-pdf.mjs",
+    "import:word-exams": "node scripts/import-word-exams.mjs",
+    "import:topic-word-exams": "node scripts/import-topic-word-exams.mjs",
+    "ingest:real-sources": "node scripts/ingest-real-sources.mjs",
+    "ingest:fixture:generate": "python scripts/generate_synthetic_ingestion_fixture.py",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "supabase:seed:demo": "node --experimental-strip-types --env-file=.env.local scripts/seed-demo-exams.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.57.0",
+    "@types/katex": "^0.16.8",
+    "katex": "^0.19.0",
+    "next": "^16.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "server-only": "^0.0.1",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.6.2",
+    "supabase": "^2.119.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
+}

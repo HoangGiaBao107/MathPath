@@ -147,3 +147,29 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Codex local cache
+.codex-npm-cache/
+
+# Local deployment/build configuration and Vercel state
+.vercel/
+
+# Local Python parser artifacts
+__pycache__/
+*.py[cod]
+
+# Source exam documents contain answer keys and are not runtime inputs
+/*.docx
+/*.pdf
+
+# Private answer keys and generated/local ingestion artifacts
+/content/word-import/private-exam-solutions.json
+/content/word-import/private-topic-practice-keys.json
+/content/extracted/*
+!/content/extracted/demo-ingestion-fixture/
+!/content/extracted/demo-ingestion-fixture/**
+/content/source-pdfs/
+/content/processed/*
+
+# Supabase CLI local state
+/supabase/.temp/

@@ -533,22 +533,20 @@ Nếu mơ hồ:
 
 # 14. AI USAGE / GIỚI HẠN LƯỢT
 
-Business logic hiện tại:
+Quy tắc mới nhất do chủ sản phẩm xác nhận (thay thế mọi quy tắc cũ về bonus/gói):
 
 Guest:
-- 5 lượt AI free.
-- Không cần đăng ký.
+- 5 lượt AI tổng cộng.
 
-Sau khi hết 5 lượt:
-- Yêu cầu đăng ký tài khoản.
+Tài khoản Free:
+- 5 lượt AI mỗi ngày theo ngày lịch Việt Nam.
+- Không có bonus một lần khi đăng ký.
 
-Registered account:
-- Được thêm 15 lượt AI free.
-
-Sau khi hết tổng free credits:
-- Hiển thị trang/UX mua thêm.
-- Các gói trả phí CHƯA CHỐT.
-- Phần pricing phải được thiết kế để cấu hình sau, không hard-code giá.
+Gói trả phí theo tháng:
+- Plus: 70.000 VND/tháng, 15 lượt AI/ngày.
+- Pro: 100.000 VND/tháng, 25 lượt AI/ngày.
+- Pro Max: 125.000 VND/tháng, 50 lượt AI/ngày.
+- Reset quota mỗi ngày theo `Asia/Ho_Chi_Minh`.
 
 Database cần track:
 - user_id
@@ -595,10 +593,7 @@ Không log secret/token.
 
 Hệ thống phải có abstraction để sau này tích hợp payment provider.
 
-Hiện tại:
-- Chưa chốt gói.
-- Chưa chốt payment provider.
-- Không hard-code package price.
+Provider thanh toán chưa được chốt. Giá/gói mới nhất đã được chốt ở mục 14; lưu cấu hình trong data/database, không hard-code trong UI.
 
 Tạo concept:
 
@@ -1274,8 +1269,8 @@ Goal:
 - Persistent credits/history.
 
 ## Phase 11 — Usage & payments abstraction
-- Free credits.
-- Account credits.
+- Guest: 5 lượt tổng cộng; tài khoản Free: 5 lượt/ngày.
+- Plus, Pro, Pro Max allowance và giá theo mục 14.
 - Purchase-ready data model.
 - Payment status flow.
 - Pricing page placeholder.
@@ -1386,7 +1381,10 @@ MVP được xem là hoàn thành khi:
 [ ] AI có youthful/trendy tone vừa phải.
 [ ] Có similar practice.
 [ ] Có 5 lượt guest free.
-[ ] Account nhận thêm 15 lượt free.
+[ ] Tài khoản Free nhận 5 lượt/ngày; không có signup bonus.
+[ ] Plus = 70.000 VND/tháng, 15 lượt/ngày.
+[ ] Pro = 100.000 VND/tháng, 25 lượt/ngày.
+[ ] Pro Max = 125.000 VND/tháng, 50 lượt/ngày.
 [ ] Credit tracking nằm phía server.
 [ ] Có login/register.
 [ ] Có feedback form.
@@ -1480,29 +1478,20 @@ Khi bắt đầu:
 12. Không hoàn thành task chỉ bằng cách tạo UI; các nút chính phải có logic tương ứng.
 ---
 
-# 42. PRODUCT NAME / BRANDING — VERSION 2
+# 42. PRODUCT NAME / BRANDING — FINAL
 
-Current working name: **HERO MATH**
+- Product name: **MathPath**
+- Repository name: **mathpath**
+- Logo/brand name: **MathPath**
+- Working domain and metadata should use **MathPath** unless the owner specifies otherwise.
 
-Alternative names to evaluate later:
-- MathPath
-- MathUp
-- MathWay
-- MathCore
-- MathHub
-- MathFlow
-- VMath
-- MathMate
-- MathLab
-- NextMath
-
-Do not rename automatically. Keep HERO MATH until the owner chooses another final name.
+Use MathPath as the sole product name across the application, metadata, and brand assets. Preserve the existing red-and-white visual direction while creating original MathPath branding.
 
 ---
 
 # 43. LOGO / BRAND ASSET
 
-Create an original HERO MATH logo concept combining:
+Create an original MathPath logo concept combining:
 - Mathematics.
 - A parabola / graph curve.
 - Statistics/data bars or points.
@@ -1716,15 +1705,15 @@ Guest:
 After guest uses all 5:
 - Require account registration.
 
-New registered account:
-- Add 15 one-time free AI requests.
+Registered Free account:
+- **5 AI requests per Vietnam calendar day**.
+- **No one-time signup bonus**.
 
-VIP:
-- Price configuration: **70,000 VND / month**
-- Allowance: **15 AI requests per day**
-- No carry-over unless business rules change later.
-- Daily reset based on Vietnam calendar date.
-- Server/database controls the reset.
+Paid plans:
+- **Plus: 70,000 VND/month, 15 AI requests/day**.
+- **Pro: 100,000 VND/month, 25 AI requests/day**.
+- **Pro Max: 125,000 VND/month, 50 AI requests/day**.
+- Daily reset uses `Asia/Ho_Chi_Minh`; server/database controls the reset.
 
 Suggested data:
 - free_credits
@@ -1748,11 +1737,11 @@ Initial payment model:
 
 High-level flow:
 
-1. User selects VIP.
+1. User selects a configured paid plan.
 2. Server creates a unique order.
-3. Server creates a unique payment code, e.g. `HM26000123`.
+3. Server creates a unique payment code, e.g. `MP26000123`.
 4. Website displays:
-   - 70,000 VND
+   - The selected plan's configured VND amount
    - bank name/account
    - payment code
    - QR code
@@ -2014,7 +2003,7 @@ Phase 11:
 AI similar-practice.
 
 Phase 12:
-VIP plan configuration: 70,000 VND/month + 15 requests/day.
+Paid plan configuration: Plus (70,000 VND/month, 15/day), Pro (100,000 VND/month, 25/day), Pro Max (125,000 VND/month, 50/day).
 
 Phase 13:
 QR payment + unique transaction code + webhook + idempotency.
@@ -2035,7 +2024,7 @@ Production deployment + custom domain + monitoring.
 
 # 61. UPDATED ACCEPTANCE CHECKLIST
 
-[ ] Original HERO MATH branding.
+[ ] Original MathPath branding.
 [ ] Logo/mark/favicon assets.
 [ ] Red/white modern design direction.
 [ ] Geometric red accents.
@@ -2047,9 +2036,10 @@ Production deployment + custom domain + monitoring.
 [ ] VI/EN UI.
 [ ] AI follows selected language.
 [ ] Guest = 5 free AI requests.
-[ ] Registered account = +15 one-time free requests.
-[ ] VIP = 70,000 VND/month configuration.
-[ ] VIP = 15 AI requests/day.
+[ ] Registered Free = 5 AI requests/day, no signup bonus.
+[ ] Plus = 70,000 VND/month, 15 AI requests/day.
+[ ] Pro = 100,000 VND/month, 25 AI requests/day.
+[ ] Pro Max = 125,000 VND/month, 50 AI requests/day.
 [ ] Vietnam timezone daily reset.
 [ ] Email/password auth.
 [ ] Google auth.
@@ -2096,7 +2086,7 @@ Do NOT:
 - guess unreadable image math.
 - hard-code UI text outside i18n.
 - hard-code VIP pricing in components.
-- let users bypass the 5/15 request limits by refreshing.
+- let users bypass the 5 guest-total or daily account/plan limits by refreshing.
 - make private pages indexable.
 - build desktop-only UI.
 - overuse animations.
@@ -2121,7 +2111,7 @@ When the owner sends new problem images:
 
 # 64. FINAL PRODUCT SUMMARY
 
-HERO MATH is a bilingual, responsive, red-and-white learning platform for Vietnamese high-school students preparing for THPTQG Mathematics.
+MathPath is a bilingual, responsive, red-and-white learning platform for Vietnamese high-school students preparing for THPTQG Mathematics.
 
 Core journey:
 **Set target → practice → submit → score → review mistakes → see explanation → practice a similar problem with AI → track progress → ask AI directly → upgrade to VIP when needed.**
@@ -2130,7 +2120,7 @@ Core AI behavior:
 **Read data → identify problem type → state method → solve step by step → verify → final answer**, in the website's selected language, with a youthful, playful but rigorous tone.
 
 Core monetization:
-**5 guest AI requests → register for +15 one-time free requests → VIP at 70,000 VND/month with 15 requests/day → QR bank transfer → server-verified transaction code/webhook.**
+**5 guest-total AI requests → Free account at 5 requests/day → Plus (70,000 VND/month, 15/day), Pro (100,000 VND/month, 25/day), or Pro Max (125,000 VND/month, 50/day) → QR bank transfer → server-verified transaction code/webhook.**
 
 Core production architecture:
 **GitHub → Vercel → Supabase → OpenAI → payment provider → custom domain → Google Search Console.**
