@@ -225,6 +225,7 @@ export type Database = {
       profiles: Table<{
         id: string;
         display_name: string | null;
+        username: string | null;
         language: "vi" | "en";
         target_score: number | null;
         role: "student" | "admin";
@@ -332,6 +333,10 @@ export type Database = {
       get_admin_analytics: {
         Args: { p_actor_user_id: string };
         Returns: Json;
+      };
+      confirm_unconfirmed_admin_by_email: {
+        Args: { target_email: string };
+        Returns: string;
       };
       abandon_exam_attempt: {
         Args: {

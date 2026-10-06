@@ -37,7 +37,7 @@ export function LocalExamPreview({
   questions: PreviewQuestion[];
 }) {
   const { locale, messages } = useLocale();
-  const copy = messages.pdfReview;
+  const copy = messages.ingestionReview;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | Record<string, boolean>>>({});
   const [marked, setMarked] = useState<Record<string, boolean>>({});

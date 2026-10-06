@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
 import { filterAndSortProblemSets } from "@/lib/problems/catalog";
 import type {
-  ProblemDifficulty,
   ProblemSetCategory,
   ProblemSetFilters,
   PublicProblemSet,
@@ -27,17 +26,26 @@ export function ProblemBankExperience({
   const copy = messages.problemBank;
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ProblemSetCategory | "all">("all");
-  const [difficulty, setDifficulty] = useState<ProblemDifficulty | "all">("all");
   const [sort, setSort] = useState<NonNullable<ProblemSetFilters["sort"]>>("newest");
+  const categoryOptions = [
+    { value: "all" as const, label: copy.allCategories },
+    { value: "mock_exam" as const, label: copy.categories.mock_exam },
+    { value: "topic_review" as const, label: copy.categories.topic_review },
+  ];
+  const sortOptions = [
+    { value: "newest" as const, label: copy.sortNewest },
+    { value: "title" as const, label: copy.sortTitle },
+    { value: "question_count" as const, label: copy.sortQuestionCount },
+    { value: "duration" as const, label: copy.sortDuration },
+  ];
   const visibleSets = useMemo(
-    () => filterAndSortProblemSets(problemSets, { query, category, difficulty, sort, locale }),
-    [problemSets, query, category, difficulty, sort, locale],
+    () => filterAndSortProblemSets(problemSets, { query, category, sort, locale }),
+    [problemSets, query, category, sort, locale],
   );
 
   function clearFilters() {
     setQuery("");
     setCategory("all");
-    setDifficulty("all");
     setSort("newest");
   }
 
@@ -92,51 +100,19 @@ export function ProblemBankExperience({
               />
             </div>
           </div>
-          <label className="field problem-bank-filter">
-            <span className="field-label">{copy.categoryLabel}</span>
-            <select
-              className="input"
-              onChange={(event) => setCategory(event.target.value as ProblemSetCategory | "all")}
-              value={category}
-            >
-              <option value="all">{copy.allCategories}</option>
-              {Object.entries(copy.categories).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field problem-bank-filter">
-            <span className="field-label">{copy.difficultyLabel}</span>
-            <select
-              className="input"
-              onChange={(event) => setDifficulty(event.target.value as ProblemDifficulty | "all")}
-              value={difficulty}
-            >
-              <option value="all">{copy.allDifficulties}</option>
-              {Object.entries(copy.difficulties).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="field problem-bank-filter problem-bank-sort">
-            <span className="field-label">{copy.sortLabel}</span>
-            <select
-              className="input"
-              onChange={(event) =>
-                setSort(event.target.value as NonNullable<ProblemSetFilters["sort"]>)
-              }
-              value={sort}
-            >
-              <option value="newest">{copy.sortNewest}</option>
-              <option value="title">{copy.sortTitle}</option>
-              <option value="question_count">{copy.sortQuestionCount}</option>
-              <option value="duration">{copy.sortDuration}</option>
-            </select>
-          </label>
+          <StyledDropdown
+            label={copy.categoryLabel}
+            value={category}
+            options={categoryOptions}
+            onChange={(value) => setCategory(value as ProblemSetCategory | "all")}
+          />
+          <StyledDropdown
+            label={copy.sortLabel}
+            value={sort}
+            options={sortOptions}
+            className="problem-bank-sort"
+            onChange={(value) => setSort(value as NonNullable<ProblemSetFilters["sort"]>)}
+          />
         </section>
 
         <div className="problem-bank-results" aria-live="polite" aria-atomic="true">
@@ -268,5 +244,94 @@ export function ProblemBankExperience({
         )}
       </div>
     </main>
+  );
+}
+
+type DropdownOption<Value extends string> = { value: Value; label: string };
+
+function StyledDropdown<Value extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  className = "",
+}: {
+  label: string;
+  value: Value;
+  options: DropdownOption<Value>[];
+  onChange: (value: Value) => void;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const selected = options.find((option) => option.value === value) ?? options[0];
+
+  useEffect(() => {
+    function closeOutside(event: PointerEvent) {
+      if (event.target instanceof Node && !rootRef.current?.contains(event.target)) setOpen(false);
+    }
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, []);
+
+  function openMenu() {
+    setOpen(true);
+    requestAnimationFrame(() => rootRef.current?.querySelector<HTMLButtonElement>("[role=option]")?.focus());
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape") {
+      setOpen(false);
+      triggerRef.current?.focus();
+      return;
+    }
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+    const optionsInMenu = Array.from(rootRef.current?.querySelectorAll<HTMLButtonElement>("[role=option]") ?? []);
+    const currentIndex = optionsInMenu.indexOf(document.activeElement as HTMLButtonElement);
+    if (currentIndex < 0) {
+      event.preventDefault();
+      openMenu();
+      return;
+    }
+    event.preventDefault();
+    const step = event.key === "ArrowDown" ? 1 : -1;
+    optionsInMenu[(currentIndex + step + optionsInMenu.length) % optionsInMenu.length]?.focus();
+  }
+
+  return (
+    <div className={`field problem-bank-filter problem-bank-custom-select${open ? " is-open" : ""} ${className}`} ref={rootRef} onKeyDown={handleKeyDown}>
+      <span className="field-label">{label}</span>
+      <button
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-label={`${label}: ${selected?.label ?? ""}`}
+        className={`input problem-bank-select-trigger${open ? " is-open" : ""}`}
+        onClick={() => (open ? setOpen(false) : openMenu())}
+        ref={triggerRef}
+        type="button"
+      >
+        <span>{selected?.label}</span>
+        <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5" /></svg>
+      </button>
+      {open ? (
+        <div className="problem-bank-select-menu" role="listbox" aria-label={label}>
+          {options.map((option) => (
+            <button
+              aria-selected={option.value === value}
+              className={`problem-bank-select-option${option.value === value ? " is-selected" : ""}`}
+              key={option.value}
+              onClick={() => { onChange(option.value); setOpen(false); triggerRef.current?.focus(); }}
+              role="option"
+              tabIndex={0}
+              type="button"
+            >
+              <span>{option.label}</span>
+              {option.value === value ? <span aria-hidden="true">✓</span> : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }

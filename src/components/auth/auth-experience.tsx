@@ -10,24 +10,36 @@ import { Card } from "@/components/ui/card";
 import { authMessages } from "@/lib/i18n/auth-messages";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { targetScoreStorageKey } from "@/lib/onboarding/target-score";
+import { getAuthRedirectBaseUrl } from "@/lib/auth/redirect-url";
+import { PasswordInput } from "@/components/auth/password-input";
 
 type AuthMode = "login" | "register" | "recovery";
 
 export function AuthExperience({
   mode,
   updatingPassword = false,
+  passwordUpdated = false,
   nextPath = "/account",
+  initialError,
 }: {
   mode: AuthMode;
   updatingPassword?: boolean;
+  passwordUpdated?: boolean;
   nextPath?: string;
+  initialError?: string;
 }) {
   const router = useRouter();
   const { locale } = useLocale();
   const copy = authMessages[locale];
   const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState("");
-  const [error, setError] = useState("");
+  const [notice, setNotice] = useState(passwordUpdated ? copy.passwordUpdated : "");
+  const [error, setError] = useState(
+    initialError === "recovery_link_expired"
+      ? copy.recoveryLinkExpired
+      : initialError === "callback_failed"
+        ? copy.authCallbackFailed
+        : "",
+  );
   const [pendingEmail, setPendingEmail] = useState("");
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -36,6 +48,13 @@ export function AuthExperience({
     setNotice("");
     setError("");
     const form = new FormData(event.currentTarget);
+    if (mode === "register" || updatingPassword) {
+      if (form.get("password") !== form.get("confirmPassword")) {
+        setError(locale === "vi" ? "Mật khẩu xác nhận chưa khớp." : "Passwords do not match.");
+        setBusy(false);
+        return;
+      }
+    }
     let targetScore: number | undefined;
     try {
       const localTarget = Number(window.localStorage.getItem(targetScoreStorageKey));
@@ -54,9 +73,16 @@ export function AuthExperience({
     const body = updatingPassword
       ? { password: form.get("password") }
       : mode === "recovery"
-        ? { email: form.get("email") }
+        ? { identifier: form.get("identifier") }
+        : mode === "login"
+          ? {
+              identifier: form.get("identifier"),
+              password: form.get("password"),
+              ...(targetScore === undefined ? {} : { targetScore }),
+            }
         : {
             email: form.get("email"),
+            username: form.get("username"),
             password: form.get("password"),
             ...(targetScore === undefined ? {} : { targetScore }),
             ...(mode === "register"
@@ -82,6 +108,10 @@ export function AuthExperience({
           email_rate_limited: copy.emailRateLimited,
           credentials_not_accepted: copy.credentialsNotAccepted,
           email_not_confirmed: copy.emailNotConfirmed,
+          session_expired: copy.recoveryLinkExpired,
+          account_not_created: copy.accountNotCreated,
+          recovery_not_sent: copy.recoveryNotSent,
+          callback_failed: copy.authCallbackFailed,
         };
         setError(errorCopy[payload.error?.code ?? ""] ?? copy.genericError);
         return;
@@ -96,8 +126,7 @@ export function AuthExperience({
         return;
       }
       if (updatingPassword) {
-        setNotice(copy.passwordUpdated);
-        router.replace(nextPath as Route);
+        router.replace("/auth/login?password_updated=1" as Route);
         router.refresh();
         return;
       }
@@ -135,10 +164,14 @@ export function AuthExperience({
     try {
       const supabase = getSupabaseBrowserClient();
       const next = encodeURIComponent(nextPath);
+      const appOrigin = getAuthRedirectBaseUrl(
+        process.env.NEXT_PUBLIC_APP_URL,
+        window.location.origin,
+      );
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${next}`,
+          redirectTo: `${appOrigin}/auth/callback?next=${next}`,
           queryParams: { prompt: "select_account" },
         },
       });
@@ -179,19 +212,45 @@ export function AuthExperience({
                 <input autoComplete="name" name="displayName" maxLength={80} />
               </label>
             ) : null}
-            {!updatingPassword ? (
+            {mode === "register" ? (
+              <label>
+                {copy.username}
+                <input autoComplete="username" name="username" required minLength={3} maxLength={30} pattern="[A-Za-z0-9._-]{3,30}" />
+              </label>
+            ) : null}
+            {!updatingPassword && mode === "register" ? (
               <label>
                 {copy.email}
                 <input autoComplete="email" type="email" name="email" required maxLength={254} />
               </label>
             ) : null}
+            {!updatingPassword && mode !== "register" ? (
+              <label>
+                {copy.loginIdentifier}
+                <input autoComplete={mode === "login" ? "username" : "email"} type="text" name="identifier" required maxLength={254} />
+              </label>
+            ) : null}
             {mode !== "recovery" || updatingPassword ? (
               <label>
                 {updatingPassword ? copy.newPassword : copy.password}
-                <input
+                <PasswordInput
                   autoComplete={mode === "login" ? "current-password" : "new-password"}
                   type="password"
                   name="password"
+                  required
+                  minLength={8}
+                  maxLength={128}
+                />
+              </label>
+            ) : null}
+            {mode === "register" || updatingPassword ? (
+              <label>
+                {updatingPassword
+                  ? locale === "vi" ? "Nhập lại mật khẩu mới" : "Confirm new password"
+                  : locale === "vi" ? "Nhập lại mật khẩu" : "Confirm password"}
+                <PasswordInput
+                  autoComplete="new-password"
+                  name="confirmPassword"
                   required
                   minLength={8}
                   maxLength={128}

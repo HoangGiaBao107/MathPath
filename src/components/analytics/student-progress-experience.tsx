@@ -96,6 +96,14 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
                   color: "#d71920",
                   values: data.trend.map((point) => point.score),
                 },
+                ...(data.targetScore === null
+                  ? []
+                  : [{
+                      label: copy.targetScore,
+                      color: "#273247",
+                      dashed: true,
+                      values: data.trend.map(() => data.targetScore!),
+                    }]),
               ]}
               formatValue={(value) => formatNumber(value, locale)}
             />

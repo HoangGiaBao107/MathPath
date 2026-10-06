@@ -114,6 +114,15 @@ const attemptResultSchema = z.object({
         state: z.enum(["unanswered", "correct", "partially_correct", "incorrect"]),
         pointsEarned: z.number(),
         pointsPossible: z.number(),
+        review: z.object({
+          questionType: z.enum(["multiple_choice", "true_false", "short_answer"]).nullable(),
+          statement: z.string().nullable(),
+          options: z.array(z.object({ key: z.string(), text: z.string() })),
+          substatements: z.array(z.object({ key: z.string(), text: z.string() })),
+          selectedAnswer: z.record(z.string(), z.unknown()).nullable(),
+          correctAnswer: z.record(z.string(), z.unknown()).nullable(),
+          explanation: z.string().nullable(),
+        }).nullable().default(null),
       }),
     ),
     sectionOutcomes: z.array(

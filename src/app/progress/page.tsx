@@ -4,7 +4,7 @@ import { StudentProgressExperience } from "@/components/analytics/student-progre
 import { getAuthenticatedActor, getStudentProgress } from "@/lib/analytics/server";
 
 export const metadata: Metadata = {
-  title: "Tiến độ học tập | MathPath",
+  title: "Lịch sử làm bài | MathPath",
   description: "Theo dõi điểm số, lịch sử làm bài và kiến thức cần ôn.",
   robots: { index: false, follow: false },
 };

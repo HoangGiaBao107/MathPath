@@ -46,6 +46,8 @@ export function HomeExperience() {
       label: home.practiceLabel,
       icon: "▤",
       type: "practice",
+      href: "/problems",
+      action: home.practiceCta,
     },
     {
       id: "ai",
@@ -57,6 +59,8 @@ export function HomeExperience() {
       label: home.aiLabel,
       icon: "∑",
       type: "ai",
+      href: "/ai",
+      action: home.aiCta,
     },
     {
       id: "progress",
@@ -68,6 +72,8 @@ export function HomeExperience() {
       label: home.progressLabel,
       icon: "↗",
       type: "progress",
+      href: "/progress",
+      action: locale === "vi" ? "Xem lịch sử làm bài" : "View attempt history",
     },
     {
       id: "similar-practice",
@@ -79,6 +85,8 @@ export function HomeExperience() {
       label: home.similarLabel,
       icon: "⌁",
       type: "similar",
+      href: "/ai?mode=practice",
+      action: messages.ai.practiceWithAI,
     },
   ] as const;
 
@@ -86,10 +94,6 @@ export function HomeExperience() {
     <main className="site-main" id="main-content">
       <TargetScoreOnboarding />
       <section className="container home-hero" aria-labelledby="home-title">
-        <div className="hero-red-orb" aria-hidden="true">
-          <span className="hero-orb-star">✳</span>
-          <span className="hero-orb-label">MathPath</span>
-        </div>
         <div className="hero-content">
           <p className="eyebrow hero-eyebrow">
             <span className="eyebrow-dot" aria-hidden="true" />
@@ -126,34 +130,6 @@ export function HomeExperience() {
                 ? `Mục tiêu hiện tại: ${formatTargetScore(targetScore, locale)} điểm · Thay đổi mục tiêu`
                 : `Current goal: ${formatTargetScore(targetScore, locale)} · Change goal`}
           </button>
-        </div>
-        <div className="hero-preview" aria-label={home.demoLabel}>
-          <div className="hero-preview-top">
-            <span className="preview-window-dots" aria-hidden="true">
-              <i />
-              <i />
-              <i />
-            </span>
-            <span>{home.demoLabel}</span>
-          </div>
-          <div className="preview-problem">
-            <span className="preview-tag">{home.demoTopic}</span>
-            <h2>{home.demoQuestion}</h2>
-            <p>{home.demoFormula}</p>
-            <div className="preview-rule" />
-            <div className="preview-solution">
-              <span className="preview-check" aria-hidden="true">
-                ✓
-              </span>
-              <span>{home.demoSteps}</span>
-              <span className="preview-arrow" aria-hidden="true">
-                ↗
-              </span>
-            </div>
-          </div>
-          <span className="hero-preview-stamp" aria-hidden="true">
-            M
-          </span>
         </div>
         <span className="hero-geometry hero-geometry--one" aria-hidden="true" />
         <span className="hero-geometry hero-geometry--two" aria-hidden="true" />
@@ -197,14 +173,6 @@ export function HomeExperience() {
                       {feature.pointB}
                     </li>
                   </ul>
-                  {feature.type === "practice" ? (
-                    <div className="practice-preview" aria-hidden="true">
-                      <span>01</span>
-                      <span>02</span>
-                      <span>03</span>
-                      <i />
-                    </div>
-                  ) : null}
                   {feature.type === "ai" ? (
                     <div className="ai-preview" aria-hidden="true">
                       <span>∫ x² dx</span>
@@ -227,7 +195,6 @@ export function HomeExperience() {
                           }}
                         />
                       </div>
-                      <small>{home.targetExample}</small>
                     </div>
                   ) : null}
                   {feature.type === "similar" ? (
@@ -237,12 +204,10 @@ export function HomeExperience() {
                       <span>f(x + 1)</span>
                     </div>
                   ) : null}
-                  {feature.type === "practice" ? (
-                    <Link className="feature-link" href="/problems">
-                      {home.practiceCta}
-                      <span aria-hidden="true">↗</span>
-                    </Link>
-                  ) : null}
+                  <Link className="feature-link" href={feature.href}>
+                    {feature.action}
+                    <span aria-hidden="true">↗</span>
+                  </Link>
                 </article>
               </Reveal>
             ))}
@@ -273,7 +238,7 @@ export function HomeExperience() {
             </div>
           </Reveal>
           <Reveal>
-            <div className="goal-visual" role="group" aria-label={home.targetExample}>
+            <div className="goal-visual" role="group" aria-label={home.targetLabel}>
               <span className="goal-orbit goal-orbit--outer" aria-hidden="true" />
               <span className="goal-orbit goal-orbit--inner" aria-hidden="true" />
               <div className="goal-score">
@@ -283,7 +248,6 @@ export function HomeExperience() {
                 </strong>
                 <span>/ 10</span>
               </div>
-              <span className="goal-visual-caption">{home.targetExample}</span>
             </div>
           </Reveal>
         </div>
@@ -300,9 +264,6 @@ export function HomeExperience() {
                 {home.finalCta}
                 <span aria-hidden="true">↗</span>
               </Link>
-              <span className="final-cta-mark" aria-hidden="true">
-                M
-              </span>
             </div>
           </Reveal>
         </div>

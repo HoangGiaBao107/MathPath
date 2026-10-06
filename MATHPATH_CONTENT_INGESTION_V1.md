@@ -1,43 +1,18 @@
-# MATHPATH — Content Ingestion V1
+# MathPath — Content Ingestion V1
 
-## Source files received in the current conversation
+## Approved source format
 
-1. `de-thi-thu-tot-nghiep-thpt-2026-mon-toan-truong-thpt-phan-dang-luu-tp-hcm.pdf`
-   - 3 pages
-   - Exam paper (Phan Dang Luu, HCMC)
-   - The supplied PDF contains the exam pages but no answer-key page was detected in the provided file.
-   - Treat any answer subsequently derived by the assistant as independently verified, not as a source-provided key.
+- Use only owner-approved Word (`.docx`) documents for problem-bank question content.
+- Do not ingest, parse, extract, transcribe, or publish questions from PDF files.
+- The PDF ingestion scripts, fixtures, tests, and review workflow have been retired.
 
-2. `de-thi-thu-tot-nghiep-thpt-2026-mon-toan-truong-thpt-nguyen-trung-truc-tp-hcm.pdf`
-   - 7 pages
-   - Exam + answer/reference section.
-   - Part I key: 1D 2A 3C 4C 5C 6D 7C 8B 9C 10D 11D 12B.
-   - Part II and Part III keys are present in the document and must be imported from the source.
-   - The source states the answer section is supplied by AI Gemini Pro; preserve provenance in admin metadata.
+## Import safeguards
 
-3. `de-thi-thu-tn-thpt-2026-mon-toan-lan-2-truong-thpt-duong-quang-ham-hung-yen.pdf`
-   - 17 pages
-   - Exam + answer/reference + detailed solution section.
-   - Part I key: 1A 2D 3A 4C 5A 6A 7A 8C 9D 10C 11D 12A.
-   - Part II and Part III keys are present.
-   - Detailed worked solutions are present and can be used as source material for concise student-facing explanations.
-   - The source states the answer/solution section was produced by AI Gemini Pro; preserve provenance in admin metadata.
-
-4. `de-thi-thu-tn-thpt-2026-mon-toan-lan-3-lien-truong-thpt-chuyen-da-nang.pdf`
-   - 19 pages
-   - Exam + answer/reference + detailed solution section.
-   - Page 5 contains a compact key for code 1016; detailed solutions follow.
-   - Preserve the source answer key exactly after validating transcription.
-   - Detailed solutions can be used to produce concise student-facing explanations.
-
-## Important mismatch to resolve
-
-The user referred to the final uploaded file as a “sách ôn chương Hàm số”, but the fourth file currently present in the conversation is actually another **THPT 2026 Mathematics exam** from liên trường THPT chuyên Đà Nẵng. It is not a Hàm số review book.
-
-Therefore:
-- Do not treat file 4 as the Hàm số book.
-- Wait for the actual Hàm số review-book PDF/images.
-- Once the book is received, ingest its questions into a separate `topic = ham_so` question pool.
+- Preserve the source ordering and exact source question numbers.
+- Import only answer keys present in the approved Word source; never invent missing keys.
+- Preserve answer and explanation provenance. Mark uncertainty for manual review rather than guessing.
+- Keep source documents and private answer keys out of public/client bundles.
+- Use the approved Word import scripts and existing review/validation workflow. Do not modify the question bank without explicit authorization.
 
 ## Problem-bank behavior
 

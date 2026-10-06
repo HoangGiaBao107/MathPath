@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { LineChart } from "@/components/analytics/line-chart";
 import { useLocale } from "@/components/providers/locale-provider";
@@ -12,6 +13,7 @@ type UserSort = "questions" | "attempts" | "score";
 export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
   const { locale, messages } = useLocale();
   const copy = messages.adminAnalytics;
+  const vi = locale === "vi";
   const [range, setRange] = useState<Range>(30);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<UserSort>("questions");
@@ -48,8 +50,19 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
     { label: copy.otherVip, value: data.subscriptions.otherVip, color: "#a855f7" },
   ];
   return (
-    <main className="page-shell analytics-page admin-analytics-page" id="main-content">
-      <header className="analytics-page-heading">
+    <div className="admin-dashboard-layout">
+      <aside className="admin-sidebar" aria-label={vi ? "Điều hướng quản trị" : "Admin navigation"}>
+        <div className="admin-sidebar-brand"><Image className="admin-sidebar-mark" src="/branding/logo.png" alt="" width={40} height={40} /><span>MathPath<small>ADMIN</small></span></div>
+        <p className="admin-sidebar-caption">{vi ? "QUẢN LÝ" : "MANAGEMENT"}</p>
+        <a className="is-active" href="#overview">▦ <span>{vi ? "Tổng quan" : "Overview"}</span></a>
+        <a href="#analytics-activity">⌁ <span>{vi ? "Lưu lượng & hoạt động" : "Traffic & activity"}</span></a>
+        <a href="#attempt-history">◷ <span>{vi ? "Lịch sử làm bài" : "Attempt history"}</span></a>
+        <a href="#users">♙ <span>{vi ? "Người dùng" : "Users"}</span></a>
+        <a href="#plans">◇ <span>{vi ? "Gói thành viên" : "Membership plans"}</span></a>
+        <a href="/" className="admin-sidebar-back">← <span>{vi ? "Về trang học tập" : "Back to platform"}</span></a>
+      </aside>
+      <main className="page-shell analytics-page admin-analytics-page" id="main-content">
+      <header className="analytics-page-heading" id="overview">
         <p className="eyebrow">ADMIN · MATHPATH</p>
         <h1>{copy.title}</h1>
         <p>{copy.description}</p>
@@ -79,8 +92,8 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
       </section>
 
       <section className="analytics-primary-grid admin-analytics-grid">
-        <Card className="analytics-panel analytics-admin-activity">
-          <div className="analytics-panel-heading">
+        <Card className="analytics-panel analytics-admin-activity" id="analytics-activity">
+          <div className="analytics-panel-heading" id="attempt-history">
             <div>
               <p className="eyebrow">{copy.activity}</p>
               <h2>{copy.activity}</h2>
@@ -173,7 +186,7 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
       </section>
 
       <section className="analytics-primary-grid admin-analytics-grid">
-        <Card className="analytics-panel">
+        <Card className="analytics-panel" id="plans">
           <div className="analytics-panel-heading">
             <div>
               <p className="eyebrow">{copy.targetDistribution}</p>
@@ -237,7 +250,7 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
         </Card>
       </section>
 
-      <section className="analytics-history-section">
+      <section className="analytics-history-section" id="users">
         <div className="analytics-section-heading">
           <div>
             <p className="eyebrow">{copy.questionsByUser}</p>
@@ -297,7 +310,8 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
           )}
         </Card>
       </section>
-    </main>
+      </main>
+    </div>
   );
 }
 

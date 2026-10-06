@@ -6,8 +6,15 @@ export const metadata: Metadata = { title: "Sign in", robots: { index: false, fo
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; error?: string; password_updated?: string }>;
 }) {
   const query = await searchParams;
-  return <AuthExperience mode="login" nextPath={safeNextPath(query.next)} />;
+  return (
+    <AuthExperience
+      mode="login"
+      nextPath={safeNextPath(query.next)}
+      passwordUpdated={query.password_updated === "1"}
+      initialError={query.error === "callback_failed" ? "callback_failed" : undefined}
+    />
+  );
 }

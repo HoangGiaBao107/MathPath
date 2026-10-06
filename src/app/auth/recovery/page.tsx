@@ -7,5 +7,13 @@ export const metadata: Metadata = {
 };
 export default async function RecoveryPage(props: PageProps<"/auth/recovery">) {
   const searchParams = await props.searchParams;
-  return <AuthExperience mode="recovery" updatingPassword={searchParams.update === "1"} />;
+  return (
+    <AuthExperience
+      mode="recovery"
+      updatingPassword={searchParams.update === "1"}
+      initialError={
+        searchParams.error === "recovery_link_invalid" ? "recovery_link_expired" : undefined
+      }
+    />
+  );
 }

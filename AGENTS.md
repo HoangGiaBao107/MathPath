@@ -9,7 +9,7 @@ Start with Phase 0, then Phase 1, then Phase 2 unless the owner explicitly reque
 Do not implement payment, production AI, or full content ingestion before the core architecture and UI shell are stable.
 
 Important content rule:
-- The 12 recognized exam sets are sourced from the approved Word documents in the repository root. PDF ingestion is fixture-only; do not treat old extracted PDF content as student exams.
+- The recognized exam sets are sourced from approved Word documents. Do not ingest or use PDFs for question content.
 - Do not silently invent missing answer keys.
 - Preserve source ordering and mark uncertainty instead of guessing.
 

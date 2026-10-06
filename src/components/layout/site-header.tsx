@@ -17,7 +17,7 @@ export function SiteHeader() {
     { label: messages.navigation.home, href: "/" as const },
     { label: messages.navigation.practice, href: "/problems" as const },
     { label: messages.navigation.ai, href: "/ai" as const },
-    { label: messages.navigation.progress, href: "/progress" as const },
+    { label: locale === "vi" ? "Lịch sử làm bài" : "Attempt history", href: "/progress" as const },
   ];
 
   useEffect(() => {

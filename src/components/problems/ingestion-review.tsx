@@ -64,7 +64,7 @@ export function IngestionReview({
   statusFilter: string;
 }) {
   const { messages } = useLocale();
-  const copy = messages.pdfReview;
+  const copy = messages.ingestionReview;
   const editorCopy = copy.contentEditor;
   const isSyntheticFixture = problemSetTitle.startsWith("MathPath Synthetic");
   const question = questions[0];

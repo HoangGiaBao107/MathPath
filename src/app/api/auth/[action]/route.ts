@@ -2,27 +2,60 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { claimCurrentGuestAttempts } from "@/lib/auth/claim-guest.server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getAuthRedirectBaseUrl } from "@/lib/auth/redirect-url";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
+import { canSkipEmailConfirmation } from "@/lib/auth/admin-email-confirmation";
+import { isEmailIdentifier, loginIdentifierSchema } from "@/lib/auth/login-identifier";
 
 const credentialsSchema = z.object({
   email: z.string().email().max(254),
+  username: z.string().regex(/^[a-zA-Z0-9._-]{3,30}$/),
   password: z.string().min(8).max(128),
   displayName: z.string().trim().min(1).max(80).optional(),
   language: z.enum(["vi", "en"]).optional(),
   targetScore: z.number().min(0).max(10).optional(),
 });
 const emailSchema = z.object({ email: z.string().email().max(254) });
+const identifierSchema = z.object({ identifier: loginIdentifierSchema });
 const passwordSchema = z.object({ password: z.string().min(8).max(128) });
 
 export async function POST(request: Request, context: RouteContext<"/api/auth/[action]">) {
   const { action } = await context.params;
   try {
+    const appOrigin = getAuthRedirectBaseUrl(
+      process.env.NEXT_PUBLIC_APP_URL,
+      new URL(request.url).origin,
+    );
     const supabase = await createSupabaseServerClient();
     const input: unknown = await request.json();
 
     if (action === "sign-in") {
-      const parsed = credentialsSchema.omit({ displayName: true }).safeParse(input);
+      const parsed = z.object({
+        identifier: loginIdentifierSchema,
+        password: z.string().min(8).max(128),
+        targetScore: z.number().min(0).max(10).optional(),
+      }).safeParse(input);
       if (!parsed.success) return authError("invalid_request", 400);
-      const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+      const email = await resolveAccountEmail(parsed.data.identifier);
+      if (!email) return authError("credentials_not_accepted", 401);
+      let { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: parsed.data.password,
+      });
+      if (error && canSkipEmailConfirmation(error)) {
+        try {
+          const admin = getSupabaseAdminClient();
+          const { data: confirmedUserId, error: confirmationError } = await admin.rpc(
+            "confirm_unconfirmed_admin_by_email",
+            { target_email: email },
+          );
+          if (!confirmationError && confirmedUserId) {
+            ({ data, error } = await supabase.auth.signInWithPassword({ email, password: parsed.data.password }));
+          }
+        } catch {
+          // Admin auto-confirm is optional and never bypasses password validation.
+        }
+      }
       if (error) {
         return authError(classifySignInError(error), 401);
       }
@@ -52,10 +85,11 @@ export async function POST(request: Request, context: RouteContext<"/api/auth/[a
         options: {
           data: {
             display_name: parsed.data.displayName ?? "",
+            username: parsed.data.username,
             language: parsed.data.language ?? "vi",
             target_score: parsed.data.targetScore,
           },
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/auth/callback?next=/account`,
+          emailRedirectTo: `${appOrigin}/auth/callback?next=/account`,
         },
       });
       if (error) return authError(classifySupabaseAuthError(error), 400);
@@ -80,7 +114,7 @@ export async function POST(request: Request, context: RouteContext<"/api/auth/[a
         type: "signup",
         email: parsed.data.email,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/auth/callback?next=/account`,
+          emailRedirectTo: `${appOrigin}/auth/callback?next=/account`,
         },
       });
       if (error) return authError(classifySupabaseAuthError(error), 503);
@@ -94,10 +128,12 @@ export async function POST(request: Request, context: RouteContext<"/api/auth/[a
     }
 
     if (action === "recovery") {
-      const parsed = emailSchema.safeParse(input);
+      const parsed = identifierSchema.safeParse(input);
       if (!parsed.success) return authError("invalid_request", 400);
-      const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/auth/callback?next=%2Fauth%2Frecovery%3Fupdate%3D1`,
+      const email = await resolveAccountEmail(parsed.data.identifier);
+      if (!email) return NextResponse.json({ ok: true }, { headers: noStoreHeaders });
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${appOrigin}/auth/callback?next=%2Fauth%2Frecovery%3Fupdate%3D1`,
       });
       if (error) return authError("recovery_not_sent", 503);
       return NextResponse.json({ ok: true }, { headers: noStoreHeaders });
@@ -122,13 +158,28 @@ export async function POST(request: Request, context: RouteContext<"/api/auth/[a
   }
 }
 
+async function resolveAccountEmail(identifier: string): Promise<string | null> {
+  if (isEmailIdentifier(identifier)) return identifier;
+  const admin = getSupabaseAdminClient();
+  const { data: profile, error: profileError } = await admin
+    .from("profiles")
+    .select("id")
+    .ilike("username", identifier)
+    .maybeSingle();
+  if (profileError || !profile) return null;
+  const { data, error } = await admin.auth.admin.getUserById(profile.id);
+  if (error) return null;
+  return data.user.email ?? null;
+}
+
 export async function PATCH(request: Request, context: RouteContext<"/api/auth/[action]">) {
   const { action } = await context.params;
   if (action !== "profile") return authError("not_found", 404);
   const inputSchema = z.object({
-    targetScore: z.number().min(0).max(10),
-    language: z.enum(["vi", "en"]),
-  });
+    targetScore: z.number().min(0).max(10).optional(),
+    language: z.enum(["vi", "en"]).optional(),
+    displayName: z.string().trim().min(1).max(80).optional(),
+  }).refine((value) => Object.keys(value).length > 0);
   const parsed = inputSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return authError("invalid_request", 400);
   try {
@@ -137,13 +188,12 @@ export async function PATCH(request: Request, context: RouteContext<"/api/auth/[
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return authError("session_expired", 401);
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        target_score: parsed.data.targetScore,
-        language: parsed.data.language,
-      })
-      .eq("id", user.id);
+    const profileUpdate = {
+      ...(parsed.data.targetScore !== undefined ? { target_score: parsed.data.targetScore } : {}),
+      ...(parsed.data.language !== undefined ? { language: parsed.data.language } : {}),
+      ...(parsed.data.displayName !== undefined ? { display_name: parsed.data.displayName } : {}),
+    };
+    const { error } = await supabase.from("profiles").update(profileUpdate).eq("id", user.id);
     if (error) return authError("profile_sync_failed", 503);
     return NextResponse.json({ ok: true }, { headers: noStoreHeaders });
   } catch {

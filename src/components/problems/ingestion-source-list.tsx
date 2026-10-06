@@ -29,7 +29,7 @@ export type IngestionSourceSummary = {
 
 export function IngestionSourceList({ sources }: { sources: IngestionSourceSummary[] }) {
   const { locale, messages } = useLocale();
-  const copy = messages.pdfReview;
+  const copy = messages.ingestionReview;
   const isVi = locale === "vi";
 
   return (

@@ -17,11 +17,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ingest:pdf": "node scripts/ingest-pdf.mjs",
     "import:word-exams": "node scripts/import-word-exams.mjs",
     "import:topic-word-exams": "node scripts/import-topic-word-exams.mjs",
-    "ingest:real-sources": "node scripts/ingest-real-sources.mjs",
-    "ingest:fixture:generate": "python scripts/generate_synthetic_ingestion_fixture.py",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "supabase:seed:demo": "node --experimental-strip-types --env-file=.env.local scripts/seed-demo-exams.mjs"

@@ -10,7 +10,7 @@ RLS remains enabled for user-readable data. Authenticated clients can select the
 
 ## Demo fixture
 
-`npm run supabase:seed:demo` sends the same generated definitions from `src/lib/exams/demo-data.mock.ts` to the restricted seed function. It upserts the two synthetic demo sets and answer keys; the fixtures are marked DEMO / MOCK and NOT OFFICIAL. It does not read or ingest source PDFs. Run only against a local/disposable Supabase project.
+`npm run supabase:seed:demo` sends the same generated definitions from `src/lib/exams/demo-data.mock.ts` to the restricted seed function. It upserts the two synthetic demo sets and answer keys; the fixtures are marked DEMO / MOCK and NOT OFFICIAL. It does not read or ingest source documents. Run only against a local/disposable Supabase project.
 
 ## Apply status
 

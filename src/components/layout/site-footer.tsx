@@ -9,9 +9,6 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="container footer-inner">
         <Link className="footer-brand" href="#top">
-          <span className="footer-brand-mark" aria-hidden="true">
-            M
-          </span>
           MathPath
         </Link>
         <span>{messages.footer.tagline}</span>

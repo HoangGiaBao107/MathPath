@@ -79,11 +79,6 @@ export type TranslationMessages = {
     finalTitle: string;
     finalDescription: string;
     finalCta: string;
-    demoLabel: string;
-    demoQuestion: string;
-    demoTopic: string;
-    demoSteps: string;
-    demoFormula: string;
   };
   onboarding: {
     title: string;
@@ -282,6 +277,12 @@ export type TranslationMessages = {
     aiPlaceholder: string;
     resultTitle: string;
     resultBack: string;
+    yourAnswer: string;
+    correctAnswer: string;
+    answerKeyUnavailable: string;
+    explanation: string;
+    noExplanation: string;
+    noAnswer: string;
     sectionBreakdown: string;
     knowledgeBreakdown: string;
     unavailableTitle: string;
@@ -340,6 +341,9 @@ export type TranslationMessages = {
     errorGeneric: string;
     errorQuota: string;
     errorSetup: string;
+    errorProvider: string;
+    errorService: string;
+    errorTimeout: string;
     setupHint: string;
     chatLauncher: string;
     chatClose: string;
@@ -388,7 +392,7 @@ export type TranslationMessages = {
     accessDenied: string;
     unknownUser: string;
   };
-  pdfReview: {
+  ingestionReview: {
     title: string;
     indexTitle: string;
     indexDescription: string;

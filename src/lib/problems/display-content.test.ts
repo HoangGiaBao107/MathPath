@@ -1,7 +1,4 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { problemSetImportSchema } from "./import-schema";
 import {
   hydrateDisplayLayers,
   isStudentQuestionPublishable,
@@ -12,21 +9,36 @@ import {
 } from "./display-content";
 import type { ImportedProblem } from "./import-schema";
 
-const d10 = JSON.parse(
-  readFileSync(
-    path.join(process.cwd(), "content/extracted/demo-ingestion-fixture/questions.json"),
-    "utf8",
-  ),
-);
-const baseQuestion = problemSetImportSchema.parse(d10).questions[0];
-const d10Questions = problemSetImportSchema.parse(d10).questions;
-const topicData = JSON.parse(
-  readFileSync(
-    path.join(process.cwd(), "content/extracted/demo-ingestion-fixture/questions.json"),
-    "utf8",
-  ),
-);
-const topicQuestions = problemSetImportSchema.parse(topicData).questions;
+const fixtureSetId = "00000000-0000-4000-8000-000000000001";
+const fixtureQuestion = (
+  id: string,
+  question_type: ImportedProblem["question_type"],
+): ImportedProblem => {
+  const options = question_type === "multiple_choice"
+    ? [{ key: "A", text: "Lựa chọn A", order_index: 0 }, { key: "B", text: "Lựa chọn B", order_index: 1 }]
+    : [];
+  const substatements = question_type === "true_false"
+    ? [{ key: "a", text: "Mệnh đề a", order_index: 0 }, { key: "b", text: "Mệnh đề b", order_index: 1 }]
+    : [];
+  return {
+    id, problem_set_id: fixtureSetId, section: "I", question_number: id, order_index: Number(id),
+    statement: "Cho biểu thức.", question_type, options, substatements,
+    correct_answer: question_type === "multiple_choice"
+      ? { type: "multiple_choice", option_key: "A" }
+      : question_type === "true_false"
+        ? { type: "true_false", statements: { a: true, b: false } }
+        : { type: "short_answer", accepted_values: ["x"], case_sensitive: false },
+    explanation: null, topic: "Đại số", difficulty: "easy", tags: [],
+    translation_status: "not_started", content_review_status: "needs_review",
+    source_document: "display-content-test.docx", source_page: 1, source_question_number: id,
+    source_type: "official_exam", provenance_status: "source_imported",
+    publication_rights_status: "approved_for_internal", review_status: "needs_review",
+    publication_status: "unpublished",
+  };
+};
+const d10Questions = [fixtureQuestion("1", "multiple_choice"), fixtureQuestion("2", "true_false")];
+const topicQuestions = [...d10Questions, fixtureQuestion("3", "short_answer")];
+const baseQuestion = d10Questions[0];
 
 describe("editable question display layers", () => {
   it("keeps the raw source and answer unchanged while Vietnamese display text is edited", () => {

@@ -116,6 +116,15 @@ export type StudentAttemptResult = {
       state: "unanswered" | "correct" | "partially_correct" | "incorrect";
       pointsEarned: number;
       pointsPossible: number;
+      review: {
+        questionType: "multiple_choice" | "true_false" | "short_answer" | null;
+        statement: string | null;
+        options: { key: string; text: string }[];
+        substatements: { key: string; text: string }[];
+        selectedAnswer: Record<string, unknown> | null;
+        correctAnswer: Record<string, unknown> | null;
+        explanation: string | null;
+      } | null;
     }[];
     sectionOutcomes: {
       sectionId: string;

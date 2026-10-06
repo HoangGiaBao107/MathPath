@@ -166,8 +166,6 @@ __pycache__/
 /content/word-import/private-exam-solutions.json
 /content/word-import/private-topic-practice-keys.json
 /content/extracted/*
-!/content/extracted/demo-ingestion-fixture/
-!/content/extracted/demo-ingestion-fixture/**
 /content/source-pdfs/
 /content/processed/*
 

@@ -4,7 +4,7 @@
 
 - `/exams/demo-thptqg-format` exercises the configurable THPTQG scoring preset with 22 generated questions: 12 multiple choice, 4 true/false questions with four statements each, and 6 short answers.
 - `/exams/demo-practice-20` exercises exactly 20 generated questions at 0.5 points each. True/false questions use all-or-nothing scoring.
-- Both are marked **DEMO / MOCK — NOT AN OFFICIAL EXAM**. No supplied exam PDFs or source questions were imported or used.
+- Both are marked **DEMO / MOCK — NOT AN OFFICIAL EXAM**. They contain generated practice data only.
 - The Problem Bank links to these two test sets. The other metadata-only cards remain unavailable.
 
 ## Scoring

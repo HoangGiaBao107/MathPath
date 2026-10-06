@@ -13,10 +13,33 @@ export function aiErrorResponse(error: unknown) {
   if (error instanceof AIOutputInvalidError) {
     return NextResponse.json({ error: "ai_output_unclear" }, { status: 502 });
   }
-  if (error instanceof AIProviderRequestError || error instanceof AIServiceUnavailableError) {
-    return NextResponse.json({ error: "ai_temporarily_unavailable" }, { status: 503 });
+  if (error instanceof AIProviderRequestError) {
+    const detail = {
+      error: "ai_provider_error",
+      provider: error.provider,
+      providerStatus: error.status,
+      providerCode: error.code,
+      providerMessage: error.providerMessage,
+      providerRequestId: error.requestId ?? null,
+    };
+    console.error("MathPath AI provider request failed", detail);
+    return NextResponse.json(detail, { status: 502 });
   }
-  return NextResponse.json({ error: "invalid_request" }, { status: 400 });
+  if (error instanceof AIServiceUnavailableError) {
+    console.error("MathPath AI service request failed", { code: error.code });
+    return NextResponse.json(
+      { error: "ai_service_unavailable", code: error.code },
+      { status: 503 },
+    );
+  }
+  if (error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError")) {
+    console.error("MathPath AI request timed out");
+    return NextResponse.json({ error: "ai_request_timeout" }, { status: 504 });
+  }
+  if (error instanceof Error) {
+    console.error("MathPath AI internal request failed", { name: error.name });
+  }
+  return NextResponse.json({ error: "ai_internal_error" }, { status: 500 });
 }
 
 export function localeFrom(value: unknown): "vi" | "en" | null {

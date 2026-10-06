@@ -1,6 +1,6 @@
 "use client";
 
-export type LineChartSeries = { label: string; color: string; values: number[] };
+export type LineChartSeries = { label: string; color: string; values: number[]; dashed?: boolean };
 
 export function LineChart({
   labels,
@@ -70,6 +70,7 @@ export function LineChart({
                 fill="none"
                 stroke={item.color}
                 strokeWidth="3"
+                strokeDasharray={item.dashed ? "8 7" : undefined}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />

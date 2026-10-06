@@ -18,8 +18,8 @@ export class AIQuotaExhaustedError extends Error {
 }
 
 export class AIServiceUnavailableError extends Error {
-  constructor() {
-    super("ai_service_unavailable");
+  constructor(readonly code = "ai_service_unavailable") {
+    super(code);
     this.name = "AIServiceUnavailableError";
   }
 }
@@ -68,8 +68,8 @@ export async function readAIQuota(): Promise<QuotaSnapshot> {
 export async function reserveAIRequest(
   type: AIRequestType,
   inputType: AIInputType,
+  provider = getAIProvider(),
 ): Promise<ReservedAIRequest> {
-  const provider = getAIProvider();
   const { owner } = await getAIIdentity();
   const requestId = randomUUID();
   const { data, error } = await getSupabaseAdminClient().rpc("reserve_ai_request", {
@@ -82,7 +82,7 @@ export async function reserveAIRequest(
   });
   if (error) {
     if (error.message.includes("ai_quota_exhausted")) throw new AIQuotaExhaustedError();
-    throw new AIServiceUnavailableError();
+    throw new AIServiceUnavailableError("quota_reservation_failed");
   }
   const result = parseQuota(data);
   const value = data as Record<string, unknown>;
@@ -91,7 +91,7 @@ export async function reserveAIRequest(
     typeof value.usageId !== "string" ||
     typeof value.requestId !== "string"
   ) {
-    throw new AIServiceUnavailableError();
+    throw new AIServiceUnavailableError("quota_reservation_response_invalid");
   }
   return {
     ...result,
@@ -114,11 +114,12 @@ export async function finishAIRequest(
     p_input_tokens: null,
     p_output_tokens: null,
   });
-  if (error) throw new AIServiceUnavailableError();
+  if (error) throw new AIServiceUnavailableError("quota_finish_failed");
 }
 
 export function parseQuota(data: unknown): QuotaSnapshot {
-  if (!data || typeof data !== "object") throw new AIServiceUnavailableError();
+  if (!data || typeof data !== "object")
+    throw new AIServiceUnavailableError("quota_response_invalid");
   const value = data as Record<string, unknown>;
   if (
     !["guest", "account", "admin"].includes(String(value.kind)) ||
@@ -128,7 +129,7 @@ export function parseQuota(data: unknown): QuotaSnapshot {
     !(typeof value.limit === "number" || value.limit === null) ||
     !(typeof value.resetAt === "string" || value.resetAt === null)
   )
-    throw new AIServiceUnavailableError();
+    throw new AIServiceUnavailableError("quota_response_invalid");
   return value as QuotaSnapshot;
 }
 
@@ -141,7 +142,7 @@ export async function withAIReservation<T>(
   ) => Promise<T>,
 ): Promise<{ data: T; quota: ReservedAIRequest }> {
   const provider = getAIProvider();
-  const reservation = await reserveAIRequest(type, inputType);
+  const reservation = await reserveAIRequest(type, inputType, provider);
   const startedAt = Date.now();
   try {
     const data = await operation(provider, reservation);

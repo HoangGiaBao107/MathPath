@@ -38,7 +38,7 @@ Admin content writes have no `anon`/`authenticated` DML grants. Future route han
 
 `content/import/problem-set.schema.json` documents the v1 JSON payload; the executable validator is `src/lib/problems/import-schema.ts`. It checks required set/question/source fields, supported answer encodings, existing option/substatement references, duplicate identifiers/question numbers/order, time-mode validity, and review-only state. A missing official key remains `null` and requires `needs_review`; the importer does not infer keys. Import-to-database execution is deliberately absent.
 
-Rights states are `unknown`, `pending_review`, `approved_for_internal`, `approved_for_publication`, and `restricted`. Provenance has its own `unknown`, `pending_review`, and `verified` state. Public publication requires explicit rights clearance. No source PDF is required, read, copied, or ingested by this foundation.
+Rights states are `unknown`, `pending_review`, `approved_for_internal`, `approved_for_publication`, and `restricted`. Provenance has its own `unknown`, `pending_review`, and `verified` state. Public publication requires explicit rights clearance. Student question content is imported from approved Word documents only; PDF ingestion is not supported.
 
 ## Hàm số sessions and timer semantics
 

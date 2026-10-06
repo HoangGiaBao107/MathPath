@@ -5,6 +5,13 @@ import type { Route } from "next";
 import { useLocale } from "@/components/providers/locale-provider";
 import { Card } from "@/components/ui/card";
 import type { StudentAttemptResult } from "@/lib/analytics/types";
+import {
+  getAcceptedAnswers,
+  getShortAnswer,
+  getTrueFalseAnswer,
+  isCorrectOption,
+  isSelectedOption,
+} from "@/lib/analytics/question-review";
 
 export function StudentAttemptResultExperience({ attempt }: { attempt: StudentAttemptResult }) {
   const { locale, messages } = useLocale();
@@ -154,7 +161,7 @@ export function StudentAttemptResultExperience({ attempt }: { attempt: StudentAt
         <h2>{messages.exam.resultHeading}</h2>
         <div className="analytics-question-result-grid">
           {result.questionOutcomes.map((question) => (
-            <div
+            <article
               key={question.questionId}
               className={`analytics-question-result analytics-question-result--${question.state}`}
             >
@@ -180,12 +187,69 @@ export function StudentAttemptResultExperience({ attempt }: { attempt: StudentAt
                 {formatNumber(question.pointsEarned, locale)} /{" "}
                 {formatNumber(question.pointsPossible, locale)}
               </small>
-            </div>
+              {question.review ? (
+                <div className="analytics-question-review">
+                  {question.review.statement ? <p>{question.review.statement}</p> : null}
+                  {question.review.questionType === "multiple_choice" && !question.review.selectedAnswer ? (
+                    <p><strong>{copy.yourAnswer}: </strong>{copy.noAnswer}</p>
+                  ) : null}
+                  {question.review.options.length ? (
+                    <ul>
+                      {question.review.options.map((option) => {
+                        const selected = isSelectedOption(question.review?.selectedAnswer, option.key);
+                        const correct = isCorrectOption(question.review?.correctAnswer, option.key);
+                        return (
+                          <li key={option.key} className={correct ? "is-correct-answer" : selected ? "is-selected-answer" : ""}>
+                            <strong>{option.key}.</strong> {option.text}
+                            {selected ? ` · ${copy.yourAnswer}` : ""}
+                            {correct ? ` · ${copy.correctAnswer}` : ""}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : null}
+                  {question.review.questionType === "multiple_choice" && !question.review.correctAnswer ? (
+                    <p>{copy.answerKeyUnavailable}</p>
+                  ) : null}
+                  {question.review.substatements.map((item) => {
+                    const selected = getTrueFalseAnswer(question.review?.selectedAnswer, item.key);
+                    const correct = getTrueFalseAnswer(question.review?.correctAnswer, item.key);
+                    return (
+                      <p key={item.key}>
+                        <strong>{item.key.toUpperCase()}.</strong> {item.text}<br />
+                        {copy.yourAnswer}: {selected === null ? copy.noAnswer : formatBoolean(selected, locale)}
+                        {correct === null ? "" : ` · ${copy.correctAnswer}: ${formatBoolean(correct, locale)}`}
+                      </p>
+                    );
+                  })}
+                  {question.review.questionType === "true_false" && !question.review.correctAnswer ? (
+                    <p>{copy.answerKeyUnavailable}</p>
+                  ) : null}
+                  {question.review.questionType === "short_answer" ? (
+                    <p>
+                      <strong>{copy.yourAnswer}: </strong>
+                      {getShortAnswer(question.review.selectedAnswer) ?? copy.noAnswer}
+                      {getAcceptedAnswers(question.review.correctAnswer).length ? (
+                        <><br /><strong>{copy.correctAnswer}: </strong>{getAcceptedAnswers(question.review.correctAnswer).join(" / ")}</>
+                      ) : null}
+                    </p>
+                  ) : null}
+                  {question.review.questionType === "short_answer" && !getAcceptedAnswers(question.review.correctAnswer).length ? (
+                    <p>{copy.answerKeyUnavailable}</p>
+                  ) : null}
+                  <p><strong>{copy.explanation}: </strong>{question.review.explanation || copy.noExplanation}</p>
+                </div>
+              ) : null}
+            </article>
           ))}
         </div>
       </Card>
     </main>
   );
+}
+
+function formatBoolean(value: boolean, locale: "vi" | "en") {
+  return locale === "vi" ? (value ? "Đúng" : "Sai") : (value ? "True" : "False");
 }
 
 function formatNumber(value: number, locale: "vi" | "en") {

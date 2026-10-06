@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { AccountExperience } from "@/components/auth/account-experience";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabasePublicConfigured } from "@/lib/supabase/config";
+import { getStudentProgress } from "@/lib/analytics/server";
 
 export const metadata = { title: "Account", robots: { index: false, follow: false } };
 
@@ -26,6 +27,7 @@ export default async function AccountPage() {
       displayName={profile?.display_name ?? null}
       language={profile?.language ?? null}
       targetScore={profile?.target_score ?? null}
+      progress={await getStudentProgress(user.id, 1)}
       configured
     />
   );

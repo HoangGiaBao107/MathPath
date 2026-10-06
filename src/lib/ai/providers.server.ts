@@ -64,7 +64,10 @@ class HttpMathPathProvider implements AIProvider {
   }
 
   async generateSimilarProblem(input: SimilarProblemInput): Promise<SimilarProblem> {
-    const text = await this.complete([{ role: "user", content: practicePrompt(input) }], true);
+    const text = await this.complete(
+      [{ role: "user", content: practicePrompt(input) }],
+      true,
+    );
     const value = similarProblemSchema.parse(parseJson<unknown>(text));
     for (const field of [
       value.statement,
@@ -121,6 +124,17 @@ class HttpMathPathProvider implements AIProvider {
     try {
       if (this.name === "openai") return await this.sendOpenAi(input, controller.signal);
       return await this.sendAnthropic(input, controller.signal);
+    } catch (error) {
+      if (error instanceof AIProviderRequestError) throw error;
+      if (controller.signal.aborted) {
+        throw new AIProviderRequestError(this.name, 504, "timeout", "Provider request timed out.");
+      }
+      throw new AIProviderRequestError(
+        this.name,
+        null,
+        "connection_error",
+        "Could not establish a connection to the AI provider.",
+      );
     } finally {
       clearTimeout(timeout);
     }
@@ -154,12 +168,18 @@ class HttpMathPathProvider implements AIProvider {
       }),
       signal,
     });
-    if (!response.ok) throw new AIProviderRequestError();
+    if (!response.ok) throw await providerResponseError(this.name, response);
     const payload = (await response.json()) as {
       choices?: { message?: { content?: string | null } }[];
     };
     const text = payload.choices?.[0]?.message?.content;
-    if (!text) throw new AIProviderRequestError();
+    if (!text)
+      throw new AIProviderRequestError(
+        this.name,
+        200,
+        "empty_response",
+        "Provider returned no text.",
+      );
     return { text };
   }
 
@@ -208,19 +228,87 @@ class HttpMathPathProvider implements AIProvider {
       }),
       signal,
     });
-    if (!response.ok) throw new AIProviderRequestError();
+    if (!response.ok) throw await providerResponseError(this.name, response);
     const payload = (await response.json()) as { content?: { type: string; text?: string }[] };
     const text = payload.content?.find((item) => item.type === "text")?.text;
-    if (!text) throw new AIProviderRequestError();
+    if (!text)
+      throw new AIProviderRequestError(
+        this.name,
+        200,
+        "empty_response",
+        "Provider returned no text.",
+      );
     return { text };
   }
 }
 
 export class AIProviderRequestError extends Error {
-  constructor() {
+  constructor(
+    readonly provider: AIProviderName,
+    readonly status: number | null,
+    readonly code: string,
+    readonly providerMessage: string,
+    readonly requestId?: string,
+  ) {
     super("ai_provider_request_failed");
     this.name = "AIProviderRequestError";
   }
+}
+
+async function providerResponseError(provider: AIProviderName, response: Response) {
+  const body = (await response.json().catch(() => null)) as {
+    error?: { code?: unknown; type?: unknown; message?: unknown };
+  } | null;
+  const upstreamCode = [body?.error?.code, body?.error?.type].find(
+    (value): value is string => typeof value === "string",
+  );
+  const code = classifyProviderError(response.status, upstreamCode);
+  const message =
+    typeof body?.error?.message === "string"
+      ? redactProviderMessage(body.error.message)
+      : safeProviderMessage(code);
+  return new AIProviderRequestError(
+    provider,
+    response.status,
+    code,
+    message,
+    response.headers.get("x-request-id") ?? response.headers.get("request-id") ?? undefined,
+  );
+}
+
+function classifyProviderError(status: number, upstreamCode?: string) {
+  const code = upstreamCode?.toLowerCase() ?? "";
+  if (code.includes("invalid_api_key") || status === 401) return "invalid_api_key";
+  if (code.includes("insufficient_quota") || code.includes("billing_hard_limit"))
+    return "insufficient_quota";
+  if (code.includes("rate_limit") || (status === 429 && !code)) return "rate_limit";
+  if (code.includes("model_not_found") || (status === 404 && !code)) return "model_not_found";
+  if (status === 403) return "permission_denied";
+  if (status === 400) return "invalid_request";
+  if (status >= 500) return "provider_server_error";
+  return "provider_request_failed";
+}
+
+function redactProviderMessage(value: string) {
+  return value
+    .replace(/sk-[A-Za-z0-9_-]{8,}/g, "[REDACTED_KEY]")
+    .replace(/Bearer\s+\S+/gi, "Bearer [REDACTED]")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 400);
+}
+
+function safeProviderMessage(code: string) {
+  const messages: Record<string, string> = {
+    invalid_api_key: "The provider rejected the API key.",
+    insufficient_quota: "The provider account has insufficient API quota or billing.",
+    rate_limit: "The provider rate limit was reached.",
+    model_not_found: "The requested model is unavailable to this provider account.",
+    permission_denied: "The provider account does not have permission for this request.",
+    invalid_request: "The provider rejected the request parameters.",
+    provider_server_error: "The provider returned a server error.",
+  };
+  return messages[code] ?? "The provider rejected the request.";
 }
 
 export class AIOutputInvalidError extends Error {
@@ -235,11 +323,7 @@ export function getAIProvider(): AIProvider & { name: AIProviderName; model: str
   if (env.OPENAI_API_KEY)
     return new HttpMathPathProvider("openai", env.OPENAI_API_KEY, "gpt-4.1-mini");
   if (env.ANTHROPIC_API_KEY)
-    return new HttpMathPathProvider(
-      "anthropic",
-      env.ANTHROPIC_API_KEY,
-      "claude-sonnet-4-5-20250929",
-    );
+    return new HttpMathPathProvider("anthropic", env.ANTHROPIC_API_KEY, "claude-sonnet-4-5-20250929");
   throw new AIProviderNotConfiguredError("openai");
 }
 

@@ -10,6 +10,8 @@ export const authMessages: Record<
     description: string;
     name: string;
     email: string;
+    loginIdentifier: string;
+    username: string;
     password: string;
     newPassword: string;
     submitLogin: string;
@@ -40,6 +42,10 @@ export const authMessages: Record<
     emailRateLimited: string;
     credentialsNotAccepted: string;
     emailNotConfirmed: string;
+    recoveryLinkExpired: string;
+    recoveryNotSent: string;
+    accountNotCreated: string;
+    authCallbackFailed: string;
     invalid: string;
   }
 > = {
@@ -51,6 +57,8 @@ export const authMessages: Record<
     description: "Lưu lại hành trình học và tiếp tục bài làm trên các thiết bị của bạn.",
     name: "Tên hiển thị",
     email: "Email",
+    loginIdentifier: "Email hoặc tên đăng nhập",
+    username: "Tên đăng nhập (3–30 ký tự, không chứa @)",
     password: "Mật khẩu (ít nhất 8 ký tự)",
     newPassword: "Mật khẩu mới (ít nhất 8 ký tự)",
     submitLogin: "Đăng nhập",
@@ -66,27 +74,30 @@ export const authMessages: Record<
     checkEmail: "Kiểm tra email để xác nhận tài khoản, rồi quay lại đăng nhập nhé.",
     resendConfirmation: "Gửi lại email xác nhận",
     confirmationResent: "Đã yêu cầu gửi lại email xác nhận. Hãy kiểm tra hộp thư và thư rác.",
-    recoverySent: "Nếu email này đã đăng ký, MathPath sẽ gửi hướng dẫn đặt lại mật khẩu.",
+    recoverySent: "Nếu email hoặc tên đăng nhập này đã có tài khoản, MathPath sẽ gửi hướng dẫn đặt lại mật khẩu.",
     passwordUpdated: "Mật khẩu đã được cập nhật.",
     signOut: "Đăng xuất",
     accountTitle: "Tài khoản của bạn",
-    accountDescription: "Thông tin được quản lý bởi Supabase Auth và hồ sơ MathPath.",
+    accountDescription: "Quản lý hồ sơ học tập, mục tiêu và bảo mật tài khoản của bạn.",
     accountLink: "Tài khoản",
     languageLabel: "Ngôn ngữ",
-    targetScoreLabel: "Mục tiêu điểm",
-    setupMissing:
-      "Chưa cấu hình Supabase. Hãy thêm URL, anon key và service role key vào .env.local rồi khởi động lại ứng dụng.",
-    genericError: "Chưa thực hiện được yêu cầu. Kiểm tra cấu hình rồi thử lại nhé.",
-    emailDeliveryNotConfigured:
-      "Supabase chưa cho phép gửi thư đến email này. Cần cấu hình SMTP tùy chỉnh trong Authentication → SMTP Settings.",
-    authRedirectNotAllowed:
-      "Supabase chưa cho phép đường dẫn quay lại ứng dụng. Thêm URL callback vào Authentication → URL Configuration.",
+    targetScoreLabel: "Mục tiêu điểm THPTQG",
+    setupMissing: "Tài khoản hiện chưa khả dụng. Vui lòng thử lại sau.",
+    genericError: "Chưa thực hiện được yêu cầu. Vui lòng thử lại sau.",
+    emailDeliveryNotConfigured: "Chưa gửi được email đến địa chỉ này. Vui lòng thử lại sau.",
+    authRedirectNotAllowed: "Liên kết chưa dùng được. Hãy yêu cầu gửi email mới rồi thử lại.",
     emailRateLimited: "Email xác nhận đang bị giới hạn tần suất. Hãy đợi một lúc rồi thử gửi lại.",
     credentialsNotAccepted:
       "Email hoặc mật khẩu chưa đúng. Kiểm tra lại thông tin hoặc chọn Quên mật khẩu nếu bạn không nhớ mật khẩu.",
     emailNotConfirmed:
       "Email tài khoản chưa được xác nhận. Hãy xác nhận email rồi thử đăng nhập lại.",
-    invalid: "Nhập email hợp lệ và mật khẩu có ít nhất 8 ký tự.",
+    recoveryLinkExpired:
+      "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Hãy gửi yêu cầu lấy lại mật khẩu mới.",
+    recoveryNotSent: "Chưa gửi được email đặt lại mật khẩu. Vui lòng thử lại sau.",
+    accountNotCreated:
+      "Chưa tạo được tài khoản. Email có thể đã đăng ký; hãy thử đăng nhập hoặc chọn Quên mật khẩu.",
+    authCallbackFailed: "Không hoàn tất được đăng nhập. Vui lòng thử lại sau.",
+    invalid: "Kiểm tra email, tên đăng nhập và mật khẩu có ít nhất 8 ký tự.",
   },
   en: {
     loginTitle: "Sign in to MathPath",
@@ -96,6 +107,8 @@ export const authMessages: Record<
     description: "Keep your learning journey and continue attempts across your devices.",
     name: "Display name",
     email: "Email",
+    loginIdentifier: "Email or username",
+    username: "Username (3–30 characters, no @)",
     password: "Password (at least 8 characters)",
     newPassword: "New password (at least 8 characters)",
     submitLogin: "Sign in",
@@ -111,26 +124,29 @@ export const authMessages: Record<
     checkEmail: "Check your email to confirm your account, then come back to sign in.",
     resendConfirmation: "Resend confirmation email",
     confirmationResent: "A new confirmation email was requested. Check your inbox and spam folder.",
-    recoverySent: "If this email has an account, MathPath will send password reset instructions.",
+    recoverySent: "If this email or username has an account, MathPath will send password reset instructions.",
     passwordUpdated: "Your password has been updated.",
     signOut: "Sign out",
     accountTitle: "Your account",
-    accountDescription: "Your account uses Supabase Auth and your MathPath profile.",
+    accountDescription: "Manage your learning profile, goals, and account security.",
     accountLink: "Account",
     languageLabel: "Language",
-    targetScoreLabel: "Target score",
-    setupMissing:
-      "Supabase is not configured. Add the project URL, anon key, and service role key to .env.local, then restart the app.",
-    genericError: "That request could not be completed. Check the configuration and try again.",
-    emailDeliveryNotConfigured:
-      "Supabase is not configured to send email to this address. Set up custom SMTP in Authentication → SMTP Settings.",
-    authRedirectNotAllowed:
-      "Supabase does not allow this return URL. Add the callback URL in Authentication → URL Configuration.",
+    targetScoreLabel: "THPTQG target score",
+    setupMissing: "This account area is temporarily unavailable. Please try again later.",
+    genericError: "That request could not be completed. Please try again later.",
+    emailDeliveryNotConfigured: "We could not send an email to this address. Please try again later.",
+    authRedirectNotAllowed: "This link is unavailable. Request a new email and try again.",
     emailRateLimited: "Confirmation email sending is rate limited. Wait a while, then try again.",
     credentialsNotAccepted:
       "The email or password is incorrect. Check your details, or choose Forgot password if needed.",
     emailNotConfirmed:
       "This account's email is not confirmed. Confirm it, then try signing in again.",
-    invalid: "Enter a valid email and a password of at least 8 characters.",
+    recoveryLinkExpired:
+      "This password reset link is invalid or expired. Request a new password reset link.",
+    recoveryNotSent: "The password reset email could not be sent. Please try again later.",
+    accountNotCreated:
+      "The account could not be created. This email may already be registered; try signing in or resetting the password.",
+    authCallbackFailed: "Sign-in could not be completed. Please try again later.",
+    invalid: "Check your email, username, and password (at least 8 characters).",
   },
 };
