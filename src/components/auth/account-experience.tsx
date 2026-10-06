@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { LineChart } from "@/components/analytics/line-chart";
 import { useLocale } from "@/components/providers/locale-provider";
 import { Button } from "@/components/ui/button";
@@ -47,7 +47,9 @@ export function AccountExperience({
   const [name, setName] = useState(username ?? "");
   const [aim, setAim] = useState(targetScore == null ? "" : String(targetScore));
   const [birthday, setBirthday] = useState(birthDate ?? "");
-  const [selectedGender, setSelectedGender] = useState(gender ?? "");
+  const [selectedGender, setSelectedGender] = useState(
+    gender === "prefer_not_to_say" ? "" : gender ?? "",
+  );
   const [avatarPath, setAvatarPath] = useState(initialAvatarPath ?? null);
   const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl ?? null);
   const [newPassword, setNewPassword] = useState("");
@@ -55,6 +57,21 @@ export function AccountExperience({
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState("starter");
+
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/ai/quota", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const payload = (await response.json()) as { quota?: { plan?: string } };
+        if (active && payload.quota?.plan) {
+          setCurrentPlan(payload.quota.plan === "free" ? "starter" : payload.quota.plan);
+        }
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
 
   async function signOut() {
     setError("");
@@ -198,10 +215,9 @@ export function AccountExperience({
   const trendSeries = progress?.trend.length ? [{ label: vi ? "Điểm từng đề" : "Exam scores", color: "#d71920", values: progress.trend.map((point) => point.score) }, ...(progress.targetScore === null ? [] : [{ label: vi ? "Mục tiêu" : "Target", color: "#1f2937", dashed: true, values: progress.trend.map(() => progress.targetScore!) }])] : [];
   const latestScore = progress?.trend.at(-1)?.score;
   const scoreMessage = getScoreGoalMessage(latestScore, progress?.targetScore ?? targetScore ?? null, locale);
-  const plans = [
-    { slug: "starter", name: "Starter", price: 0, requests: creditPolicy.registeredFreeDailyRequests, current: true },
-    ...creditPolicy.paidPlans.map((plan) => ({ slug: plan.slug, name: plan.name, price: plan.monthlyPriceVnd, requests: plan.requestsPerDay, current: false })),
-  ];
+  const activePlanName = currentPlan === "starter"
+    ? "Starter"
+    : creditPolicy.paidPlans.find((plan) => plan.slug === currentPlan)?.name ?? currentPlan;
 
   return (
     <main className="site-main page-shell account-dashboard container" id="main-content">
@@ -230,7 +246,6 @@ export function AccountExperience({
                       {savingAvatar ? (vi ? "Đang cập nhật…" : "Updating…") : copy.avatarLabel}
                     </label>
                     <input id="account-avatar-file" className="sr-only" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void uploadAvatar(event)} disabled={savingAvatar} />
-                    <small>{copy.avatarHelp}</small>
                     {avatarPath ? <button className="account-remove-avatar" type="button" onClick={() => void removeAvatar()} disabled={savingAvatar}>{vi ? "Gỡ ảnh" : "Remove photo"}</button> : null}
                   </div>
                 </div>
@@ -241,7 +256,8 @@ export function AccountExperience({
                   <p className="account-field-hint">{vi ? "Tên đăng nhập cũng là tên hiển thị của bạn. Dùng 3–30 chữ cái, số, dấu chấm, gạch dưới hoặc gạch ngang." : "Your username is also your display name. Use 3–30 letters, numbers, dots, underscores, or hyphens."}</p>
                   <label>{copy.email}<input value={email ?? "—"} readOnly /></label>
                   <label>{copy.birthDateLabel}<input type="date" value={birthday} max={new Date().toISOString().slice(0, 10)} onChange={(event) => setBirthday(event.target.value)} /></label>
-                  <label>{copy.genderLabel}<select value={selectedGender} onChange={(event) => setSelectedGender(event.target.value)}><option value="">{vi ? "Chưa chọn" : "Choose an option"}</option><option value="female">{copy.genderOptions.female}</option><option value="male">{copy.genderOptions.male}</option><option value="non_binary">{copy.genderOptions.nonBinary}</option><option value="prefer_not_to_say">{copy.genderOptions.preferNot}</option></select></label>
+                  <label>{copy.genderLabel}<select value={selectedGender} onChange={(event) => setSelectedGender(event.target.value)}><option value="" disabled hidden>{vi ? "Chọn giới tính" : "Choose gender"}</option><option value="female">{copy.genderOptions.female}</option><option value="male">{copy.genderOptions.male}</option><option value="non_binary">{copy.genderOptions.nonBinary}</option></select></label>
+                  <label>{vi ? "Gói học tập" : "Learning plan"}<input value={activePlanName} readOnly /></label>
                   <label>{copy.targetScoreLabel} (0–10)<input type="number" min="0" max="10" step="0.1" value={aim} onChange={(event) => setAim(event.target.value)} placeholder={vi ? "Chưa đặt mục tiêu" : "No target set"} /></label>
                   <Button type="submit" disabled={savingProfile}>{savingProfile ? (vi ? "Đang lưu…" : "Saving…") : (vi ? "Lưu hồ sơ" : "Save profile")}</Button>
                 </form>
@@ -271,16 +287,6 @@ export function AccountExperience({
             </div>
           </div>
 
-          <Card className="account-panel account-plans-panel">
-            <div className="account-panel-heading"><div><p className="eyebrow">{vi ? "CHỌN NHỊP HỌC" : "FIND YOUR PACE"}</p><h2>{copy.plansTitle}</h2><p className="account-plans-description">{copy.plansDescription}</p></div></div>
-            <div className="account-plan-grid">
-              {plans.map((plan) => <article className={`account-plan-card${plan.current ? " is-current" : ""}`} key={plan.slug}>
-                <div className="account-plan-card-heading"><h3>{plan.name}</h3><span>{plan.current ? copy.planCurrent : copy.planComingSoon}</span></div>
-                <p className="account-plan-price">{plan.price === 0 ? (vi ? "Miễn phí" : "Free") : <>{new Intl.NumberFormat(vi ? "vi-VN" : "en-US").format(plan.price)} <small>{vi ? "đ/tháng" : "VND/month"}</small></>}</p>
-                <p className="account-plan-quota"><strong>{plan.requests}</strong> {copy.planPerDay}</p>
-              </article>)}
-            </div>
-          </Card>
         </>
       )}
       {error ? <p className="auth-message auth-message--error" role="alert">{error}</p> : null}{notice ? <p className="auth-message" role="status">{notice}</p> : null}

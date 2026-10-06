@@ -4,6 +4,7 @@ import { claimCurrentGuestAttempts } from "@/lib/auth/claim-guest.server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getAuthRedirectBaseUrl } from "@/lib/auth/redirect-url";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
+import { persistProfileUpdate } from "@/lib/auth/persist-profile-update";
 import { canSkipEmailConfirmation } from "@/lib/auth/admin-email-confirmation";
 import { isEmailIdentifier, loginIdentifierSchema } from "@/lib/auth/login-identifier";
 
@@ -202,7 +203,9 @@ export async function PATCH(request: Request, context: RouteContext<"/api/auth/[
       ...(parsed.data.gender !== undefined ? { gender: parsed.data.gender } : {}),
       ...(parsed.data.avatarPath !== undefined ? { avatar_path: parsed.data.avatarPath } : {}),
     };
-    const { error } = await supabase.from("profiles").update(profileUpdate).eq("id", user.id);
+    // Profile RLS only permits admins to write; the server performs this
+    // validated, per-user update with the service client after authenticating.
+    const { error } = await persistProfileUpdate(getSupabaseAdminClient(), user.id, profileUpdate);
     if (error?.code === "23505") return authError("username_taken", 409);
     if (error) return authError("profile_sync_failed", 503);
     return NextResponse.json({ ok: true }, { headers: noStoreHeaders });

@@ -9,6 +9,7 @@ export type TranslationMessages = {
     practice: string;
     ai: string;
     progress: string;
+    plans: string;
     label: string;
     brandHome: string;
   };

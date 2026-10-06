@@ -9,6 +9,7 @@ import { TargetScoreOnboarding } from "@/components/home/target-score-onboarding
 import { interpolate } from "@/lib/i18n/messages";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { formatTargetScore } from "@/lib/onboarding/target-score";
+import { creditPolicy } from "@/lib/credits/types";
 import {
   getTargetScoreServerSnapshot,
   getTargetScoreSnapshot,
@@ -210,6 +211,35 @@ export function HomeExperience() {
                   </Link>
                 </article>
               </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="home-plans-section" id="plans" aria-labelledby="plans-title">
+        <div className="container">
+          <Reveal>
+            <SectionHeading
+              id="plans-title"
+              eyebrow={locale === "vi" ? "GÓI HỌC MATHPATH" : "MATHPATH PLANS"}
+              title={locale === "vi" ? "Chọn gói học hợp với bạn" : "Find the plan that fits"}
+              description={locale === "vi" ? "Bắt đầu miễn phí, nâng cấp khi bạn cần thêm lượt đồng hành cùng AI." : "Start free, then upgrade when you need more help from AI."}
+            />
+          </Reveal>
+          <div className="account-plan-grid home-plan-grid">
+            <article className="account-plan-card is-current">
+              <div className="account-plan-card-heading"><h3>Starter</h3><span>{locale === "vi" ? "MIỄN PHÍ" : "FREE"}</span></div>
+              <p className="account-plan-price">{locale === "vi" ? "0đ" : "Free"}</p>
+              <p className="account-plan-quota"><strong>{creditPolicy.registeredFreeDailyRequests}</strong> {locale === "vi" ? "lượt AI mỗi ngày" : "AI requests per day"}</p>
+              <Link className="button button--secondary button--small home-plan-action" href="/problems">{locale === "vi" ? "Bắt đầu học" : "Start learning"}</Link>
+            </article>
+            {creditPolicy.paidPlans.map((plan) => (
+              <article className="account-plan-card" key={plan.slug}>
+                <div className="account-plan-card-heading"><h3>{plan.name}</h3><span>{locale === "vi" ? "SẮP RA MẮT" : "COMING SOON"}</span></div>
+                <p className="account-plan-price">{new Intl.NumberFormat(locale === "vi" ? "vi-VN" : "en-US").format(plan.monthlyPriceVnd)} <small>{locale === "vi" ? "đ/tháng" : "VND/month"}</small></p>
+                <p className="account-plan-quota"><strong>{plan.requestsPerDay}</strong> {locale === "vi" ? "lượt AI mỗi ngày" : "AI requests per day"}</p>
+                <button className="button button--secondary button--small home-plan-action" type="button" disabled>{locale === "vi" ? "Sắp mở bán" : "Not available yet"}</button>
+              </article>
             ))}
           </div>
         </div>

@@ -44,6 +44,7 @@ export function AIWorkspace({
   const [image, setImage] = useState<File | null>(null);
   const imageUrl = useMemo(() => (image ? URL.createObjectURL(image) : null), [image]);
   const fileInput = useRef<HTMLInputElement>(null);
+  const cameraInput = useRef<HTMLInputElement>(null);
   const [solution, setSolution] = useState<SolverResponse | null>(null);
   const [topic, setTopic] = useState("");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
@@ -242,15 +243,39 @@ export function AIWorkspace({
                 onChange={(event) => setProblemText(event.target.value)}
                 placeholder={copy.problemPlaceholder}
               />
-              <label className="ai-image-picker">
-                {copy.imageLabel}
+              <div className="ai-image-picker">
+                <span>{copy.imageLabel}</span>
                 <input
                   ref={fileInput}
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
-                  onChange={(event) => onImageChange(event.target.files?.[0] ?? null)}
+                  onChange={(event) => {
+                    onImageChange(event.target.files?.[0] ?? null);
+                    event.currentTarget.value = "";
+                  }}
                 />
-              </label>
+                <input
+                  ref={cameraInput}
+                  className="ai-image-input-hidden"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  capture="environment"
+                  aria-label={locale === "vi" ? "Chụp ảnh đề Toán" : "Take a photo of the math problem"}
+                  onChange={(event) => {
+                    onImageChange(event.target.files?.[0] ?? null);
+                    event.currentTarget.value = "";
+                  }}
+                />
+                <div className="ai-image-picker-actions">
+                  <button type="button" className="button button--secondary button--small" onClick={() => fileInput.current?.click()}>
+                    {locale === "vi" ? "Chọn ảnh" : "Choose an image"}
+                  </button>
+                  <button type="button" className="button button--secondary button--small" onClick={() => cameraInput.current?.click()}>
+                    {locale === "vi" ? "Chụp bằng camera" : "Take a photo"}
+                  </button>
+                </div>
+                {image ? <span className="ai-image-file-name">{image.name}</span> : null}
+              </div>
               {image && imageUrl ? (
                 <div className="ai-image-preview">
                   <Image

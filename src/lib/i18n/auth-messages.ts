@@ -37,9 +37,8 @@ export const authMessages: Record<
     targetScoreLabel: string;
     birthDateLabel: string;
     genderLabel: string;
-    genderOptions: { female: string; male: string; nonBinary: string; preferNot: string };
+    genderOptions: { female: string; male: string; nonBinary: string };
     avatarLabel: string;
-    avatarHelp: string;
     avatarTooLarge: string;
     avatarUnsupported: string;
     usernameTaken: string;
@@ -103,9 +102,8 @@ export const authMessages: Record<
     targetScoreLabel: "Mục tiêu điểm THPTQG",
     birthDateLabel: "Ngày sinh",
     genderLabel: "Giới tính",
-    genderOptions: { female: "Nữ", male: "Nam", nonBinary: "Khác", preferNot: "Không muốn nêu" },
+    genderOptions: { female: "Nữ", male: "Nam", nonBinary: "Khác" },
     avatarLabel: "Đổi ảnh đại diện",
-    avatarHelp: "PNG, JPG hoặc WebP · tối đa 2 MB",
     avatarTooLarge: "Ảnh đại diện cần nhỏ hơn 2 MB.",
     avatarUnsupported: "Chọn ảnh PNG, JPG hoặc WebP nhé.",
     usernameTaken: "Tên đăng nhập này đã có người dùng. Chọn tên khác nhé.",
@@ -172,9 +170,8 @@ export const authMessages: Record<
     targetScoreLabel: "THPTQG target score",
     birthDateLabel: "Date of birth",
     genderLabel: "Gender",
-    genderOptions: { female: "Female", male: "Male", nonBinary: "Other", preferNot: "Prefer not to say" },
+    genderOptions: { female: "Female", male: "Male", nonBinary: "Other" },
     avatarLabel: "Change profile photo",
-    avatarHelp: "PNG, JPG or WebP · up to 2 MB",
     avatarTooLarge: "Choose a profile photo smaller than 2 MB.",
     avatarUnsupported: "Choose a PNG, JPG, or WebP image.",
     usernameTaken: "That username is already in use. Please choose another.",

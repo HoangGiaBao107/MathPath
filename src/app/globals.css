@@ -5527,6 +5527,13 @@ select:focus-visible {
   padding: 0.8rem 0.95rem;
   font: inherit;
 }
+.ai-form select {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d71920' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .9rem center;
+}
 .ai-form textarea {
   resize: vertical;
   min-height: 90px;
@@ -5543,14 +5550,32 @@ select:focus-visible {
 }
 .ai-image-picker {
   display: grid;
-  gap: 0.5rem;
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  gap: .75rem;
+  padding: 1rem;
+  border: 1px solid #f0d9da;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #fff8f8, #fff);
+  color: var(--color-text);
+  font-size: .92rem;
+  font-weight: 700;
 }
-.ai-image-picker input {
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 0.75rem;
+.ai-image-picker > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.ai-image-picker-actions { display: flex; gap: .65rem; flex-wrap: wrap; }
+.ai-image-file-name { color: var(--color-text-secondary); font-size: .83rem; font-weight: 500; overflow-wrap: anywhere; }
+.auth-form select {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d71920' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .9rem center;
 }
 .ai-image-preview {
   position: relative;
@@ -5815,6 +5840,11 @@ select:focus-visible {
 .account-plan-price small { display: block; color: var(--color-text-secondary); font-size: .78rem; font-weight: 500; }
 .account-plan-quota { margin: 0; color: var(--color-text-secondary); font-size: .83rem; }
 .account-plan-quota strong { color: var(--color-primary); }
+.home-plans-section { padding: clamp(3.5rem, 7vw, 6rem) 0; background: linear-gradient(180deg, #fff8f8 0%, #fff 100%); scroll-margin-top: 6rem; }
+.home-plans-section .section-heading { margin-bottom: 2rem; }
+.home-plan-grid { max-width: 1120px; margin: 0 auto; }
+.home-plan-action { margin-top: 1rem; width: 100%; justify-content: center; }
+.home-plan-action:disabled { opacity: .72; cursor: not-allowed; }
 .account-dashboard > .auth-message { margin-top: 1rem; }
 @media (max-width: 900px) {
   .account-dashboard-grid { grid-template-columns: minmax(0, 1fr); }
