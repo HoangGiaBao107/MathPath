@@ -11,7 +11,6 @@ const credentialsSchema = z.object({
   email: z.string().email().max(254),
   username: z.string().regex(/^[a-zA-Z0-9._-]{3,30}$/),
   password: z.string().min(8).max(128),
-  displayName: z.string().trim().min(1).max(80).optional(),
   language: z.enum(["vi", "en"]).optional(),
   targetScore: z.number().min(0).max(10).optional(),
 });
@@ -84,7 +83,7 @@ export async function POST(request: Request, context: RouteContext<"/api/auth/[a
         password: parsed.data.password,
         options: {
           data: {
-            display_name: parsed.data.displayName ?? "",
+            display_name: parsed.data.username,
             username: parsed.data.username,
             language: parsed.data.language ?? "vi",
             target_score: parsed.data.targetScore,
@@ -176,9 +175,12 @@ export async function PATCH(request: Request, context: RouteContext<"/api/auth/[
   const { action } = await context.params;
   if (action !== "profile") return authError("not_found", 404);
   const inputSchema = z.object({
-    targetScore: z.number().min(0).max(10).optional(),
+    targetScore: z.number().min(0).max(10).nullable().optional(),
     language: z.enum(["vi", "en"]).optional(),
-    displayName: z.string().trim().min(1).max(80).optional(),
+    username: z.string().trim().regex(/^[a-zA-Z0-9._-]{3,30}$/).optional(),
+    birthDate: z.string().nullable().optional().refine(isValidBirthDate),
+    gender: z.enum(["female", "male", "non_binary", "prefer_not_to_say"]).nullable().optional(),
+    avatarPath: z.string().max(100).nullable().optional(),
   }).refine((value) => Object.keys(value).length > 0);
   const parsed = inputSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return authError("invalid_request", 400);
@@ -188,17 +190,32 @@ export async function PATCH(request: Request, context: RouteContext<"/api/auth/[
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return authError("session_expired", 401);
+    if (parsed.data.avatarPath && parsed.data.avatarPath !== `${user.id}/avatar`)
+      return authError("invalid_request", 400);
     const profileUpdate = {
       ...(parsed.data.targetScore !== undefined ? { target_score: parsed.data.targetScore } : {}),
       ...(parsed.data.language !== undefined ? { language: parsed.data.language } : {}),
-      ...(parsed.data.displayName !== undefined ? { display_name: parsed.data.displayName } : {}),
+      ...(parsed.data.username !== undefined
+        ? { username: parsed.data.username, display_name: parsed.data.username }
+        : {}),
+      ...(parsed.data.birthDate !== undefined ? { birth_date: parsed.data.birthDate } : {}),
+      ...(parsed.data.gender !== undefined ? { gender: parsed.data.gender } : {}),
+      ...(parsed.data.avatarPath !== undefined ? { avatar_path: parsed.data.avatarPath } : {}),
     };
     const { error } = await supabase.from("profiles").update(profileUpdate).eq("id", user.id);
+    if (error?.code === "23505") return authError("username_taken", 409);
     if (error) return authError("profile_sync_failed", 503);
     return NextResponse.json({ ok: true }, { headers: noStoreHeaders });
   } catch {
     return authError("auth_service_unavailable", 503);
   }
+}
+
+function isValidBirthDate(value: string | null | undefined) {
+  if (value == null) return true;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value && value <= new Date().toISOString().slice(0, 10);
 }
 
 const noStoreHeaders = { "Cache-Control": "no-store, private" };
@@ -209,6 +226,8 @@ function authError(code: string, status: number) {
 
 function classifySupabaseAuthError(error: { code?: string; message: string; status?: number }) {
   const detail = `${error.code ?? ""} ${error.message}`.toLowerCase();
+  if (error.code === "23505" || detail.includes("profiles_username_lower_unique"))
+    return "username_taken";
   if (
     detail.includes("email_address_not_authorized") ||
     detail.includes("email address not authorized")

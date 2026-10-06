@@ -8,6 +8,7 @@ import { useLocale } from "@/components/providers/locale-provider";
 import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
 import { deriveStudentPersonalization } from "@/lib/analytics/personalization";
+import { getScoreGoalMessage } from "@/lib/analytics/score-encouragement";
 import type { StudentProgress } from "@/lib/analytics/types";
 
 const historyPageSize = 10;
@@ -36,6 +37,7 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
           ? copy.trendStable
           : copy.insufficientTrend;
   const chartLabels = data.trend.map((point) => formatDateShort(point.submittedAt, locale));
+  const scoreGoalMessage = getScoreGoalMessage(data.trend.at(-1)?.score, data.targetScore, locale);
 
   return (
     <main className="page-shell analytics-page" id="main-content">
@@ -75,7 +77,8 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
           <div className="analytics-panel-heading">
             <div>
               <p className="eyebrow">{copy.scoreTrend}</p>
-              <h2>{copy.scoreTrend}</h2>
+              <h2>{scoreGoalMessage.title}</h2>
+              {scoreGoalMessage.body ? <p className="account-score-message">{scoreGoalMessage.body}</p> : null}
             </div>
             <span className={`analytics-trend-badge analytics-trend-badge--${summary.scoreTrend}`}>
               {trendLabel}

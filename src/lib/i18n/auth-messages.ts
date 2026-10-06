@@ -35,6 +35,25 @@ export const authMessages: Record<
     accountLink: string;
     languageLabel: string;
     targetScoreLabel: string;
+    birthDateLabel: string;
+    genderLabel: string;
+    genderOptions: { female: string; male: string; nonBinary: string; preferNot: string };
+    avatarLabel: string;
+    avatarHelp: string;
+    avatarTooLarge: string;
+    avatarUnsupported: string;
+    usernameTaken: string;
+    plansTitle: string;
+    plansDescription: string;
+    planCurrent: string;
+    planComingSoon: string;
+    planPerDay: string;
+    scoreGoalExceeded: string;
+    scoreGoalReached: string;
+    scoreGoalProgress: string;
+    scoreNoAttempts: string;
+    scoreSetGoal: string;
+    scoreWithNoGoal: string;
     setupMissing: string;
     genericError: string;
     emailDeliveryNotConfigured: string;
@@ -55,7 +74,7 @@ export const authMessages: Record<
     recoveryTitle: "Lấy lại mật khẩu",
     recoveryUpdateTitle: "Đặt mật khẩu mới",
     description: "Lưu lại hành trình học và tiếp tục bài làm trên các thiết bị của bạn.",
-    name: "Tên hiển thị",
+    name: "Tên đăng nhập",
     email: "Email",
     loginIdentifier: "Email hoặc tên đăng nhập",
     username: "Tên đăng nhập (3–30 ký tự, không chứa @)",
@@ -82,6 +101,25 @@ export const authMessages: Record<
     accountLink: "Tài khoản",
     languageLabel: "Ngôn ngữ",
     targetScoreLabel: "Mục tiêu điểm THPTQG",
+    birthDateLabel: "Ngày sinh",
+    genderLabel: "Giới tính",
+    genderOptions: { female: "Nữ", male: "Nam", nonBinary: "Khác", preferNot: "Không muốn nêu" },
+    avatarLabel: "Đổi ảnh đại diện",
+    avatarHelp: "PNG, JPG hoặc WebP · tối đa 2 MB",
+    avatarTooLarge: "Ảnh đại diện cần nhỏ hơn 2 MB.",
+    avatarUnsupported: "Chọn ảnh PNG, JPG hoặc WebP nhé.",
+    usernameTaken: "Tên đăng nhập này đã có người dùng. Chọn tên khác nhé.",
+    plansTitle: "Gói học tập",
+    plansDescription: "Bắt đầu với Starter, rồi chọn gói phù hợp khi bạn cần thêm lượt AI.",
+    planCurrent: "Đang dùng",
+    planComingSoon: "Sắp mở",
+    planPerDay: "lượt AI mỗi ngày",
+    scoreGoalExceeded: "Bạn vừa vượt mục tiêu {goal}/10 — quá xịn, giữ nhịp này nhé!",
+    scoreGoalReached: "Bạn đã chạm mục tiêu {goal}/10 rồi — chúc mừng nhé!",
+    scoreGoalProgress: "Còn {gap} điểm nữa là chạm mục tiêu {goal}/10. Mình cùng gỡ từng câu nhé!",
+    scoreNoAttempts: "Làm thử một đề nhé — mình sẽ cùng bạn theo dõi mục tiêu {goal}/10.",
+    scoreSetGoal: "Đặt mục tiêu điểm để mình cổ vũ bạn trên từng chặng nhé!",
+    scoreWithNoGoal: "Điểm gần nhất của bạn là {score}/10. Đặt mục tiêu để mình cùng chinh phục nhé!",
     setupMissing: "Tài khoản hiện chưa khả dụng. Vui lòng thử lại sau.",
     genericError: "Chưa thực hiện được yêu cầu. Vui lòng thử lại sau.",
     emailDeliveryNotConfigured: "Chưa gửi được email đến địa chỉ này. Vui lòng thử lại sau.",
@@ -105,7 +143,7 @@ export const authMessages: Record<
     recoveryTitle: "Reset your password",
     recoveryUpdateTitle: "Choose a new password",
     description: "Keep your learning journey and continue attempts across your devices.",
-    name: "Display name",
+    name: "Username",
     email: "Email",
     loginIdentifier: "Email or username",
     username: "Username (3–30 characters, no @)",
@@ -132,6 +170,25 @@ export const authMessages: Record<
     accountLink: "Account",
     languageLabel: "Language",
     targetScoreLabel: "THPTQG target score",
+    birthDateLabel: "Date of birth",
+    genderLabel: "Gender",
+    genderOptions: { female: "Female", male: "Male", nonBinary: "Other", preferNot: "Prefer not to say" },
+    avatarLabel: "Change profile photo",
+    avatarHelp: "PNG, JPG or WebP · up to 2 MB",
+    avatarTooLarge: "Choose a profile photo smaller than 2 MB.",
+    avatarUnsupported: "Choose a PNG, JPG, or WebP image.",
+    usernameTaken: "That username is already in use. Please choose another.",
+    plansTitle: "Learning plans",
+    plansDescription: "Start with Starter, then choose a plan if you need more AI requests.",
+    planCurrent: "Current plan",
+    planComingSoon: "Coming soon",
+    planPerDay: "AI requests per day",
+    scoreGoalExceeded: "You just passed your {goal}/10 target — amazing work, keep it going!",
+    scoreGoalReached: "You reached your {goal}/10 target — congratulations!",
+    scoreGoalProgress: "You’re {gap} points away from your {goal}/10 target. Let’s work through it one question at a time!",
+    scoreNoAttempts: "Try an exam and we’ll track your progress toward {goal}/10 together.",
+    scoreSetGoal: "Set a score target and I’ll cheer you on along the way!",
+    scoreWithNoGoal: "Your latest score is {score}/10. Set a target and we’ll work toward it together!",
     setupMissing: "This account area is temporarily unavailable. Please try again later.",
     genericError: "That request could not be completed. Please try again later.",
     emailDeliveryNotConfigured: "We could not send an email to this address. Please try again later.",

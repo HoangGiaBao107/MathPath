@@ -85,9 +85,7 @@ export function AuthExperience({
             username: form.get("username"),
             password: form.get("password"),
             ...(targetScore === undefined ? {} : { targetScore }),
-            ...(mode === "register"
-              ? { displayName: form.get("displayName"), language: locale }
-              : {}),
+            ...(mode === "register" ? { language: locale } : {}),
           };
 
     try {
@@ -110,6 +108,7 @@ export function AuthExperience({
           email_not_confirmed: copy.emailNotConfirmed,
           session_expired: copy.recoveryLinkExpired,
           account_not_created: copy.accountNotCreated,
+          username_taken: copy.usernameTaken,
           recovery_not_sent: copy.recoveryNotSent,
           callback_failed: copy.authCallbackFailed,
         };
@@ -206,12 +205,6 @@ export function AuthExperience({
           <h1>{title}</h1>
           <p>{copy.description}</p>
           <form className="auth-form" onSubmit={(event) => void onSubmit(event)}>
-            {mode === "register" ? (
-              <label>
-                {copy.name}
-                <input autoComplete="name" name="displayName" maxLength={80} />
-              </label>
-            ) : null}
             {mode === "register" ? (
               <label>
                 {copy.username}

@@ -11,6 +11,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
+  const [accountName, setAccountName] = useState("");
   const { locale, setLocale, messages } = useLocale();
   const authCopy = authMessages[locale];
   const navigation = [
@@ -32,13 +33,33 @@ export function SiteHeader() {
   useEffect(() => {
     try {
       const supabase = getSupabaseBrowserClient();
-      void supabase.auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
+      async function syncUser(user: Awaited<ReturnType<typeof supabase.auth.getUser>>["data"]["user"] | null) {
+        setSignedIn(Boolean(user));
+        if (!user) {
+          setAccountName("");
+          return;
+        }
+        const metadataUsername = typeof user.user_metadata?.username === "string" ? user.user_metadata.username : "";
+        setAccountName(metadataUsername || user.email?.split("@")[0] || "");
+        const { data: profile, error } = await supabase
+          .from("profiles")
+          .select("username, display_name")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (!error) setAccountName(profile?.username?.trim() || profile?.display_name?.trim() || metadataUsername || user.email?.split("@")[0] || "");
+      }
+      void supabase.auth.getUser().then(({ data }) => void syncUser(data.user));
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSignedIn(Boolean(session?.user));
+        void syncUser(session?.user ?? null);
       });
-      return () => subscription.unsubscribe();
+      const refreshProfile = () => void supabase.auth.getUser().then(({ data }) => void syncUser(data.user));
+      window.addEventListener("mathpath:profile-updated", refreshProfile);
+      return () => {
+        subscription.unsubscribe();
+        window.removeEventListener("mathpath:profile-updated", refreshProfile);
+      };
     } catch {
       // Supabase is optional in the disconnected local mock mode.
     }
@@ -85,7 +106,7 @@ export function SiteHeader() {
             href={signedIn ? "/account" : "/auth/login"}
             onClick={closeMenu}
           >
-            {signedIn ? authCopy.accountLink : messages.actions.login}
+            {signedIn ? accountName || authCopy.accountLink : messages.actions.login}
           </Link>
         </nav>
 
@@ -106,7 +127,7 @@ export function SiteHeader() {
             className="button button--secondary button--small header-login"
             href={signedIn ? "/account" : "/auth/login"}
           >
-            {signedIn ? authCopy.accountLink : messages.actions.login}
+            {signedIn ? accountName || authCopy.accountLink : messages.actions.login}
           </Link>
           <button
             className="mobile-menu-toggle"

@@ -5757,3 +5757,75 @@ select:focus-visible {
     animation: none;
   }
 }
+
+/* Account dashboard: centered, balanced layout with the learning history in view. */
+.account-dashboard.container {
+  width: min(calc(100% - 2 * var(--page-gutter)), 1240px);
+  padding-block: clamp(2.5rem, 5vw, 4.5rem);
+}
+.account-dashboard-heading { max-width: 760px; margin: 0 auto 1.75rem; }
+.account-dashboard-heading h1 { margin: .35rem 0; font-size: clamp(2rem, 4vw, 3rem); }
+.account-dashboard-heading > p:last-child { color: var(--color-text-secondary); }
+.account-dashboard-grid { display: grid; grid-template-columns: minmax(18rem, .78fr) minmax(0, 1.5fr); gap: 1.25rem; align-items: start; }
+.account-learning-column { display: grid; gap: 1.25rem; min-width: 0; }
+.account-panel { min-width: 0; padding: clamp(1.2rem, 2.4vw, 1.8rem); border: 1px solid #f0d9da; border-radius: 1.25rem; background: linear-gradient(145deg, #fff 76%, #fff8f8); box-shadow: 0 12px 34px rgb(17 24 39 / 5%); }
+.account-profile-panel { display: grid; gap: .9rem; }
+.account-profile-panel h2 { margin: 0; overflow-wrap: anywhere; }
+.account-email { margin: -.65rem 0 0; color: var(--color-text-secondary); overflow-wrap: anywhere; }
+.account-profile-identity { display: flex; align-items: center; gap: 1rem; }
+.account-avatar { display: grid; flex: 0 0 auto; place-items: center; width: 4.5rem; height: 4.5rem; border: 3px solid #fff; border-radius: 1.4rem; background-color: var(--color-primary); background-position: center; background-size: cover; color: #fff; font-size: 1.7rem; font-weight: 800; box-shadow: 0 8px 22px rgb(215 25 32 / 22%); }
+.account-avatar-actions { display: grid; justify-items: start; gap: .25rem; }
+.account-avatar-actions .button { cursor: pointer; }
+.account-avatar-actions small,.account-field-hint { color: var(--color-text-secondary); font-size: .78rem; line-height: 1.45; }
+.account-field-hint { margin: -.65rem 0 0; }
+.account-remove-avatar { border: 0; padding: 0; background: transparent; color: var(--color-primary); font-size: .8rem; font-weight: 700; cursor: pointer; }
+.account-panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+.account-panel-heading h2 { margin: .3rem 0 0; }
+.account-panel-heading .eyebrow { margin: 0; }
+.account-score-panel .account-panel-heading h2 { max-width: 39rem; color: var(--color-text); font-size: clamp(1.15rem, 2vw, 1.55rem); line-height: 1.35; }
+.account-score-message { margin: .35rem 0 0; color: var(--color-text-secondary); }
+.account-score-summary { display: flex; align-items: baseline; gap: .35rem .65rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.account-score-summary strong { color: var(--color-primary); font-size: 1.6rem; }
+.account-score-summary strong:not(:first-child) { margin-left: 1rem; color: var(--color-text); }
+.account-score-summary small,.account-history-score small { font-size: .85rem; color: var(--color-text-secondary); }
+.account-score-summary span { color: var(--color-text-secondary); font-size: .9rem; }
+.account-score-panel .line-chart { width: 100%; min-width: 0; }
+.account-chart-legend { display: flex; gap: 1rem; flex-wrap: wrap; color: var(--color-text-secondary); font-size: .85rem; }
+.account-chart-legend span { display: inline-flex; gap: .4rem; align-items: center; }
+.account-chart-legend i { display: inline-block; width: 1rem; border-top: 3px solid var(--color-primary); }
+.account-chart-legend .account-chart-target i { border-color: #1f2937; border-top-style: dashed; }
+.account-history-row { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 1rem; padding: .9rem 0; border-top: 1px solid var(--color-border); color: inherit; text-decoration: none; }
+.account-history-row:hover strong:first-child { color: var(--color-primary); }
+.account-history-row > span:first-child { display: grid; gap: .25rem; min-width: 0; }
+.account-history-row > span:first-child strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-history-row small { color: var(--color-text-secondary); }
+.account-history-score { color: var(--color-primary); font-size: 1.2rem; }
+.account-recovery-link { margin: .8rem 0 0; font-size: .9rem; }
+.account-recovery-link a,.text-link { color: var(--color-primary); font-weight: 700; }
+.account-signout { margin-top: 1rem; }
+.account-plans-panel { margin-top: 1.25rem; }
+.account-plans-description { margin: .35rem 0 0; color: var(--color-text-secondary); }
+.account-plan-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .85rem; }
+.account-plan-card { min-width: 0; padding: 1rem; border: 1px solid var(--color-border); border-radius: 1rem; background: #fff; }
+.account-plan-card.is-current { border-color: #e99b9e; background: linear-gradient(145deg, #fff4f4, #fff); box-shadow: 0 6px 18px rgb(215 25 32 / 7%); }
+.account-plan-card-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.account-plan-card-heading h3 { margin: 0; font-size: 1.05rem; }
+.account-plan-card-heading span { color: var(--color-primary); font-size: .68rem; font-weight: 750; text-align: right; }
+.account-plan-price { margin: .9rem 0 .25rem; color: var(--color-text); font-size: 1.12rem; font-weight: 800; }
+.account-plan-price small { display: block; color: var(--color-text-secondary); font-size: .78rem; font-weight: 500; }
+.account-plan-quota { margin: 0; color: var(--color-text-secondary); font-size: .83rem; }
+.account-plan-quota strong { color: var(--color-primary); }
+.account-dashboard > .auth-message { margin-top: 1rem; }
+@media (max-width: 900px) {
+  .account-dashboard-grid { grid-template-columns: minmax(0, 1fr); }
+  .account-left-column { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+}
+@media (max-width: 620px) {
+  .account-dashboard.container { width: min(calc(100% - 1.5rem), 1240px); padding-block: 2rem; }
+  .account-dashboard-heading { margin-bottom: 1.25rem; }
+  .account-left-column { grid-template-columns: minmax(0, 1fr); }
+  .account-panel-heading { flex-wrap: wrap; }
+  .account-plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .account-plan-card { padding: .85rem; }
+  .account-history-row { gap: .6rem; }
+}

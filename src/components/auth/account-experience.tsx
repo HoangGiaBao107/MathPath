@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { LineChart } from "@/components/analytics/line-chart";
 import { useLocale } from "@/components/providers/locale-provider";
 import { Button } from "@/components/ui/button";
@@ -11,19 +11,30 @@ import { authMessages } from "@/lib/i18n/auth-messages";
 import type { StudentProgress } from "@/lib/analytics/types";
 import { PasswordInput } from "@/components/auth/password-input";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { creditPolicy } from "@/lib/credits/types";
+import { getScoreGoalMessage } from "@/lib/analytics/score-encouragement";
+
+const avatarMaxBytes = 2 * 1024 * 1024;
+const avatarTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export function AccountExperience({
   email,
-  displayName,
-  language,
+  username,
   targetScore,
+  birthDate,
+  gender,
+  avatarPath: initialAvatarPath,
+  avatarUrl: initialAvatarUrl,
   progress,
   configured,
 }: {
   email: string | null;
-  displayName: string | null;
-  language?: string | null;
+  username: string | null;
   targetScore?: number | null;
+  birthDate?: string | null;
+  gender?: string | null;
+  avatarPath?: string | null;
+  avatarUrl?: string | null;
   progress?: StudentProgress | null;
   configured: boolean;
 }) {
@@ -33,12 +44,17 @@ export function AccountExperience({
   const vi = locale === "vi";
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const [name, setName] = useState(displayName ?? "");
+  const [name, setName] = useState(username ?? "");
   const [aim, setAim] = useState(targetScore == null ? "" : String(targetScore));
+  const [birthday, setBirthday] = useState(birthDate ?? "");
+  const [selectedGender, setSelectedGender] = useState(gender ?? "");
+  const [avatarPath, setAvatarPath] = useState(initialAvatarPath ?? null);
+  const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl ?? null);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [savingAvatar, setSavingAvatar] = useState(false);
 
   async function signOut() {
     setError("");
@@ -63,15 +79,106 @@ export function AccountExperience({
   }
 
   async function saveProfile(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setError(""); setNotice(""); setSavingProfile(true);
+    event.preventDefault();
+    setError("");
+    setNotice("");
+    setSavingProfile(true);
     try {
       const response = await fetch("/api/auth/profile", {
-        method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ displayName: name.trim(), ...(aim === "" ? {} : { targetScore: Number(aim) }) }),
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: name.trim(),
+          birthDate: birthday || null,
+          gender: selectedGender || null,
+          targetScore: aim === "" ? null : Number(aim),
+        }),
       });
-      if (!response.ok) throw new Error();
-      setNotice(vi ? "Đã lưu thông tin tài khoản." : "Account details saved."); router.refresh();
-    } catch { setError(copy.genericError); } finally { setSavingProfile(false); }
+      const payload = (await response.json().catch(() => null)) as { error?: { code?: string } } | null;
+      if (!response.ok) {
+        setError(payload?.error?.code === "username_taken" ? copy.usernameTaken : copy.genericError);
+        return;
+      }
+      setNotice(vi ? "Đã lưu hồ sơ của bạn." : "Your profile is saved.");
+      window.dispatchEvent(new Event("mathpath:profile-updated"));
+      router.refresh();
+    } catch {
+      setError(copy.genericError);
+    } finally {
+      setSavingProfile(false);
+    }
+  }
+
+  async function uploadAvatar(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setError("");
+    setNotice("");
+    if (!avatarTypes.has(file.type)) {
+      setError(copy.avatarUnsupported);
+      return;
+    }
+    if (file.size > avatarMaxBytes) {
+      setError(copy.avatarTooLarge);
+      return;
+    }
+
+    setSavingAvatar(true);
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error("session_expired");
+      const path = `${user.id}/avatar`;
+      const { error: uploadError } = await supabase.storage
+        .from("profile-avatars")
+        .upload(path, file, { upsert: true, contentType: file.type, cacheControl: "3600" });
+      if (uploadError) throw uploadError;
+      const response = await fetch("/api/auth/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatarPath: path }),
+      });
+      if (!response.ok) throw new Error("profile_sync_failed");
+      const { data: signed, error: signedError } = await supabase.storage
+        .from("profile-avatars")
+        .createSignedUrl(path, 3600);
+      if (signedError) throw signedError;
+      setAvatarPath(path);
+      setAvatarUrl(signed.signedUrl);
+      setNotice(vi ? "Ảnh đại diện đã được cập nhật." : "Your profile photo is updated.");
+      router.refresh();
+    } catch {
+      setError(copy.genericError);
+    } finally {
+      setSavingAvatar(false);
+    }
+  }
+
+  async function removeAvatar() {
+    if (!avatarPath || savingAvatar) return;
+    setSavingAvatar(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/auth/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatarPath: null }),
+      });
+      if (!response.ok) throw new Error("profile_sync_failed");
+      const { error: removeError } = await getSupabaseBrowserClient()
+        .storage.from("profile-avatars").remove([avatarPath]);
+      if (removeError) throw removeError;
+      setAvatarPath(null);
+      setAvatarUrl(null);
+      setNotice(vi ? "Đã gỡ ảnh đại diện." : "Your profile photo was removed.");
+      router.refresh();
+    } catch {
+      setError(copy.genericError);
+    } finally {
+      setSavingAvatar(false);
+    }
   }
 
   async function changePassword(event: React.FormEvent<HTMLFormElement>) {
@@ -89,44 +196,92 @@ export function AccountExperience({
 
   const labels = progress?.trend.map((point) => new Intl.DateTimeFormat(vi ? "vi-VN" : "en-US", { day: "2-digit", month: "2-digit" }).format(new Date(point.submittedAt))) ?? [];
   const trendSeries = progress?.trend.length ? [{ label: vi ? "Điểm từng đề" : "Exam scores", color: "#d71920", values: progress.trend.map((point) => point.score) }, ...(progress.targetScore === null ? [] : [{ label: vi ? "Mục tiêu" : "Target", color: "#1f2937", dashed: true, values: progress.trend.map(() => progress.targetScore!) }])] : [];
+  const latestScore = progress?.trend.at(-1)?.score;
+  const scoreMessage = getScoreGoalMessage(latestScore, progress?.targetScore ?? targetScore ?? null, locale);
+  const plans = [
+    { slug: "starter", name: "Starter", price: 0, requests: creditPolicy.registeredFreeDailyRequests, current: true },
+    ...creditPolicy.paidPlans.map((plan) => ({ slug: plan.slug, name: plan.name, price: plan.monthlyPriceVnd, requests: plan.requestsPerDay, current: false })),
+  ];
 
   return (
-    <main className="page-shell account-dashboard" id="main-content">
+    <main className="site-main page-shell account-dashboard container" id="main-content">
       <header className="account-dashboard-heading">
         <p className="eyebrow">MATHPATH · {vi ? "HỒ SƠ HỌC TẬP" : "LEARNING PROFILE"}</p>
         <h1>{copy.accountTitle}</h1>
-        <p>{vi ? "Quản lý hồ sơ và xem lại hành trình ôn tập của bạn." : "Manage your profile and review your learning journey."}</p>
+        <p>{vi ? "Chỉnh hồ sơ, xem điểm và chọn nhịp học hợp với bạn." : "Update your profile, review your scores, and find a plan that fits."}</p>
       </header>
       {!configured ? <Card className="account-panel">{copy.setupMissing}</Card> : (
-        <div className="account-dashboard-grid">
-          <Card className="account-panel account-profile-panel">
-            <div className="account-avatar" aria-hidden="true">{(displayName || email || "M").slice(0, 1).toUpperCase()}</div>
-            <h2>{displayName || (vi ? "Học sinh MathPath" : "MathPath learner")}</h2>
-            <p className="account-email">{email || "—"}</p>
-            <form className="auth-form" onSubmit={saveProfile}>
-              <label>{copy.name}<input value={name} onChange={(event) => setName(event.target.value)} maxLength={80} required /></label>
-              <label>{copy.email}<input value={email ?? "—"} readOnly /></label>
-              <label>{copy.languageLabel}<input value={(language || locale).toUpperCase()} readOnly /></label>
-              <label>{copy.targetScoreLabel} (0–10)<input type="number" min="0" max="10" step="0.1" value={aim} onChange={(event) => setAim(event.target.value)} placeholder={vi ? "Chưa đặt mục tiêu" : "No target set"} /></label>
-              <Button type="submit" disabled={savingProfile}>{savingProfile ? (vi ? "Đang lưu…" : "Saving…") : (vi ? "Lưu thay đổi" : "Save changes")}</Button>
-            </form>
-            <section className="account-vip-card"><span className="account-vip-mark">VIP</span><div><strong>{vi ? "Gói học tập nâng cao" : "Advanced learning plan"}</strong><p>{vi ? "Khu vực gói VIP sẽ sớm ra mắt." : "VIP plans will be available later."}</p></div><span className="account-coming-soon">{vi ? "Sắp có" : "Coming soon"}</span></section>
-            <Button onClick={() => void signOut()} variant="secondary">{copy.signOut}</Button>
-          </Card>
+        <>
+          <div className="account-dashboard-grid">
+            <div className="account-learning-column account-left-column">
+              <Card className="account-panel account-profile-panel">
+                <div className="account-profile-identity">
+                  <div
+                    className={`account-avatar${avatarUrl ? " has-photo" : ""}`}
+                    role={avatarUrl ? "img" : undefined}
+                    aria-label={avatarUrl ? copy.avatarLabel : undefined}
+                    aria-hidden={avatarUrl ? undefined : true}
+                    style={avatarUrl ? { backgroundImage: `url("${avatarUrl}")` } : undefined}
+                  >
+                    {avatarUrl ? null : (name || email || "M").slice(0, 1).toUpperCase()}
+                  </div>
+                  <div className="account-avatar-actions">
+                    <label className="button button--secondary button--small" htmlFor="account-avatar-file">
+                      {savingAvatar ? (vi ? "Đang cập nhật…" : "Updating…") : copy.avatarLabel}
+                    </label>
+                    <input id="account-avatar-file" className="sr-only" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void uploadAvatar(event)} disabled={savingAvatar} />
+                    <small>{copy.avatarHelp}</small>
+                    {avatarPath ? <button className="account-remove-avatar" type="button" onClick={() => void removeAvatar()} disabled={savingAvatar}>{vi ? "Gỡ ảnh" : "Remove photo"}</button> : null}
+                  </div>
+                </div>
+                <h2>{name || (vi ? "Chọn tên đăng nhập" : "Choose a username")}</h2>
+                <p className="account-email">{email || "—"}</p>
+                <form className="auth-form" onSubmit={(event) => void saveProfile(event)}>
+                  <label>{copy.username}<input autoComplete="username" value={name} onChange={(event) => setName(event.target.value)} minLength={3} maxLength={30} pattern="[A-Za-z0-9._-]{3,30}" required /></label>
+                  <p className="account-field-hint">{vi ? "Tên đăng nhập cũng là tên hiển thị của bạn. Dùng 3–30 chữ cái, số, dấu chấm, gạch dưới hoặc gạch ngang." : "Your username is also your display name. Use 3–30 letters, numbers, dots, underscores, or hyphens."}</p>
+                  <label>{copy.email}<input value={email ?? "—"} readOnly /></label>
+                  <label>{copy.birthDateLabel}<input type="date" value={birthday} max={new Date().toISOString().slice(0, 10)} onChange={(event) => setBirthday(event.target.value)} /></label>
+                  <label>{copy.genderLabel}<select value={selectedGender} onChange={(event) => setSelectedGender(event.target.value)}><option value="">{vi ? "Chưa chọn" : "Choose an option"}</option><option value="female">{copy.genderOptions.female}</option><option value="male">{copy.genderOptions.male}</option><option value="non_binary">{copy.genderOptions.nonBinary}</option><option value="prefer_not_to_say">{copy.genderOptions.preferNot}</option></select></label>
+                  <label>{copy.targetScoreLabel} (0–10)<input type="number" min="0" max="10" step="0.1" value={aim} onChange={(event) => setAim(event.target.value)} placeholder={vi ? "Chưa đặt mục tiêu" : "No target set"} /></label>
+                  <Button type="submit" disabled={savingProfile}>{savingProfile ? (vi ? "Đang lưu…" : "Saving…") : (vi ? "Lưu hồ sơ" : "Save profile")}</Button>
+                </form>
+              </Card>
+              <Card className="account-panel account-password-panel">
+                <div className="account-panel-heading"><div><p className="eyebrow">{vi ? "BẢO MẬT" : "SECURITY"}</p><h2>{vi ? "Đổi mật khẩu" : "Change password"}</h2></div></div>
+                <form className="auth-form account-password-form" onSubmit={(event) => void changePassword(event)}>
+                  <label>{copy.newPassword}<PasswordInput autoComplete="new-password" minLength={8} maxLength={128} value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required /></label>
+                  <label>{vi ? "Nhập lại mật khẩu mới" : "Confirm new password"}<PasswordInput autoComplete="new-password" minLength={8} maxLength={128} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required /></label>
+                  <Button type="submit" disabled={savingPassword}>{savingPassword ? (vi ? "Đang cập nhật…" : "Updating…") : copy.submitPassword}</Button>
+                </form>
+                <p className="account-recovery-link"><Link href="/auth/recovery">{vi ? "Quên mật khẩu? Gửi liên kết đặt lại qua email" : "Forgot your password? Request an email reset link"}</Link></p>
+                <Button className="account-signout" onClick={() => void signOut()} variant="secondary">{copy.signOut}</Button>
+              </Card>
+            </div>
 
-          <div className="account-learning-column">
-            <Card className="account-panel account-score-panel">
-              <div className="account-panel-heading"><div><p className="eyebrow">{vi ? "KEEP TRACK" : "KEEP TRACK"}</p><h2>{vi ? "Đường điểm của bạn" : "Your score journey"}</h2></div><Link href="/progress" className="text-link">{vi ? "Mở lịch sử →" : "View history →"}</Link></div>
-              <div className="account-score-summary"><strong>{progress?.averageScore == null ? "—" : progress.averageScore.toLocaleString(vi ? "vi-VN" : "en-US", { maximumFractionDigits: 2 })}<small>/10</small></strong><span>{vi ? "Điểm trung bình" : "Average score"}</span><strong>{progress?.totalAttempts ?? 0}</strong><span>{vi ? "Đề đã nộp" : "Exams submitted"}</span></div>
-              {labels.length ? <><LineChart ariaLabel={vi ? "Biểu đồ điểm và mục tiêu" : "Scores and target chart"} labels={labels} series={trendSeries} formatValue={(value) => value.toLocaleString(vi ? "vi-VN" : "en-US", { maximumFractionDigits: 1 })} /><div className="account-chart-legend"><span><i />{vi ? "Điểm từng đề" : "Exam scores"}</span>{progress?.targetScore != null ? <span className="account-chart-target"><i />{vi ? `Mục tiêu ${progress.targetScore}/10` : `Target ${progress.targetScore}/10`}</span> : null}</div></> : <p className="analytics-empty-message">{vi ? "Nộp đề đầu tiên để bắt đầu theo dõi điểm." : "Submit your first exam to start tracking scores."}</p>}
-            </Card>
-            <Card className="account-panel account-history-preview"><div className="account-panel-heading"><div><p className="eyebrow">{vi ? "ÔN TẬP" : "PRACTICE"}</p><h2>{vi ? "Lịch sử làm bài" : "Attempt history"}</h2></div><Link href="/progress" className="text-link">{vi ? "Xem tất cả →" : "See all →"}</Link></div>
-              {progress?.history.slice(0, 4).map((attempt) => <Link className="account-history-row" href={`/progress/attempts/${attempt.attemptId}`} key={attempt.attemptId}><span><strong>{attempt.examTitle}</strong><small>{new Intl.DateTimeFormat(vi ? "vi-VN" : "en-US", { dateStyle: "medium", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(attempt.submittedAt))}</small></span><strong className="account-history-score">{attempt.score.toLocaleString(vi ? "vi-VN" : "en-US", { maximumFractionDigits: 2 })}<small>/10</small></strong><span aria-hidden="true">›</span></Link>)}
-              {!progress?.history.length ? <p className="analytics-empty-message">{vi ? "Chưa có bài làm nào." : "No attempts yet."}</p> : null}
-            </Card>
-            <Card className="account-panel account-password-panel"><div className="account-panel-heading"><div><p className="eyebrow">{vi ? "BẢO MẬT" : "SECURITY"}</p><h2>{vi ? "Đổi mật khẩu" : "Change password"}</h2></div></div><form className="auth-form account-password-form" onSubmit={changePassword}><label>{copy.newPassword}<PasswordInput autoComplete="new-password" minLength={8} maxLength={128} value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required /></label><label>{vi ? "Nhập lại mật khẩu mới" : "Confirm new password"}<PasswordInput autoComplete="new-password" minLength={8} maxLength={128} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} required /></label><Button type="submit" disabled={savingPassword}>{savingPassword ? (vi ? "Đang cập nhật…" : "Updating…") : copy.submitPassword}</Button></form><p className="account-recovery-link"><Link href="/auth/recovery">{vi ? "Quên mật khẩu? Gửi liên kết đặt lại qua email" : "Forgot your password? Request an email reset link"}</Link></p></Card>
+            <div className="account-learning-column">
+              <Card className="account-panel account-score-panel">
+                <div className="account-panel-heading"><div><p className="eyebrow">{vi ? "TIẾN BỘ CỦA BẠN" : "YOUR PROGRESS"}</p><h2>{scoreMessage.title}</h2><p className="account-score-message">{scoreMessage.body}</p></div><Link href="/progress" className="text-link">{vi ? "Mở lịch sử →" : "View history →"}</Link></div>
+                <div className="account-score-summary"><strong>{progress?.averageScore == null ? "—" : progress.averageScore.toLocaleString(vi ? "vi-VN" : "en-US", { maximumFractionDigits: 2 })}<small>/10</small></strong><span>{vi ? "Điểm trung bình" : "Average score"}</span><strong>{progress?.totalAttempts ?? 0}</strong><span>{vi ? "Đề đã nộp" : "Exams submitted"}</span></div>
+                {labels.length ? <><LineChart ariaLabel={vi ? "Biểu đồ điểm và mục tiêu" : "Scores and target chart"} labels={labels} series={trendSeries} formatValue={(value) => value.toLocaleString(vi ? "vi-VN" : "en-US", { maximumFractionDigits: 1 })} /><div className="account-chart-legend"><span><i />{vi ? "Điểm từng đề" : "Exam scores"}</span>{progress?.targetScore != null ? <span className="account-chart-target"><i />{vi ? `Mục tiêu ${progress.targetScore}/10` : `Target ${progress.targetScore}/10`}</span> : null}</div></> : null}
+              </Card>
+              <Card className="account-panel account-history-preview"><div className="account-panel-heading"><div><p className="eyebrow">{vi ? "ÔN TẬP" : "PRACTICE"}</p><h2>{vi ? "Lịch sử làm bài" : "Attempt history"}</h2></div><Link href="/progress" className="text-link">{vi ? "Xem tất cả →" : "See all →"}</Link></div>
+                {progress?.history.slice(0, 4).map((attempt) => <Link className="account-history-row" href={`/progress/attempts/${attempt.attemptId}`} key={attempt.attemptId}><span><strong>{attempt.examTitle}</strong><small>{new Intl.DateTimeFormat(vi ? "vi-VN" : "en-US", { dateStyle: "medium", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(attempt.submittedAt))}</small></span><strong className="account-history-score">{attempt.score.toLocaleString(vi ? "vi-VN" : "en-US", { maximumFractionDigits: 2 })}<small>/10</small></strong><span aria-hidden="true">›</span></Link>)}
+                {!progress?.history.length ? <p className="analytics-empty-message">{vi ? "Chưa có bài làm nào. Làm thử một đề nhé!" : "No attempts yet. Try your first exam!"}</p> : null}
+              </Card>
+            </div>
           </div>
-        </div>
+
+          <Card className="account-panel account-plans-panel">
+            <div className="account-panel-heading"><div><p className="eyebrow">{vi ? "CHỌN NHỊP HỌC" : "FIND YOUR PACE"}</p><h2>{copy.plansTitle}</h2><p className="account-plans-description">{copy.plansDescription}</p></div></div>
+            <div className="account-plan-grid">
+              {plans.map((plan) => <article className={`account-plan-card${plan.current ? " is-current" : ""}`} key={plan.slug}>
+                <div className="account-plan-card-heading"><h3>{plan.name}</h3><span>{plan.current ? copy.planCurrent : copy.planComingSoon}</span></div>
+                <p className="account-plan-price">{plan.price === 0 ? (vi ? "Miễn phí" : "Free") : <>{new Intl.NumberFormat(vi ? "vi-VN" : "en-US").format(plan.price)} <small>{vi ? "đ/tháng" : "VND/month"}</small></>}</p>
+                <p className="account-plan-quota"><strong>{plan.requests}</strong> {copy.planPerDay}</p>
+              </article>)}
+            </div>
+          </Card>
+        </>
       )}
       {error ? <p className="auth-message auth-message--error" role="alert">{error}</p> : null}{notice ? <p className="auth-message" role="status">{notice}</p> : null}
     </main>
