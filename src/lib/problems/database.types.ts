@@ -228,9 +228,6 @@ export type Database = {
         username: string | null;
         language: "vi" | "en";
         target_score: number | null;
-        birth_date: string | null;
-        gender: "female" | "male" | "non_binary" | "prefer_not_to_say" | null;
-        avatar_path: string | null;
         role: "student" | "admin";
         created_at: string;
         updated_at: string;

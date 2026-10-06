@@ -35,12 +35,6 @@ export const authMessages: Record<
     accountLink: string;
     languageLabel: string;
     targetScoreLabel: string;
-    birthDateLabel: string;
-    genderLabel: string;
-    genderOptions: { female: string; male: string; nonBinary: string };
-    avatarLabel: string;
-    avatarTooLarge: string;
-    avatarUnsupported: string;
     usernameTaken: string;
     plansTitle: string;
     plansDescription: string;
@@ -100,12 +94,6 @@ export const authMessages: Record<
     accountLink: "Tài khoản",
     languageLabel: "Ngôn ngữ",
     targetScoreLabel: "Mục tiêu điểm THPTQG",
-    birthDateLabel: "Ngày sinh",
-    genderLabel: "Giới tính",
-    genderOptions: { female: "Nữ", male: "Nam", nonBinary: "Khác" },
-    avatarLabel: "Đổi ảnh đại diện",
-    avatarTooLarge: "Ảnh đại diện cần nhỏ hơn 2 MB.",
-    avatarUnsupported: "Chọn ảnh PNG, JPG hoặc WebP nhé.",
     usernameTaken: "Tên đăng nhập này đã có người dùng. Chọn tên khác nhé.",
     plansTitle: "Gói học tập",
     plansDescription: "Bắt đầu với Starter, rồi chọn gói phù hợp khi bạn cần thêm lượt AI.",
@@ -168,12 +156,6 @@ export const authMessages: Record<
     accountLink: "Account",
     languageLabel: "Language",
     targetScoreLabel: "THPTQG target score",
-    birthDateLabel: "Date of birth",
-    genderLabel: "Gender",
-    genderOptions: { female: "Female", male: "Male", nonBinary: "Other" },
-    avatarLabel: "Change profile photo",
-    avatarTooLarge: "Choose a profile photo smaller than 2 MB.",
-    avatarUnsupported: "Choose a PNG, JPG, or WebP image.",
     usernameTaken: "That username is already in use. Please choose another.",
     plansTitle: "Learning plans",
     plansDescription: "Start with Starter, then choose a plan if you need more AI requests.",

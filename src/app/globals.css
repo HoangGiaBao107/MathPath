@@ -1083,7 +1083,6 @@ select:focus-visible {
 .account-profile-panel { display: grid; gap: 1rem; }
 .account-profile-panel h2 { margin: 0; }
 .account-email { margin: -.7rem 0 0; color: var(--color-text-secondary); overflow-wrap: anywhere; }
-.account-avatar { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 1.25rem; background: linear-gradient(145deg, #d71920, #99131a); color: #fff; font-size: 1.65rem; font-weight: 800; box-shadow: 0 8px 22px rgb(215 25 32 / 22%); }
 .account-panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
 .account-panel-heading h2 { margin: .3rem 0 0; }
 .account-panel-heading .eyebrow { margin: 0; }
@@ -5570,13 +5569,15 @@ select:focus-visible {
 }
 .ai-image-picker-actions { display: flex; gap: .65rem; flex-wrap: wrap; }
 .ai-image-file-name { color: var(--color-text-secondary); font-size: .83rem; font-weight: 500; overflow-wrap: anywhere; }
-.auth-form select {
-  appearance: none;
-  padding-right: 2.75rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d71920' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right .9rem center;
-}
+.ai-camera-backdrop { position: fixed; z-index: 120; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(17 24 39 / 68%); }
+.ai-camera-dialog { display: grid; gap: .9rem; width: min(100%, 680px); padding: 1.2rem; border: 1px solid #f0d9da; border-radius: 1.25rem; background: #fff; box-shadow: 0 24px 80px rgb(0 0 0 / 25%); }
+.ai-camera-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.ai-camera-heading h2 { margin: 0; font-size: 1.2rem; }
+.ai-camera-close { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border: 1px solid var(--color-border); border-radius: 50%; background: white; color: var(--color-text); font-size: 1.5rem; cursor: pointer; }
+.ai-camera-dialog video { width: 100%; max-height: min(65vh, 620px); min-height: 220px; border-radius: .9rem; background: #111827; object-fit: contain; }
+.ai-camera-dialog > p { margin: 0; color: var(--color-text-secondary); }
+.ai-camera-dialog .ai-camera-error { color: var(--color-danger); }
+.ai-camera-actions { display: flex; justify-content: flex-end; gap: .65rem; flex-wrap: wrap; }
 .ai-image-preview {
   position: relative;
   width: min(100%, 560px);
@@ -5797,13 +5798,8 @@ select:focus-visible {
 .account-profile-panel { display: grid; gap: .9rem; }
 .account-profile-panel h2 { margin: 0; overflow-wrap: anywhere; }
 .account-email { margin: -.65rem 0 0; color: var(--color-text-secondary); overflow-wrap: anywhere; }
-.account-profile-identity { display: flex; align-items: center; gap: 1rem; }
-.account-avatar { display: grid; flex: 0 0 auto; place-items: center; width: 4.5rem; height: 4.5rem; border: 3px solid #fff; border-radius: 1.4rem; background-color: var(--color-primary); background-position: center; background-size: cover; color: #fff; font-size: 1.7rem; font-weight: 800; box-shadow: 0 8px 22px rgb(215 25 32 / 22%); }
-.account-avatar-actions { display: grid; justify-items: start; gap: .25rem; }
-.account-avatar-actions .button { cursor: pointer; }
-.account-avatar-actions small,.account-field-hint { color: var(--color-text-secondary); font-size: .78rem; line-height: 1.45; }
+.account-field-hint { color: var(--color-text-secondary); font-size: .78rem; line-height: 1.45; }
 .account-field-hint { margin: -.65rem 0 0; }
-.account-remove-avatar { border: 0; padding: 0; background: transparent; color: var(--color-primary); font-size: .8rem; font-weight: 700; cursor: pointer; }
 .account-panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
 .account-panel-heading h2 { margin: .3rem 0 0; }
 .account-panel-heading .eyebrow { margin: 0; }

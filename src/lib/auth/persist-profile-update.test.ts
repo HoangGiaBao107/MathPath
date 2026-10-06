@@ -12,9 +12,7 @@ describe("persistProfileUpdate", () => {
     const values: Database["public"]["Tables"]["profiles"]["Update"] = {
       username: "math_learner",
       display_name: "math_learner",
-      birth_date: "2008-06-12",
-      gender: "female",
-      avatar_path: "user-123/avatar",
+      target_score: 8,
     };
 
     await persistProfileUpdate(client, "user-123", values);

@@ -27,6 +27,13 @@ type Practice = {
   difficulty: "easy" | "medium" | "hard";
 };
 
+function getCameraUserMedia() {
+  const devices = (navigator as Navigator & {
+    mediaDevices?: { getUserMedia?: (constraints: MediaStreamConstraints) => Promise<MediaStream> };
+  }).mediaDevices;
+  return devices?.getUserMedia?.bind(devices);
+}
+
 export function AIWorkspace({
   initialMode,
   attemptId,
@@ -44,7 +51,11 @@ export function AIWorkspace({
   const [image, setImage] = useState<File | null>(null);
   const imageUrl = useMemo(() => (image ? URL.createObjectURL(image) : null), [image]);
   const fileInput = useRef<HTMLInputElement>(null);
-  const cameraInput = useRef<HTMLInputElement>(null);
+  const cameraVideo = useRef<HTMLVideoElement>(null);
+  const cameraStream = useRef<MediaStream | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [cameraError, setCameraError] = useState("");
   const [solution, setSolution] = useState<SolverResponse | null>(null);
   const [topic, setTopic] = useState("");
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
@@ -77,6 +88,41 @@ export function AIWorkspace({
     },
     [imageUrl],
   );
+
+  useEffect(() => {
+    if (!cameraOpen) return;
+    let cancelled = false;
+    let stream: MediaStream | null = null;
+    const getUserMedia = getCameraUserMedia();
+    if (!getUserMedia) return;
+    const video = cameraVideo.current;
+    void getUserMedia({
+      video: { facingMode: { ideal: "environment" } },
+      audio: false,
+    }).then(async (camera) => {
+      stream = camera;
+      if (cancelled) {
+        camera.getTracks().forEach((track) => track.stop());
+        return;
+      }
+      cameraStream.current = camera;
+      if (video) {
+        video.srcObject = camera;
+        await video.play().catch(() => undefined);
+      }
+    }).catch(() => {
+      if (!cancelled) setCameraError(locale === "vi"
+        ? "Không mở được camera. Hãy cho phép trình duyệt dùng camera rồi thử lại nhé."
+        : "Could not open the camera. Allow camera access in your browser and try again.");
+    });
+    return () => {
+      cancelled = true;
+      stream?.getTracks().forEach((track) => track.stop());
+      cameraStream.current?.getTracks().forEach((track) => track.stop());
+      cameraStream.current = null;
+      if (video) video.srcObject = null;
+    };
+  }, [cameraOpen, locale]);
 
   function clearError() {
     setError(null);
@@ -188,6 +234,34 @@ export function AIWorkspace({
     setSolution(null);
   }
 
+  function captureCameraImage() {
+    const video = cameraVideo.current;
+    if (!video || video.videoWidth === 0 || video.videoHeight === 0) return;
+    const scale = Math.min(1, 2000 / video.videoWidth);
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        setCameraError(locale === "vi" ? "Chưa chụp được ảnh. Thử lại nhé." : "Could not capture the image. Try again.");
+        return;
+      }
+      onImageChange(new File([blob], `mathpath-${Date.now()}.jpg`, { type: "image/jpeg" }));
+      setCameraOpen(false);
+    }, "image/jpeg", 0.85);
+  }
+
+  function openCamera() {
+    setCameraReady(false);
+    setCameraError(getCameraUserMedia() ? "" : locale === "vi"
+      ? "Trình duyệt này không hỗ trợ mở camera trực tiếp."
+      : "This browser cannot open the camera directly.");
+    setCameraOpen(true);
+  }
+
   const tabs: { id: Mode; label: string }[] = [
     { id: "solver", label: copy.solverTab },
     { id: "practice", label: copy.practiceTab },
@@ -254,23 +328,11 @@ export function AIWorkspace({
                     event.currentTarget.value = "";
                   }}
                 />
-                <input
-                  ref={cameraInput}
-                  className="ai-image-input-hidden"
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  capture="environment"
-                  aria-label={locale === "vi" ? "Chụp ảnh đề Toán" : "Take a photo of the math problem"}
-                  onChange={(event) => {
-                    onImageChange(event.target.files?.[0] ?? null);
-                    event.currentTarget.value = "";
-                  }}
-                />
                 <div className="ai-image-picker-actions">
                   <button type="button" className="button button--secondary button--small" onClick={() => fileInput.current?.click()}>
                     {locale === "vi" ? "Chọn ảnh" : "Choose an image"}
                   </button>
-                  <button type="button" className="button button--secondary button--small" onClick={() => cameraInput.current?.click()}>
+                  <button type="button" className="button button--secondary button--small" onClick={openCamera}>
                     {locale === "vi" ? "Chụp bằng camera" : "Take a photo"}
                   </button>
                 </div>
@@ -447,6 +509,22 @@ export function AIWorkspace({
           </div>
         ) : null}
       </Card>
+      {cameraOpen ? (
+        <div className="ai-camera-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setCameraOpen(false); }}>
+          <section className="ai-camera-dialog" role="dialog" aria-modal="true" aria-labelledby="ai-camera-title">
+            <div className="ai-camera-heading">
+              <h2 id="ai-camera-title">{locale === "vi" ? "Chụp ảnh đề Toán" : "Photograph a math problem"}</h2>
+              <button type="button" className="ai-camera-close" onClick={() => setCameraOpen(false)} aria-label={locale === "vi" ? "Đóng camera" : "Close camera"}>×</button>
+            </div>
+            <video ref={cameraVideo} autoPlay muted playsInline onLoadedMetadata={() => setCameraReady(true)} />
+            {cameraError ? <p role="alert" className="ai-camera-error">{cameraError}</p> : <p>{locale === "vi" ? "Đặt đề bài vào giữa khung hình rồi chụp nhé." : "Center the problem in the frame, then take a photo."}</p>}
+            <div className="ai-camera-actions">
+              <button type="button" className="button button--secondary" onClick={() => setCameraOpen(false)}>{locale === "vi" ? "Đóng" : "Close"}</button>
+              <button type="button" className="button button--primary" onClick={captureCameraImage} disabled={!cameraReady}>{locale === "vi" ? "Chụp ảnh" : "Capture photo"}</button>
+            </div>
+          </section>
+        </div>
+      ) : null}
       {quota && quota.remaining === 0 && !quota.unlimited ? (
         <Card className="ai-exhausted-card">
           <p>{quota.kind === "guest" ? copy.exhaustedGuest : copy.exhaustedAccount}</p>

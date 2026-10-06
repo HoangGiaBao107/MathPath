@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { LineChart } from "@/components/analytics/line-chart";
 import { useLocale } from "@/components/providers/locale-provider";
 import { Button } from "@/components/ui/button";
@@ -14,27 +14,16 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { creditPolicy } from "@/lib/credits/types";
 import { getScoreGoalMessage } from "@/lib/analytics/score-encouragement";
 
-const avatarMaxBytes = 2 * 1024 * 1024;
-const avatarTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
-
 export function AccountExperience({
   email,
   username,
   targetScore,
-  birthDate,
-  gender,
-  avatarPath: initialAvatarPath,
-  avatarUrl: initialAvatarUrl,
   progress,
   configured,
 }: {
   email: string | null;
   username: string | null;
   targetScore?: number | null;
-  birthDate?: string | null;
-  gender?: string | null;
-  avatarPath?: string | null;
-  avatarUrl?: string | null;
   progress?: StudentProgress | null;
   configured: boolean;
 }) {
@@ -46,17 +35,10 @@ export function AccountExperience({
   const [notice, setNotice] = useState("");
   const [name, setName] = useState(username ?? "");
   const [aim, setAim] = useState(targetScore == null ? "" : String(targetScore));
-  const [birthday, setBirthday] = useState(birthDate ?? "");
-  const [selectedGender, setSelectedGender] = useState(
-    gender === "prefer_not_to_say" ? "" : gender ?? "",
-  );
-  const [avatarPath, setAvatarPath] = useState(initialAvatarPath ?? null);
-  const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl ?? null);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
-  const [savingAvatar, setSavingAvatar] = useState(false);
   const [currentPlan, setCurrentPlan] = useState("starter");
 
   useEffect(() => {
@@ -106,8 +88,6 @@ export function AccountExperience({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: name.trim(),
-          birthDate: birthday || null,
-          gender: selectedGender || null,
           targetScore: aim === "" ? null : Number(aim),
         }),
       });
@@ -123,78 +103,6 @@ export function AccountExperience({
       setError(copy.genericError);
     } finally {
       setSavingProfile(false);
-    }
-  }
-
-  async function uploadAvatar(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
-    setError("");
-    setNotice("");
-    if (!avatarTypes.has(file.type)) {
-      setError(copy.avatarUnsupported);
-      return;
-    }
-    if (file.size > avatarMaxBytes) {
-      setError(copy.avatarTooLarge);
-      return;
-    }
-
-    setSavingAvatar(true);
-    try {
-      const supabase = getSupabaseBrowserClient();
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) throw new Error("session_expired");
-      const path = `${user.id}/avatar`;
-      const { error: uploadError } = await supabase.storage
-        .from("profile-avatars")
-        .upload(path, file, { upsert: true, contentType: file.type, cacheControl: "3600" });
-      if (uploadError) throw uploadError;
-      const response = await fetch("/api/auth/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ avatarPath: path }),
-      });
-      if (!response.ok) throw new Error("profile_sync_failed");
-      const { data: signed, error: signedError } = await supabase.storage
-        .from("profile-avatars")
-        .createSignedUrl(path, 3600);
-      if (signedError) throw signedError;
-      setAvatarPath(path);
-      setAvatarUrl(signed.signedUrl);
-      setNotice(vi ? "Ảnh đại diện đã được cập nhật." : "Your profile photo is updated.");
-      router.refresh();
-    } catch {
-      setError(copy.genericError);
-    } finally {
-      setSavingAvatar(false);
-    }
-  }
-
-  async function removeAvatar() {
-    if (!avatarPath || savingAvatar) return;
-    setSavingAvatar(true);
-    setError("");
-    setNotice("");
-    try {
-      const response = await fetch("/api/auth/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ avatarPath: null }),
-      });
-      if (!response.ok) throw new Error("profile_sync_failed");
-      const { error: removeError } = await getSupabaseBrowserClient()
-        .storage.from("profile-avatars").remove([avatarPath]);
-      if (removeError) throw removeError;
-      setAvatarPath(null);
-      setAvatarUrl(null);
-      setNotice(vi ? "Đã gỡ ảnh đại diện." : "Your profile photo was removed.");
-      router.refresh();
-    } catch {
-      setError(copy.genericError);
-    } finally {
-      setSavingAvatar(false);
     }
   }
 
@@ -231,32 +139,12 @@ export function AccountExperience({
           <div className="account-dashboard-grid">
             <div className="account-learning-column account-left-column">
               <Card className="account-panel account-profile-panel">
-                <div className="account-profile-identity">
-                  <div
-                    className={`account-avatar${avatarUrl ? " has-photo" : ""}`}
-                    role={avatarUrl ? "img" : undefined}
-                    aria-label={avatarUrl ? copy.avatarLabel : undefined}
-                    aria-hidden={avatarUrl ? undefined : true}
-                    style={avatarUrl ? { backgroundImage: `url("${avatarUrl}")` } : undefined}
-                  >
-                    {avatarUrl ? null : (name || email || "M").slice(0, 1).toUpperCase()}
-                  </div>
-                  <div className="account-avatar-actions">
-                    <label className="button button--secondary button--small" htmlFor="account-avatar-file">
-                      {savingAvatar ? (vi ? "Đang cập nhật…" : "Updating…") : copy.avatarLabel}
-                    </label>
-                    <input id="account-avatar-file" className="sr-only" type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void uploadAvatar(event)} disabled={savingAvatar} />
-                    {avatarPath ? <button className="account-remove-avatar" type="button" onClick={() => void removeAvatar()} disabled={savingAvatar}>{vi ? "Gỡ ảnh" : "Remove photo"}</button> : null}
-                  </div>
-                </div>
                 <h2>{name || (vi ? "Chọn tên đăng nhập" : "Choose a username")}</h2>
                 <p className="account-email">{email || "—"}</p>
                 <form className="auth-form" onSubmit={(event) => void saveProfile(event)}>
                   <label>{copy.username}<input autoComplete="username" value={name} onChange={(event) => setName(event.target.value)} minLength={3} maxLength={30} pattern="[A-Za-z0-9._-]{3,30}" required /></label>
                   <p className="account-field-hint">{vi ? "Tên đăng nhập cũng là tên hiển thị của bạn. Dùng 3–30 chữ cái, số, dấu chấm, gạch dưới hoặc gạch ngang." : "Your username is also your display name. Use 3–30 letters, numbers, dots, underscores, or hyphens."}</p>
                   <label>{copy.email}<input value={email ?? "—"} readOnly /></label>
-                  <label>{copy.birthDateLabel}<input type="date" value={birthday} max={new Date().toISOString().slice(0, 10)} onChange={(event) => setBirthday(event.target.value)} /></label>
-                  <label>{copy.genderLabel}<select value={selectedGender} onChange={(event) => setSelectedGender(event.target.value)}><option value="" disabled hidden>{vi ? "Chọn giới tính" : "Choose gender"}</option><option value="female">{copy.genderOptions.female}</option><option value="male">{copy.genderOptions.male}</option><option value="non_binary">{copy.genderOptions.nonBinary}</option></select></label>
                   <label>{vi ? "Gói học tập" : "Learning plan"}<input value={activePlanName} readOnly /></label>
                   <label>{copy.targetScoreLabel} (0–10)<input type="number" min="0" max="10" step="0.1" value={aim} onChange={(event) => setAim(event.target.value)} placeholder={vi ? "Chưa đặt mục tiêu" : "No target set"} /></label>
                   <Button type="submit" disabled={savingProfile}>{savingProfile ? (vi ? "Đang lưu…" : "Saving…") : (vi ? "Lưu hồ sơ" : "Save profile")}</Button>
