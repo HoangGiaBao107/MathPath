@@ -78,17 +78,25 @@ function extractTrueFalseAnswers(explanation) {
   for (const match of explanation.matchAll(/([a-d])\)\s*(Đúng|Sai)\b/gi)) {
     answers.set(match[1].toLowerCase(), match[2].toLocaleLowerCase("vi") === "đúng");
   }
-  for (const match of explanation.matchAll(/(?:phát biểu|ý)\s+([a-d])\s+(?:là\s+)?(Đúng|Sai)\b/gi)) {
+  for (const match of explanation.matchAll(
+    /(?:phát biểu|ý)\s+([a-d])\s+(?:là\s+)?(Đúng|Sai)\b/gi,
+  )) {
     answers.set(match[1].toLowerCase(), match[2].toLocaleLowerCase("vi") === "đúng");
   }
   return answers;
 }
 
 function knowledgeLabel(examSlug, question) {
-  const sourceQuestion = String(question.sourceContent ?? "").split(/Đáp án(?:\s*&\s*Giải thích)?\s*:/i)[0];
+  const sourceQuestion = String(question.sourceContent ?? "").split(
+    /Đáp án(?:\s*&\s*Giải thích)?\s*:/i,
+  )[0];
   const text = `${question.stem} ${sourceQuestion} ${(question.statements ?? []).map((item) => item.text).join(" ")}`;
   const has = (pattern) => pattern.test(text);
-  if (has(/thống kê|mẫu số liệu|tứ phân vị|trung vị|tần số ghép nhóm|nhóm chứa mốt|số giờ tự học|chiều cao trung bình/i)) {
+  if (
+    has(
+      /thống kê|mẫu số liệu|tứ phân vị|trung vị|tần số ghép nhóm|nhóm chứa mốt|số giờ tự học|chiều cao trung bình/i,
+    )
+  ) {
     return { topic: "Thống kê", subtopic: "Số liệu ghép nhóm" };
   }
   if (has(/số phức|phần thực|phần ảo|liên hợp|môđun.*z|điểm biểu diễn/i)) {
@@ -99,13 +107,19 @@ function knowledgeLabel(examSlug, question) {
         : "Phép toán và phần thực số phức";
     return { topic: "Số phức", subtopic };
   }
-  if (has(/xác suất|gieo.*xúc xắc|biến cố|số cách|chọn ra \d+ học sinh|xếp \d+ học sinh|số tự nhiên gồm|chỉnh hợp|hoán vị|tổ hợp/i)) {
+  if (
+    has(
+      /xác suất|gieo.*xúc xắc|biến cố|số cách|chọn ra \d+ học sinh|xếp \d+ học sinh|số tự nhiên gồm|chỉnh hợp|hoán vị|tổ hợp/i,
+    )
+  ) {
     return {
       topic: "Xác suất và tổ hợp",
       subtopic: has(/xác suất|gieo.*xúc xắc|biến cố/i) ? "Xác suất" : "Quy tắc đếm và tổ hợp",
     };
   }
-  if (has(/∫|\\int|nguyên hàm|tích phân|vận tốc|gia tốc|quãng đường|v\(t\)|diện tích hình phẳng/i)) {
+  if (
+    has(/∫|\\int|nguyên hàm|tích phân|vận tốc|gia tốc|quãng đường|v\(t\)|diện tích hình phẳng/i)
+  ) {
     const subtopic = has(/vận tốc|gia tốc|quãng đường|v\(t\)/i)
       ? "Ứng dụng tích phân trong chuyển động"
       : has(/diện tích hình phẳng/i)
@@ -119,9 +133,16 @@ function knowledgeLabel(examSlug, question) {
     return { topic: "Dãy số", subtopic: "Cấp số cộng và cấp số nhân" };
   }
   if (has(/log|ln\s*\(|\\log|e\^|[a-z]=?\^x|\^\s*\{?x/i)) {
-    return { topic: "Hàm số mũ và logarit", subtopic: "Phương trình, bất phương trình và tính chất" };
+    return {
+      topic: "Hàm số mũ và logarit",
+      subtopic: "Phương trình, bất phương trình và tính chất",
+    };
   }
-  if (has(/hàm số|đạo hàm|đồng biến|nghịch biến|cực đại|cực tiểu|cực trị|tiệm cận|bảng biến thiên|đồ thị|bất phương trình/i)) {
+  if (
+    has(
+      /hàm số|đạo hàm|đồng biến|nghịch biến|cực đại|cực tiểu|cực trị|tiệm cận|bảng biến thiên|đồ thị|bất phương trình/i,
+    )
+  ) {
     let subtopic = "Khảo sát và đọc đồ thị hàm số";
     if (has(/đạo hàm/)) subtopic = "Đạo hàm";
     else if (has(/cực đại|cực tiểu|cực trị/)) subtopic = "Cực trị";
@@ -129,7 +150,11 @@ function knowledgeLabel(examSlug, question) {
     else if (has(/đồng biến|nghịch biến/)) subtopic = "Tính đơn điệu";
     return { topic: "Hàm số", subtopic };
   }
-  if (has(/Oxyz|vectơ|\bvector\b|mặt phẳng|đường thẳng|tọa độ|khoảng cách.*\(P\)|mặt cầu.*\(S\)|A\([^)]*\).{0,80}B\(/i)) {
+  if (
+    has(
+      /Oxyz|vectơ|\bvector\b|mặt phẳng|đường thẳng|tọa độ|khoảng cách.*\(P\)|mặt cầu.*\(S\)|A\([^)]*\).{0,80}B\(/i,
+    )
+  ) {
     const subtopic = has(/mặt cầu/i)
       ? "Mặt cầu và khoảng cách"
       : has(/đường thẳng/i) && has(/mặt phẳng/i)
@@ -143,7 +168,11 @@ function knowledgeLabel(examSlug, question) {
               : "Tọa độ điểm, trung điểm và khoảng cách";
     return { topic: "Hình học tọa độ Oxyz", subtopic };
   }
-  if (has(/lăng trụ|hình chóp|khối chóp|khối lập phương|lập phương|hình trụ|khối trụ|hình nón|khối nón|khối cầu|mặt cầu|tứ diện|đáy là hình vuông|đường chéo.*hình vuông|thể tích/i)) {
+  if (
+    has(
+      /lăng trụ|hình chóp|khối chóp|khối lập phương|lập phương|hình trụ|khối trụ|hình nón|khối nón|khối cầu|mặt cầu|tứ diện|đáy là hình vuông|đường chéo.*hình vuông|thể tích/i,
+    )
+  ) {
     const subtopic = has(/hình trụ|khối trụ|hình nón|khối nón|khối cầu|mặt cầu/i)
       ? "Khối tròn xoay"
       : has(/lăng trụ|khối lập phương|lập phương/i)
@@ -155,7 +184,9 @@ function knowledgeLabel(examSlug, question) {
             : "Thể tích và diện tích khối hình học";
     return { topic: "Hình học không gian", subtopic };
   }
-  throw new Error(`No reliable knowledge label for ${examSlug} question ${question.questionNumber}: ${text.slice(0, 180)}`);
+  throw new Error(
+    `No reliable knowledge label for ${examSlug} question ${question.questionNumber}: ${text.slice(0, 180)}`,
+  );
 }
 
 function answerPayload(question, privateQuestion, sourceKind) {
@@ -247,31 +278,46 @@ function answerPayload(question, privateQuestion, sourceKind) {
   if (question.questionType === "true_false") {
     const subanswers = privateQuestion.subanswers ?? [];
     const answersFromExplanation = extractTrueFalseAnswers(privateQuestion.explanation ?? "");
-    const hasStructuredAnswers = subanswers.length === question.substatements.length && subanswers.every((item) =>
-      ["đúng", "sai"].includes(
-        String(item.answer ?? "")
-          .trim()
-          .toLocaleLowerCase("vi"),
-      ),
-    );
+    const hasStructuredAnswers =
+      subanswers.length === question.substatements.length &&
+      subanswers.every((item) =>
+        ["đúng", "sai"].includes(
+          String(item.answer ?? "")
+            .trim()
+            .toLocaleLowerCase("vi"),
+        ),
+      );
     const answers = hasStructuredAnswers
-      ? new Map(subanswers.map((item) => [item.key, String(item.answer).trim().toLocaleLowerCase("vi") === "đúng"]))
+      ? new Map(
+          subanswers.map((item) => [
+            item.key,
+            String(item.answer).trim().toLocaleLowerCase("vi") === "đúng",
+          ]),
+        )
       : answersFromExplanation;
     if (question.substatements.some((item) => !answers.has(item.key))) {
       return {
-        statements: Object.fromEntries(question.substatements.map((item) => [item.key, answers.get(item.key) ?? null])),
+        statements: Object.fromEntries(
+          question.substatements.map((item) => [item.key, answers.get(item.key) ?? null]),
+        ),
         answer_pending: true,
         source_subanswers: subanswers,
-        answer_source: hasStructuredAnswers ? "structured_source_key" : "word_explanation_answer_markers",
+        answer_source: hasStructuredAnswers
+          ? "structured_source_key"
+          : "word_explanation_answer_markers",
         source_answer_record: sourceAnswerRecord,
         verification_status: "uncertain",
       };
     }
-    const statements = Object.fromEntries(question.substatements.map((item) => [item.key, answers.get(item.key)]));
+    const statements = Object.fromEntries(
+      question.substatements.map((item) => [item.key, answers.get(item.key)]),
+    );
     return {
       statements,
       source_subanswers: subanswers,
-      answer_source: hasStructuredAnswers ? "structured_source_key" : "word_explanation_answer_markers",
+      answer_source: hasStructuredAnswers
+        ? "structured_source_key"
+        : "word_explanation_answer_markers",
       source_answer_record: sourceAnswerRecord,
       verification_status: "verified",
     };
@@ -308,7 +354,11 @@ function buildTopicScoreConfig(exam) {
 
 function buildGeneralScoreConfig(exam) {
   const pointsFor = (question) =>
-    question.questionType === "multiple_choice" ? 0.25 : question.questionType === "true_false" ? 1 : 0.5;
+    question.questionType === "multiple_choice"
+      ? 0.25
+      : question.questionType === "true_false"
+        ? 1
+        : 0.5;
   const sections = [...new Set(exam.questions.map((question) => question.section))].map((key) => ({
     key,
     description: "",
@@ -460,12 +510,15 @@ export function buildApprovedImportBundle() {
         const typeKey = sourceKind === "general" ? type : type;
         const mappedType = typeKey;
         const privateKey = answerPayload(question, privateQuestion, sourceKind);
-        const knowledge = sourceKind === "general" ? knowledgeLabel(examId, {
-          stem: type === "short_answer" ? "" : stem,
-          sourceContent: privateQuestion.sourceContent,
-          statements,
-          questionNumber: question.questionNumber,
-        }) : null;
+        const knowledge =
+          sourceKind === "general"
+            ? knowledgeLabel(examId, {
+                stem: type === "short_answer" ? "" : stem,
+                sourceContent: privateQuestion.sourceContent,
+                statements,
+                questionNumber: question.questionNumber,
+              })
+            : null;
         return {
           id: questionId,
           sourceQuestionId,
@@ -581,7 +634,11 @@ export function buildApprovedImportBundle() {
     questionCount: sets.reduce((sum, set) => sum + set.questions.length, 0),
     generalQuestionsLabeled: sets
       .filter((set) => set.sourceKind === "general")
-      .reduce((sum, set) => sum + set.questions.filter((question) => question.topic && question.subtopic).length, 0),
+      .reduce(
+        (sum, set) =>
+          sum + set.questions.filter((question) => question.topic && question.subtopic).length,
+        0,
+      ),
     answerKeyCount: sets.reduce(
       (sum, set) =>
         sum +
@@ -996,7 +1053,9 @@ export function buildPublishSql(bundle) {
   const slugs = bundle.sets.map((set) => sqlText(set.slug)).join(", ");
   const pending = bundle.sets.flatMap((set) =>
     set.questions
-      .filter((question) => (question.correctAnswer.verification_status ?? "verified") !== "verified")
+      .filter(
+        (question) => (question.correctAnswer.verification_status ?? "verified") !== "verified",
+      )
       .map((question) => `${set.slug}/${question.questionNumber}`),
   );
   const noChoices = bundle.sets.flatMap((set) =>
@@ -1060,7 +1119,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
       d1d10Imported: false,
       figuresGenerated: 0,
       pendingFigurePromptsPreservedPrivately: bundle.figureManifest.figures.length,
-      publication: publish ? "publish requested after import" : "unpublished; no publication action performed",
+      publication: publish
+        ? "publish requested after import"
+        : "unpublished; no publication action performed",
       sqlBytes: Buffer.byteLength(sql),
     };
     printSummary(summary);

@@ -99,37 +99,40 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
     setPhase(nextAttempt.status === "in_progress" ? "active" : "submitted");
   }, []);
 
-  const loadCurrent = useCallback(async (restartPreviousAttempt = false) => {
-    setRequestError("");
-    try {
-      const response = await fetch(`/api/attempts?examId=${encodeURIComponent(exam.id)}`, {
-        cache: "no-store",
-      });
-      if (!response.ok) throw new Error("load");
-      const data = (await response.json()) as {
-        attempt: PublicExamAttempt | null;
-        guestQuestionUsage?: number;
-        isGuest?: boolean;
-      };
-      guestQuestionUsageRef.current = data.guestQuestionUsage ?? 0;
-      guestLimitReachedRef.current = data.isGuest === true && guestQuestionUsageRef.current >= 10;
-      setIsGuest(data.isGuest === true);
-      setGuestLimitReached(guestLimitReachedRef.current);
-      if (data.attempt && restartPreviousAttempt) {
-        const abandonResponse = await fetch(`/api/attempts/${data.attempt.id}/abandon`, {
-          method: "POST",
-          keepalive: true,
+  const loadCurrent = useCallback(
+    async (restartPreviousAttempt = false) => {
+      setRequestError("");
+      try {
+        const response = await fetch(`/api/attempts?examId=${encodeURIComponent(exam.id)}`, {
+          cache: "no-store",
         });
-        if (!abandonResponse.ok) throw new Error("abandon");
-        attemptRef.current = null;
-        setPhase("intro");
-      } else if (data.attempt) applyAttempt(data.attempt);
-      else setPhase("intro");
-    } catch {
-      setRequestError(copy.loadError);
-      setPhase("error");
-    }
-  }, [applyAttempt, copy.loadError, exam.id]);
+        if (!response.ok) throw new Error("load");
+        const data = (await response.json()) as {
+          attempt: PublicExamAttempt | null;
+          guestQuestionUsage?: number;
+          isGuest?: boolean;
+        };
+        guestQuestionUsageRef.current = data.guestQuestionUsage ?? 0;
+        guestLimitReachedRef.current = data.isGuest === true && guestQuestionUsageRef.current >= 10;
+        setIsGuest(data.isGuest === true);
+        setGuestLimitReached(guestLimitReachedRef.current);
+        if (data.attempt && restartPreviousAttempt) {
+          const abandonResponse = await fetch(`/api/attempts/${data.attempt.id}/abandon`, {
+            method: "POST",
+            keepalive: true,
+          });
+          if (!abandonResponse.ok) throw new Error("abandon");
+          attemptRef.current = null;
+          setPhase("intro");
+        } else if (data.attempt) applyAttempt(data.attempt);
+        else setPhase("intro");
+      } catch {
+        setRequestError(copy.loadError);
+        setPhase("error");
+      }
+    },
+    [applyAttempt, copy.loadError, exam.id],
+  );
 
   useEffect(() => {
     const timer = window.setTimeout(() => void loadCurrent(true), 0);
@@ -243,7 +246,9 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
         body: JSON.stringify({ examId: exam.id, requestKey: startKeyRef.current }),
       });
       if (!response.ok) {
-        const data = (await response.json().catch(() => null)) as { error?: { code?: string } } | null;
+        const data = (await response.json().catch(() => null)) as {
+          error?: { code?: string };
+        } | null;
         if (data?.error?.code === "guest_question_limit_reached") {
           setGuestLimitReached(true);
           setRequestError(copy.guestLimitReached);
@@ -322,7 +327,9 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
           }),
         });
         if (!response.ok) {
-          const data = (await response.json().catch(() => null)) as { error?: { code?: string } } | null;
+          const data = (await response.json().catch(() => null)) as {
+            error?: { code?: string };
+          } | null;
           if (data?.error?.code === "guest_question_limit_reached") {
             const persisted = persistedDraftsRef.current[questionId] ?? {
               answer: null,
@@ -447,7 +454,8 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
             {guestLimitReached ? (
               <p className="exam-error-message" role="alert">
                 {copy.guestLimitReached} <Link href="/auth/register">{copy.guestLimitAction}</Link>
-                {" · "}<Link href="/auth/login">{copy.guestLimitLogin}</Link>
+                {" · "}
+                <Link href="/auth/login">{copy.guestLimitLogin}</Link>
               </p>
             ) : null}
             <Button
@@ -898,7 +906,8 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
                     key={`${item.topic}:${item.subtopic ?? ""}`}
                   >
                     <span>
-                      {item.topic}{item.subtopic ? ` · ${item.subtopic}` : ""}
+                      {item.topic}
+                      {item.subtopic ? ` · ${item.subtopic}` : ""}
                     </span>
                     <strong>
                       {item.incorrectCount} {copy.wrongQuestions}

@@ -239,6 +239,23 @@ export type Database = {
       attempts: Table<ExamAttemptRow>;
       attempt_questions: Table<AttemptQuestionRow>;
       attempt_answers: Table<AttemptAnswerRow>;
+      ai_practice_items: Table<{
+        id: string;
+        user_id: string | null;
+        guest_session_hash: string | null;
+        statement: string;
+        question_type: "multiple_choice" | "short_answer";
+        choices: Json;
+        correct_answer: string;
+        explanation: string;
+        topic: string;
+        difficulty: "easy" | "medium" | "hard";
+        source_context: string;
+        provider: string;
+        model: string;
+        created_at: string;
+        expires_at: string;
+      }>;
     };
     Views: Record<string, never>;
     Functions: {
@@ -325,6 +342,33 @@ export type Database = {
         Returns: boolean;
       };
       seed_demo_exams: { Args: { p_exams: Json }; Returns: number };
+      get_ai_quota: {
+        Args: { p_user_id: string | null; p_guest_session_hash: string | null };
+        Returns: Json;
+      };
+      reserve_ai_request: {
+        Args: {
+          p_user_id: string | null;
+          p_guest_session_hash: string | null;
+          p_request_id: string;
+          p_request_type: string;
+          p_input_type: string;
+          p_provider: string;
+          p_model: string;
+        };
+        Returns: Json;
+      };
+      finish_ai_request: {
+        Args: {
+          p_reservation_id: string;
+          p_usage_id: string;
+          p_succeeded: boolean;
+          p_duration_ms: number;
+          p_input_tokens?: number | null;
+          p_output_tokens?: number | null;
+        };
+        Returns: boolean;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

@@ -2,16 +2,12 @@
 
 import Link from "next/link";
 import type { Route } from "next";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { LineChart } from "@/components/analytics/line-chart";
 import { useLocale } from "@/components/providers/locale-provider";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
-import {
-  createImproveWithAiContext,
-  deriveStudentPersonalization,
-} from "@/lib/analytics/personalization";
+import { deriveStudentPersonalization } from "@/lib/analytics/personalization";
 import type { StudentProgress } from "@/lib/analytics/types";
 
 const historyPageSize = 10;
@@ -19,9 +15,7 @@ const historyPageSize = 10;
 export function StudentProgressExperience({ data, page }: { data: StudentProgress; page: number }) {
   const { messages, locale } = useLocale();
   const copy = messages.progress;
-  const [showAiPlaceholder, setShowAiPlaceholder] = useState(false);
   const summary = useMemo(() => deriveStudentPersonalization(data), [data]);
-  const aiContext = useMemo(() => createImproveWithAiContext(data, locale), [data, locale]);
   const historyPages = Math.max(1, Math.ceil(data.historyTotal / historyPageSize));
   const hasTopicData = data.topics.length > 0;
   const recommendation = summary.weakestTopic
@@ -226,22 +220,18 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
             <p className="eyebrow">{copy.improveWithAi}</p>
             <h3>{copy.improveWithAi}</h3>
             <p>{copy.aiDescription}</p>
-            <Button
-              type="button"
-              size="small"
-              onClick={() => setShowAiPlaceholder((value) => !value)}
+            <Link
+              className="button button--primary button--small"
+              href={"/ai?mode=practice" as Route}
             >
               {copy.improveWithAi}
-            </Button>
-            {showAiPlaceholder ? (
-              <p
-                className="analytics-ai-placeholder"
-                role="status"
-                data-feature={aiContext.feature}
-              >
-                {copy.aiPlaceholder}
-              </p>
-            ) : null}
+            </Link>
+            <Link
+              className="button button--secondary button--small"
+              href={"/ai?mode=recommendation" as Route}
+            >
+              {messages.ai.recommendationAction}
+            </Link>
           </div>
         </Card>
       </section>

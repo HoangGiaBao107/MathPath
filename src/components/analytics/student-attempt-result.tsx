@@ -44,6 +44,64 @@ export function StudentAttemptResultExperience({ attempt }: { attempt: StudentAt
           </span>
         </div>
       </Card>
+      {result.knowledgeOutcomes.length > 0
+        ? (() => {
+            const weakest = [...result.knowledgeOutcomes].sort(
+              (a, b) =>
+                b.incorrectCount +
+                b.partialCount +
+                b.unansweredCount -
+                (a.incorrectCount + a.partialCount + a.unansweredCount),
+            )[0]!;
+            const weakCount =
+              weakest.incorrectCount + weakest.partialCount + weakest.unansweredCount;
+            const topicQuestions = result.questionOutcomes.filter(
+              (item) => item.topic === weakest.topic,
+            );
+            const correct = topicQuestions.filter((item) => item.state === "correct").length;
+            const accuracy =
+              weakCount && topicQuestions.length
+                ? Math.round((correct / topicQuestions.length) * 100)
+                : null;
+            return (
+              <Card className="ai-result-improvement">
+                <div>
+                  <p className="eyebrow">{locale === "vi" ? "BƯỚC TIẾP THEO" : "YOUR NEXT STEP"}</p>
+                  <h2>{messages.ai.resultNextTitle}</h2>
+                  <p>
+                    {weakCount ? messages.ai.resultWeakTopic : messages.ai.resultNoWeakTopic}
+                    {weakCount ? (
+                      <>
+                        : <strong>{weakest.topic}</strong>
+                      </>
+                    ) : null}
+                    {accuracy === null
+                      ? ""
+                      : ` · ${locale === "vi" ? "đúng" : "accuracy"} ${accuracy}%`}
+                  </p>
+                </div>
+                <div className="ai-result-actions">
+                  <Link
+                    className="button button--primary button--small"
+                    href={
+                      `/ai?mode=practice&attemptId=${encodeURIComponent(attempt.attemptId)}` as Route
+                    }
+                  >
+                    {messages.ai.practiceWithAI}
+                  </Link>
+                  <Link
+                    className="button button--secondary button--small"
+                    href={
+                      `/ai?mode=recommendation&attemptId=${encodeURIComponent(attempt.attemptId)}` as Route
+                    }
+                  >
+                    {messages.ai.getStudyAdvice}
+                  </Link>
+                </div>
+              </Card>
+            );
+          })()
+        : null}
       <section className="analytics-primary-grid">
         <Card className="analytics-panel">
           <p className="eyebrow">{copy.sectionBreakdown}</p>

@@ -57,9 +57,7 @@ export class MockAttemptRepository {
     const attempt = [...this.attempts.values()]
       .filter(
         (item) =>
-          item.examId === examId &&
-          item.status === "in_progress" &&
-          isSameOwner(item.owner, owner),
+          item.examId === examId && item.status === "in_progress" && isSameOwner(item.owner, owner),
       )
       .sort((a, b) => Date.parse(b.startedAt) - Date.parse(a.startedAt))[0];
     if (attempt && hasExpired(attempt, this.now())) {
@@ -87,7 +85,8 @@ export class MockAttemptRepository {
     if (!attempt.questionIdsInOrder.includes(input.questionId)) return null;
     if (owner.kind === "guest" && input.answer !== null) {
       const used = this.guestAnsweredQuestions.get(owner.guestSessionHash) ?? new Set<string>();
-      if (!used.has(input.questionId) && used.size >= 10) throw new Error("guest_question_limit_reached");
+      if (!used.has(input.questionId) && used.size >= 10)
+        throw new Error("guest_question_limit_reached");
       used.add(input.questionId);
       this.guestAnsweredQuestions.set(owner.guestSessionHash, used);
     }
@@ -107,7 +106,9 @@ export class MockAttemptRepository {
   }
 
   getGuestQuestionUsage(owner: AttemptOwner): number {
-    return owner.kind === "guest" ? this.guestAnsweredQuestions.get(owner.guestSessionHash)?.size ?? 0 : 0;
+    return owner.kind === "guest"
+      ? (this.guestAnsweredQuestions.get(owner.guestSessionHash)?.size ?? 0)
+      : 0;
   }
 
   submit(

@@ -23,7 +23,10 @@ export async function POST(request: Request, context: RouteContext<"/api/auth/[a
       const parsed = credentialsSchema.omit({ displayName: true }).safeParse(input);
       if (!parsed.success) return authError("invalid_request", 400);
       const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
-      if (error || !data.user) return authError("credentials_not_accepted", 401);
+      if (error) {
+        return authError(classifySignInError(error), 401);
+      }
+      if (!data.user) return authError("credentials_not_accepted", 401);
       if (parsed.data.targetScore !== undefined) {
         const { error: profileError } = await supabase
           .from("profiles")
@@ -156,10 +159,24 @@ function authError(code: string, status: number) {
 
 function classifySupabaseAuthError(error: { code?: string; message: string; status?: number }) {
   const detail = `${error.code ?? ""} ${error.message}`.toLowerCase();
-  if (detail.includes("email_address_not_authorized") || detail.includes("email address not authorized"))
+  if (
+    detail.includes("email_address_not_authorized") ||
+    detail.includes("email address not authorized")
+  )
     return "email_delivery_not_configured";
-  if (detail.includes("redirect") && (detail.includes("not allowed") || detail.includes("allowlist")))
+  if (
+    detail.includes("redirect") &&
+    (detail.includes("not allowed") || detail.includes("allowlist"))
+  )
     return "auth_redirect_not_allowed";
   if (error.status === 429 || detail.includes("rate limit")) return "email_rate_limited";
   return "account_not_created";
+}
+
+function classifySignInError(error: { code?: string; message: string }) {
+  const detail = `${error.code ?? ""} ${error.message}`.toLowerCase();
+  if (detail.includes("email_not_confirmed") || detail.includes("email not confirmed")) {
+    return "email_not_confirmed";
+  }
+  return "credentials_not_accepted";
 }

@@ -99,7 +99,11 @@ describe("approved Word question-bank import", () => {
       .filter((question) => question.correctAnswer.verification_status === "uncertain");
     expect(incomplete).toHaveLength(0);
     const getQuestion = (slug, number) =>
-      bundle.sets.find((set) => set.slug === slug).questions.find((question) => question.questionNumber === number && question.type === "true_false");
+      bundle.sets
+        .find((set) => set.slug === slug)
+        .questions.find(
+          (question) => question.questionNumber === number && question.type === "true_false",
+        );
     expect(getQuestion("exam-6", "2").correctAnswer.statements.b).toBe(false);
     expect(getQuestion("exam-8", "2").correctAnswer.statements).toEqual({
       a: true,
@@ -108,9 +112,9 @@ describe("approved Word question-bank import", () => {
       d: true,
     });
     expect(getQuestion("exam-8", "4").correctAnswer.statements.c).toBe(false);
-    const question8 = bundle.sets.find((set) => set.slug === "exam-1").questions.find(
-      (question) => question.sourceQuestionId === "word-exam-1-q8-1",
-    );
+    const question8 = bundle.sets
+      .find((set) => set.slug === "exam-1")
+      .questions.find((question) => question.sourceQuestionId === "word-exam-1-q8-1");
     expect(question8.options.map(({ key, text }) => [key, text])).toEqual([
       ["A", "$0 < c < 1 < q$"],
       ["B", "$0 < q < 1 < c$"],

@@ -134,9 +134,7 @@ describe("server-side exam scoring", () => {
         { ...question, topic: "Hàm số", subtopic: "Đạo hàm" },
         { ...question, id: "q-tagged-2", number: "2", topic: "Hàm số", subtopic: "Đạo hàm" },
       ],
-      sections: [
-        { ...official.sections[0], maxScore: question.points * 2 },
-      ],
+      sections: [{ ...official.sections[0], maxScore: question.points * 2 }],
     };
     const result = scoreExam(taggedExam, {
       [question.id]: { type: "multiple_choice", optionKey: "wrong-option" },

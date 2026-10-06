@@ -175,7 +175,9 @@ export class SupabaseAttemptRepository implements AttemptRepository {
       throw new Error(
         error.message.includes("guest_question_limit_reached")
           ? "guest_question_limit_reached"
-          : error.message.includes("attempt_closed") ? "attempt_closed" : "attempt_storage_unavailable",
+          : error.message.includes("attempt_closed")
+            ? "attempt_closed"
+            : "attempt_storage_unavailable",
       );
     }
     return this.get(attemptId, owner);

@@ -80,6 +80,8 @@ export function AuthExperience({
           email_delivery_not_configured: copy.emailDeliveryNotConfigured,
           auth_redirect_not_allowed: copy.authRedirectNotAllowed,
           email_rate_limited: copy.emailRateLimited,
+          credentials_not_accepted: copy.credentialsNotAccepted,
+          email_not_confirmed: copy.emailNotConfirmed,
         };
         setError(errorCopy[payload.error?.code ?? ""] ?? copy.genericError);
         return;

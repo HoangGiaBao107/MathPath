@@ -38,6 +38,8 @@ export const authMessages: Record<
     emailDeliveryNotConfigured: string;
     authRedirectNotAllowed: string;
     emailRateLimited: string;
+    credentialsNotAccepted: string;
+    emailNotConfirmed: string;
     invalid: string;
   }
 > = {
@@ -80,6 +82,10 @@ export const authMessages: Record<
     authRedirectNotAllowed:
       "Supabase chưa cho phép đường dẫn quay lại ứng dụng. Thêm URL callback vào Authentication → URL Configuration.",
     emailRateLimited: "Email xác nhận đang bị giới hạn tần suất. Hãy đợi một lúc rồi thử gửi lại.",
+    credentialsNotAccepted:
+      "Email hoặc mật khẩu chưa đúng. Kiểm tra lại thông tin hoặc chọn Quên mật khẩu nếu bạn không nhớ mật khẩu.",
+    emailNotConfirmed:
+      "Email tài khoản chưa được xác nhận. Hãy xác nhận email rồi thử đăng nhập lại.",
     invalid: "Nhập email hợp lệ và mật khẩu có ít nhất 8 ký tự.",
   },
   en: {
@@ -121,6 +127,10 @@ export const authMessages: Record<
     authRedirectNotAllowed:
       "Supabase does not allow this return URL. Add the callback URL in Authentication → URL Configuration.",
     emailRateLimited: "Confirmation email sending is rate limited. Wait a while, then try again.",
+    credentialsNotAccepted:
+      "The email or password is incorrect. Check your details, or choose Forgot password if needed.",
+    emailNotConfirmed:
+      "This account's email is not confirmed. Confirm it, then try signing in again.",
     invalid: "Enter a valid email and a password of at least 8 characters.",
   },
 };
