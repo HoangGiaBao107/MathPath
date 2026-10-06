@@ -9,8 +9,7 @@ import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
 import type { SolverResponse } from "@/lib/ai/types";
 
-type Mode = "chat" | "solver" | "practice" | "recommendation";
-type ChatMessage = { role: "user" | "assistant"; content: string };
+type Mode = "solver" | "practice" | "recommendation";
 type Quota = {
   kind: "guest" | "account" | "admin";
   plan: string;
@@ -41,8 +40,6 @@ export function AIWorkspace({
   const [quota, setQuota] = useState<Quota | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [chatInput, setChatInput] = useState("");
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [problemText, setProblemText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const imageUrl = useMemo(() => (image ? URL.createObjectURL(image) : null), [image]);
@@ -82,26 +79,6 @@ export function AIWorkspace({
 
   function clearError() {
     setError(null);
-  }
-
-  async function sendChat() {
-    if (!chatInput.trim() || busy) return;
-    clearError();
-    setBusy(true);
-    const requestMessages = [
-      ...chatMessages,
-      { role: "user" as const, content: chatInput.trim() },
-    ].slice(-12);
-    try {
-      const body = await postJson("/api/ai/chat", { locale, messages: requestMessages });
-      setChatMessages([...requestMessages, { role: "assistant", content: body.answer as string }]);
-      if (body.quota) setQuota(body.quota as Quota);
-      setChatInput("");
-    } catch (caught) {
-      setError(errorCopy(caught, copy));
-    } finally {
-      setBusy(false);
-    }
   }
 
   async function solveProblem() {
@@ -211,7 +188,6 @@ export function AIWorkspace({
   }
 
   const tabs: { id: Mode; label: string }[] = [
-    { id: "chat", label: copy.chatTab },
     { id: "solver", label: copy.solverTab },
     { id: "practice", label: copy.practiceTab },
     { id: "recommendation", label: copy.recommendationTab },
@@ -244,62 +220,6 @@ export function AIWorkspace({
             </button>
           ))}
         </div>
-
-        {mode === "chat" ? (
-          <section className="ai-mode-panel" aria-labelledby="ai-chat-heading">
-            <h2 id="ai-chat-heading">{copy.chatHeading}</h2>
-            <div className="ai-chat-log" aria-live="polite">
-              {chatMessages.length === 0 ? (
-                <p className="ai-empty-state">{copy.emptyChat}</p>
-              ) : (
-                chatMessages.map((message, index) => (
-                  <div
-                    className={`ai-chat-message ai-chat-message--${message.role}`}
-                    key={`${index}-${message.role}`}
-                  >
-                    <span>
-                      {message.role === "user" ? (locale === "vi" ? "Bạn" : "You") : "MathPath AI"}
-                    </span>
-                    <div>
-                      <MathContentView value={message.content} />
-                    </div>
-                  </div>
-                ))
-              )}
-              {busy ? (
-                <p className="ai-loading" role="status">
-                  {copy.thinking}
-                </p>
-              ) : null}
-            </div>
-            <form
-              className="ai-form"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void sendChat();
-              }}
-            >
-              <label className="sr-only" htmlFor="ai-chat-input">
-                {copy.chatPlaceholder}
-              </label>
-              <textarea
-                id="ai-chat-input"
-                rows={3}
-                maxLength={5000}
-                value={chatInput}
-                onChange={(event) => setChatInput(event.target.value)}
-                placeholder={copy.chatPlaceholder}
-              />
-              <button
-                className="button button--primary"
-                type="submit"
-                disabled={busy || !chatInput.trim()}
-              >
-                {busy ? copy.loading : copy.send}
-              </button>
-            </form>
-          </section>
-        ) : null}
 
         {mode === "solver" ? (
           <section className="ai-mode-panel" aria-labelledby="ai-solver-heading">
@@ -482,18 +402,19 @@ export function AIWorkspace({
 
         {error ? (
           <div className="ai-error" role="alert">
-            <p>{error}</p>
+            <div>
+              <p>{error}</p>
+              {error === copy.errorSetup ? <small>{copy.setupHint}</small> : null}
+            </div>
             <button
               type="button"
               className="button button--secondary button--small"
               onClick={() =>
-                mode === "chat"
-                  ? void sendChat()
-                  : mode === "solver"
-                    ? void solveProblem()
-                    : mode === "practice"
-                      ? void generatePractice()
-                      : void requestRecommendation()
+                mode === "solver"
+                  ? void solveProblem()
+                  : mode === "practice"
+                    ? void generatePractice()
+                    : void requestRecommendation()
               }
             >
               {copy.retry}

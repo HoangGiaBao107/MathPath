@@ -290,7 +290,6 @@ export type TranslationMessages = {
   ai: {
     title: string;
     description: string;
-    chatTab: string;
     solverTab: string;
     practiceTab: string;
     recommendationTab: string;
@@ -341,6 +340,9 @@ export type TranslationMessages = {
     errorGeneric: string;
     errorQuota: string;
     errorSetup: string;
+    setupHint: string;
+    chatLauncher: string;
+    chatClose: string;
     errorImage: string;
     loading: string;
     resultNextTitle: string;

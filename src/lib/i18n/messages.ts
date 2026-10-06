@@ -309,7 +309,6 @@ export const messages: Record<Locale, TranslationMessages> = {
     ai: {
       title: "AI học Toán cùng bạn",
       description: "Hỏi bài, giải đề, luyện câu mới và nhận gợi ý dựa trên tiến độ thật của bạn.",
-      chatTab: "Hỏi AI",
       solverTab: "Giải đề",
       practiceTab: "Luyện tập cùng AI",
       recommendationTab: "Gợi ý học tập",
@@ -360,7 +359,11 @@ export const messages: Record<Locale, TranslationMessages> = {
       noAttempts: "Chưa có đủ dữ liệu làm đề để tạo gợi ý cá nhân hóa. Hãy thử một đề trước nhé.",
       errorGeneric: "AI đang bận một chút. Bạn thử lại sau nhé.",
       errorQuota: "Bạn đã dùng hết lượt AI hiện có.",
-      errorSetup: "AI chưa được cấu hình trên máy chủ. Hãy báo quản trị viên.",
+      errorSetup: "Chatbox AI chưa kết nối được dịch vụ AI.",
+      setupHint:
+        "Quản trị viên cần thêm OPENAI_API_KEY hoặc ANTHROPIC_API_KEY trong Vercel → Settings → Environment Variables (Production), sau đó redeploy.",
+      chatLauncher: "Mở chat với robot MathPath",
+      chatClose: "Đóng chat",
       errorImage: "Ảnh chưa đọc được. Hãy thử ảnh rõ hơn, đúng định dạng và dưới 5 MB.",
       loading: "Đang xử lý…",
       resultNextTitle: "Luyện tập bước tiếp theo cùng AI",
@@ -828,7 +831,6 @@ export const messages: Record<Locale, TranslationMessages> = {
       title: "MathPath AI Tutor",
       description:
         "Ask questions, solve a problem, generate a fresh exercise, and get advice based on your real progress.",
-      chatTab: "Ask AI",
       solverTab: "Solve a problem",
       practiceTab: "Practice with AI",
       recommendationTab: "Study advice",
@@ -880,7 +882,11 @@ export const messages: Record<Locale, TranslationMessages> = {
         "There isn’t enough exam data for a personal recommendation yet. Try an exam first.",
       errorGeneric: "The AI is temporarily unavailable. Please try again.",
       errorQuota: "You’ve used all available AI requests.",
-      errorSetup: "AI is not configured on the server yet. Please contact an administrator.",
+      errorSetup: "The AI chatbox cannot connect to an AI provider yet.",
+      setupHint:
+        "An administrator needs to add OPENAI_API_KEY or ANTHROPIC_API_KEY in Vercel → Settings → Environment Variables (Production), then redeploy.",
+      chatLauncher: "Open chat with MathPath robot",
+      chatClose: "Close chat",
       errorImage: "We couldn’t read that image. Try a clearer supported image under 5 MB.",
       loading: "Working…",
       resultNextTitle: "Choose your next practice step with AI",

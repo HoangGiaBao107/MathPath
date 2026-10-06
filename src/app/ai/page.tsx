@@ -13,8 +13,6 @@ export default async function AIPage({
 }) {
   const query = await searchParams;
   const initialMode =
-    query.mode === "practice" || query.mode === "recommendation" || query.mode === "solver"
-      ? query.mode
-      : "chat";
+    query.mode === "practice" || query.mode === "recommendation" ? query.mode : "solver";
   return <AIWorkspace initialMode={initialMode} attemptId={query.attemptId ?? null} />;
 }

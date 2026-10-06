@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SkipNavigation } from "@/components/layout/skip-navigation";
+import { AIChatWidget } from "@/components/ai/ai-chat-widget";
 import { LocaleProvider } from "@/components/providers/locale-provider";
 import "./globals.css";
 import "katex/dist/katex.min.css";
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <SkipNavigation />
           <SiteHeader />
           {children}
+          <AIChatWidget />
           <SiteFooter />
         </LocaleProvider>
       </body>
