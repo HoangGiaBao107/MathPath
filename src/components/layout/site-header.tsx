@@ -12,6 +12,7 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [accountName, setAccountName] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const { locale, setLocale, messages } = useLocale();
   const authCopy = authMessages[locale];
   const navigation = [
@@ -20,6 +21,9 @@ export function SiteHeader() {
     { label: messages.navigation.ai, href: "/ai" as const },
     { label: locale === "vi" ? "Lịch sử làm bài" : "Attempt history", href: "/progress" as const },
     { label: messages.navigation.plans, href: "/#plans" as const },
+    ...(isAdmin
+      ? [{ label: locale === "vi" ? "Quản trị" : "Admin", href: "/admin/analytics" as const }]
+      : []),
   ];
 
   useEffect(() => {
@@ -38,16 +42,20 @@ export function SiteHeader() {
         setSignedIn(Boolean(user));
         if (!user) {
           setAccountName("");
+          setIsAdmin(false);
           return;
         }
         const metadataUsername = typeof user.user_metadata?.username === "string" ? user.user_metadata.username : "";
         setAccountName(metadataUsername || user.email?.split("@")[0] || "");
         const { data: profile, error } = await supabase
           .from("profiles")
-          .select("username, display_name")
+          .select("username, display_name, role")
           .eq("id", user.id)
           .maybeSingle();
-        if (!error) setAccountName(profile?.username?.trim() || profile?.display_name?.trim() || metadataUsername || user.email?.split("@")[0] || "");
+        if (!error) {
+          setAccountName(profile?.username?.trim() || profile?.display_name?.trim() || metadataUsername || user.email?.split("@")[0] || "");
+          setIsAdmin(profile?.role === "admin");
+        }
       }
       void supabase.auth.getUser().then(({ data }) => void syncUser(data.user));
       const {

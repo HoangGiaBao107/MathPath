@@ -21,10 +21,11 @@ export default async function AccountPage() {
     display_name: null as string | null,
     language: null as string | null,
     target_score: null as number | null,
+    role: "student" as "student" | "admin",
   };
   const { data: extendedProfile, error: extendedProfileError } = await supabase
     .from("profiles")
-    .select("username, display_name, language, target_score")
+    .select("username, display_name, language, target_score, role")
     .eq("id", user.id)
     .maybeSingle();
   if (!extendedProfileError && extendedProfile) {
@@ -33,7 +34,7 @@ export default async function AccountPage() {
     // Keep the account page readable until the additive profile migration is applied.
     const { data: legacyProfile } = await supabase
       .from("profiles")
-      .select("display_name, language, target_score")
+      .select("display_name, language, target_score, role")
       .eq("id", user.id)
       .maybeSingle();
     if (legacyProfile) profile = { ...profile, ...legacyProfile };
@@ -44,6 +45,7 @@ export default async function AccountPage() {
     <AccountExperience
       email={user.email ?? null}
       username={profile.username ?? metadataUsername}
+      isAdmin={profile.role === "admin"}
       targetScore={profile?.target_score ?? null}
       progress={await getStudentProgress(user.id, 1)}
       configured

@@ -18,12 +18,14 @@ export function AccountExperience({
   email,
   username,
   targetScore,
+  isAdmin = false,
   progress,
   configured,
 }: {
   email: string | null;
   username: string | null;
   targetScore?: number | null;
+  isAdmin?: boolean;
   progress?: StudentProgress | null;
   configured: boolean;
 }) {
@@ -48,7 +50,12 @@ export function AccountExperience({
         if (!response.ok) return;
         const payload = (await response.json()) as { quota?: { plan?: string } };
         if (active && payload.quota?.plan) {
-          setCurrentPlan(payload.quota.plan === "free" ? "starter" : payload.quota.plan);
+          const normalizedPlan = payload.quota.plan === "free" ? "starter" : payload.quota.plan;
+          setCurrentPlan(
+            creditPolicy.paidPlans.some((plan) => plan.slug === normalizedPlan)
+              ? normalizedPlan
+              : "starter",
+          );
         }
       })
       .catch(() => undefined);
@@ -130,7 +137,14 @@ export function AccountExperience({
   return (
     <main className="site-main page-shell account-dashboard container" id="main-content">
       <header className="account-dashboard-heading">
-        <p className="eyebrow">MATHPATH · {vi ? "HỒ SƠ HỌC TẬP" : "LEARNING PROFILE"}</p>
+        <div className="account-heading-top">
+          <p className="eyebrow">MATHPATH · {vi ? "HỒ SƠ HỌC TẬP" : "LEARNING PROFILE"}</p>
+          {isAdmin ? (
+            <Link className="button button--secondary button--small" href="/admin/analytics">
+              {vi ? "Trang quản trị" : "Admin dashboard"}
+            </Link>
+          ) : null}
+        </div>
         <h1>{copy.accountTitle}</h1>
         <p>{vi ? "Chỉnh hồ sơ, xem điểm và chọn nhịp học hợp với bạn." : "Update your profile, review your scores, and find a plan that fits."}</p>
       </header>
