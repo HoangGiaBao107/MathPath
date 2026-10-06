@@ -257,6 +257,11 @@ export type Database = {
         created_at: string;
         expires_at: string;
       }>;
+      site_page_views: Table<{
+        id: number;
+        path: string;
+        viewed_at: string;
+      }>;
     };
     Views: Record<string, never>;
     Functions: {
@@ -334,6 +339,11 @@ export type Database = {
         Args: { p_actor_user_id: string };
         Returns: Json;
       };
+      get_admin_operational_metrics: {
+        Args: { p_actor_user_id: string };
+        Returns: Json;
+      };
+      record_site_page_view: { Args: { p_path: string }; Returns: undefined };
       confirm_unconfirmed_admin_by_email: {
         Args: { target_email: string };
         Returns: string;

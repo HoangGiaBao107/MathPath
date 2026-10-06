@@ -70,6 +70,15 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
 
       <section className="analytics-kpi-grid admin-kpi-grid" aria-label={copy.title}>
         <AdminMetric label={copy.accounts} value={formatCount(data.totalAccounts, locale)} />
+        <AdminMetric
+          label={copy.aiRequests}
+          value={data.totalAiRequests === null ? "—" : formatCount(data.totalAiRequests, locale)}
+        />
+        <AdminMetric
+          label={copy.revenue}
+          value={data.totalRevenueVnd === null ? "—" : formatVnd(data.totalRevenueVnd, locale)}
+          accent
+        />
         <AdminMetric label={copy.activeVip} value={formatCount(data.totalVip, locale)} accent />
         <AdminMetric label={copy.allAttempts} value={formatCount(data.totalAttempts, locale)} />
         <AdminMetric
@@ -96,7 +105,7 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
           <div className="analytics-panel-heading" id="attempt-history">
             <div>
               <p className="eyebrow">{copy.activity}</p>
-              <h2>{copy.activity}</h2>
+              <h2>{copy.traffic}</h2>
             </div>
             <div className="analytics-range-switch" role="group" aria-label={copy.activity}>
               {([7, 30, 90] as const).map((days) => (
@@ -114,45 +123,47 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
           <div className="analytics-activity-legend">
             <span>
               <i className="analytics-legend-dot analytics-legend-dot--red" />
-              {copy.submissions}
+              {copy.pageViews}
             </span>
             <span>
               <i className="analytics-legend-dot analytics-legend-dot--dark" />
-              {copy.activeUsers}
+              {copy.dailyAiRequests}
             </span>
           </div>
-          {activity.length ? (
+          {activity.some((day) => day.pageViews !== null) ? (
             <LineChart
-              ariaLabel={copy.activity}
+              ariaLabel={copy.traffic}
               labels={activity.map((day) => formatDateShort(day.date, locale))}
               series={[
                 {
-                  label: copy.submissions,
+                  label: copy.pageViews,
                   color: "#d71920",
-                  values: activity.map((day) => day.submissions),
+                  values: activity.map((day) => day.pageViews ?? 0),
                 },
                 {
-                  label: copy.activeUsers,
+                  label: copy.dailyAiRequests,
                   color: "#1f2937",
-                  values: activity.map((day) => day.activeUsers),
+                  values: activity.map((day) => day.aiRequests ?? 0),
                 },
               ]}
               formatValue={(value) => formatCount(value, locale)}
             />
           ) : (
-            <p className="analytics-empty-message">{copy.noActivity}</p>
+            <p className="analytics-empty-message">{copy.noTraffic}</p>
           )}
           <div className="analytics-period-summary">
             {([7, 30, 90] as const).map((days) => {
               const slice = data.dailyActivity.slice(-days);
-              const total = slice.reduce((sum, day) => sum + day.submissions, 0);
+              const total = slice.every((day) => day.pageViews !== null)
+                ? slice.reduce((sum, day) => sum + (day.pageViews ?? 0), 0)
+                : null;
               return (
                 <div key={days}>
                   <span>
                     {days === 7 ? copy.range7 : days === 30 ? copy.range30 : copy.range90}
                   </span>
-                  <strong>{formatCount(total, locale)}</strong>
-                  <small>{copy.submissions}</small>
+                  <strong>{total === null ? "—" : formatCount(total, locale)}</strong>
+                  <small>{copy.pageViews}</small>
                 </div>
               );
             })}
@@ -351,6 +362,14 @@ function formatScore(value: number | null, locale: "vi" | "en") {
 
 function formatPercent(value: number | null, locale: "vi" | "en") {
   return value === null ? "—" : `${formatNumber(value, locale)}%`;
+}
+
+function formatVnd(value: number, locale: "vi" | "en") {
+  return new Intl.NumberFormat(locale === "vi" ? "vi-VN" : "en-US", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  }).format(value);
 }
 
 function formatDateShort(value: string, locale: "vi" | "en") {

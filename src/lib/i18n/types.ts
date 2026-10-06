@@ -360,12 +360,17 @@ export type TranslationMessages = {
     title: string;
     description: string;
     accounts: string;
+    aiRequests: string;
+    revenue: string;
     activeVip: string;
     allAttempts: string;
     averageScore: string;
     completionRate: string;
     averageAttempts: string;
     activity: string;
+    traffic: string;
+    pageViews: string;
+    dailyAiRequests: string;
     submissions: string;
     activeUsers: string;
     range7: string;
@@ -381,6 +386,8 @@ export type TranslationMessages = {
     noUsers: string;
     noAccounts: string;
     noActivity: string;
+    noTraffic: string;
+    metricsUnavailable: string;
     noTargets: string;
     free: string;
     plus: string;

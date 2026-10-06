@@ -72,7 +72,11 @@ const adminAnalyticsSchema = z.object({
     z.object({ bucket: z.number().int(), label: z.string(), count: z.number().int() }),
   ),
   dailyActivity: z.array(
-    z.object({ date: z.string(), activeUsers: z.number().int(), submissions: z.number().int() }),
+    z.object({
+      date: z.string(),
+      activeUsers: z.number().int(),
+      submissions: z.number().int(),
+    }),
   ),
   scoreTrend: z.array(
     z.object({ date: z.string(), submissions: z.number().int(), averageScore: z.number() }),
@@ -85,6 +89,18 @@ const adminAnalyticsSchema = z.object({
       attempts: z.number().int().nonnegative(),
       questionsAttempted: z.number().int().nonnegative(),
       averageScore: z.number().nullable(),
+    }),
+  ),
+});
+
+const adminOperationalMetricsSchema = z.object({
+  totalAiRequests: z.number().int().nonnegative(),
+  totalRevenueVnd: z.number().int().nonnegative(),
+  dailyTraffic: z.array(
+    z.object({
+      date: z.string(),
+      pageViews: z.number().int().nonnegative(),
+      aiRequests: z.number().int().nonnegative(),
     }),
   ),
 });
@@ -187,12 +203,28 @@ export async function getStudentAttemptResult(
 }
 
 export async function getAdminAnalytics(actorUserId: string): Promise<AdminAnalytics> {
-  const { data, error } = await getSupabaseAdminClient().rpc("get_admin_analytics", {
-    p_actor_user_id: actorUserId,
-  });
+  const admin = getSupabaseAdminClient();
+  const [{ data, error }, operationalResult] = await Promise.all([
+    admin.rpc("get_admin_analytics", { p_actor_user_id: actorUserId }),
+    admin.rpc("get_admin_operational_metrics", { p_actor_user_id: actorUserId }),
+  ]);
   if (error)
     throw new Error(
       error.message.includes("admin_required") ? "admin_required" : "admin_analytics_unavailable",
     );
-  return adminAnalyticsSchema.parse(data) satisfies AdminAnalytics;
+  const base = adminAnalyticsSchema.parse(data);
+  const operational = operationalResult.error
+    ? null
+    : adminOperationalMetricsSchema.safeParse(operationalResult.data).data ?? null;
+  const trafficByDate = new Map(operational?.dailyTraffic.map((day) => [day.date, day]) ?? []);
+  return {
+    ...base,
+    totalAiRequests: operational?.totalAiRequests ?? null,
+    totalRevenueVnd: operational?.totalRevenueVnd ?? null,
+    dailyActivity: base.dailyActivity.map((day) => ({
+      ...day,
+      pageViews: trafficByDate.get(day.date)?.pageViews ?? null,
+      aiRequests: trafficByDate.get(day.date)?.aiRequests ?? null,
+    })),
+  } satisfies AdminAnalytics;
 }

@@ -60,6 +60,8 @@ export type AdminDailyActivity = {
   date: string;
   activeUsers: number;
   submissions: number;
+  pageViews: number | null;
+  aiRequests: number | null;
 };
 
 export type AdminScoreTrend = {
@@ -79,6 +81,8 @@ export type AdminUserActivity = {
 
 export type AdminAnalytics = {
   totalAccounts: number;
+  totalAiRequests: number | null;
+  totalRevenueVnd: number | null;
   totalVip: number;
   totalAttempts: number;
   averageScore: number | null;
