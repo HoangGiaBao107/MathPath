@@ -547,8 +547,8 @@ export const messages: Record<Locale, TranslationMessages> = {
     },
     home: {
       heroEyebrow: "MATH LEARNING FOR HIGH SCHOOL",
-      heroTitleFirst: "Math,",
-      heroTitleSecond: "your way.",
+      heroTitleFirst: "Your Math,",
+      heroTitleSecond: "your Path.",
       heroDescription:
         "Practice with purpose, understand each step, and move closer to your THPTQG goal.",
       heroTyping: "Small steps, steady progress",
