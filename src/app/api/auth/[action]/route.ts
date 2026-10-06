@@ -144,8 +144,8 @@ export async function POST(request: Request, context: RouteContext<"/api/auth/[a
       if (!parsed.success) return authError("invalid_request", 400);
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) return authError("session_expired", 401);
-      const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
-      if (error) return authError("password_not_updated", 400);
+      const { data, error } = await supabase.auth.updateUser({ password: parsed.data.password });
+      if (error || !data.user) return authError("password_not_updated", 400);
       return NextResponse.json({ ok: true }, { headers: noStoreHeaders });
     }
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
-import { useState, type FormEvent } from "react";
+import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,6 +12,20 @@ import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { targetScoreStorageKey } from "@/lib/onboarding/target-score";
 import { getAuthRedirectBaseUrl } from "@/lib/auth/redirect-url";
 import { PasswordInput } from "@/components/auth/password-input";
+import { hasRecoveryLinkError } from "@/lib/auth/recovery-link-error";
+
+function subscribeToHash(callback: () => void) {
+  window.addEventListener("hashchange", callback);
+  return () => window.removeEventListener("hashchange", callback);
+}
+
+function getHashSnapshot() {
+  return window.location.hash;
+}
+
+function getServerHashSnapshot() {
+  return "";
+}
 
 type AuthMode = "login" | "register" | "recovery";
 
@@ -31,6 +45,7 @@ export function AuthExperience({
   const router = useRouter();
   const { locale } = useLocale();
   const copy = authMessages[locale];
+  const hash = useSyncExternalStore(subscribeToHash, getHashSnapshot, getServerHashSnapshot);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(passwordUpdated ? copy.passwordUpdated : "");
   const [error, setError] = useState(
@@ -41,6 +56,9 @@ export function AuthExperience({
         : "",
   );
   const [pendingEmail, setPendingEmail] = useState("");
+  const recoveryLinkInvalid =
+    updatingPassword &&
+    (error === copy.recoveryLinkExpired || hasRecoveryLinkError(hash));
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -107,6 +125,7 @@ export function AuthExperience({
           credentials_not_accepted: copy.credentialsNotAccepted,
           email_not_confirmed: copy.emailNotConfirmed,
           session_expired: copy.recoveryLinkExpired,
+          password_not_updated: copy.passwordNotUpdated,
           account_not_created: copy.accountNotCreated,
           username_taken: copy.usernameTaken,
           recovery_not_sent: copy.recoveryNotSent,
@@ -204,7 +223,17 @@ export function AuthExperience({
           <p className="eyebrow">MathPath</p>
           <h1>{title}</h1>
           <p>{copy.description}</p>
-          <form className="auth-form" onSubmit={(event) => void onSubmit(event)}>
+          {recoveryLinkInvalid ? (
+            <div className="auth-form">
+              <p className="auth-message auth-message--error" role="alert">
+                {error || copy.recoveryLinkExpired}
+              </p>
+              <Link className="button button--primary button--large" href="/auth/recovery">
+                {copy.submitRecovery}
+              </Link>
+              <p className="auth-links"><Link href="/auth/login">{copy.loginLink}</Link></p>
+            </div>
+          ) : <form className="auth-form" onSubmit={(event) => void onSubmit(event)}>
             {mode === "register" ? (
               <label>
                 {copy.username}
@@ -268,7 +297,7 @@ export function AuthExperience({
             <Button disabled={busy} size="large" type="submit">
               {busy ? "…" : submitLabel}
             </Button>
-          </form>
+          </form>}
 
           {mode === "login" ? (
             <>

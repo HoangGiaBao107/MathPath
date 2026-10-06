@@ -55,6 +55,7 @@ export const authMessages: Record<
     credentialsNotAccepted: string;
     emailNotConfirmed: string;
     recoveryLinkExpired: string;
+    passwordNotUpdated: string;
     recoveryNotSent: string;
     accountNotCreated: string;
     authCallbackFailed: string;
@@ -117,6 +118,8 @@ export const authMessages: Record<
       "Email tài khoản chưa được xác nhận. Hãy xác nhận email rồi thử đăng nhập lại.",
     recoveryLinkExpired:
       "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Hãy gửi yêu cầu lấy lại mật khẩu mới.",
+    passwordNotUpdated:
+      "Chưa lưu được mật khẩu mới. Vui lòng yêu cầu liên kết đặt lại mới rồi thử lại.",
     recoveryNotSent: "Chưa gửi được email đặt lại mật khẩu. Vui lòng thử lại sau.",
     accountNotCreated:
       "Chưa tạo được tài khoản. Email có thể đã đăng ký; hãy thử đăng nhập hoặc chọn Quên mật khẩu.",
@@ -179,6 +182,8 @@ export const authMessages: Record<
       "This account's email is not confirmed. Confirm it, then try signing in again.",
     recoveryLinkExpired:
       "This password reset link is invalid or expired. Request a new password reset link.",
+    passwordNotUpdated:
+      "Your new password was not saved. Request a fresh reset link and try again.",
     recoveryNotSent: "The password reset email could not be sent. Please try again later.",
     accountNotCreated:
       "The account could not be created. This email may already be registered; try signing in or resetting the password.",
