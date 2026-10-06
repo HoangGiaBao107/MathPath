@@ -5331,6 +5331,39 @@ select:focus-visible {
 .ai-robot-icon {
   width: 42px;
   height: 42px;
+  overflow: visible;
+}
+.ai-robot-float {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-robot-bob 3s ease-in-out infinite;
+}
+.ai-robot-antenna {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ai-robot-glow 1.8s ease-in-out infinite;
+}
+@keyframes ai-robot-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-2px) rotate(-2deg);
+  }
+}
+@keyframes ai-robot-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgb(255 255 255 / 0%));
+  }
+  50% {
+    filter: drop-shadow(0 0 4px rgb(255 255 255 / 85%));
+  }
+}
+.ai-widget-x {
+  font-size: 1.5rem;
+  line-height: 1;
 }
 .ai-chat-panel {
   position: absolute;
@@ -5817,5 +5850,12 @@ select:focus-visible {
   .ai-error {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-robot-float,
+  .ai-robot-antenna {
+    animation: none;
   }
 }

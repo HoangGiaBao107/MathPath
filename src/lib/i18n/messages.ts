@@ -318,7 +318,7 @@ export const messages: Record<Locale, TranslationMessages> = {
       retry: "Thử lại",
       emptyChat: "Bắt đầu bằng một câu hỏi Toán hoặc nhờ mình giải thích khái niệm nhé.",
       thinking: "AI đang suy nghĩ từng bước…",
-      solverHeading: "Đưa đề Toán đây",
+      solverHeading: "Bạn gặp khó ở đâu vậy?",
       problemPlaceholder: "Nhập đề bài rõ nhất có thể…",
       imageLabel: "Hoặc chọn ảnh đề (JPG, PNG, WebP; tối đa 5 MB)",
       imagePrompt: "Ghi chú thêm (không bắt buộc)",

@@ -250,20 +250,38 @@ export function AIChatWidget() {
 
 function RobotIcon() {
   return (
-    <svg className="ai-robot-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <path d="M24 7v5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="24" cy="5" r="3" fill="#fff" />
-      <rect x="7" y="13" width="34" height="26" rx="9" fill="#fff" />
-      <path d="M7 23h34" stroke="#ed1c24" strokeWidth="2" />
-      <circle cx="18" cy="25" r="2.5" fill="#ed1c24" />
-      <circle cx="30" cy="25" r="2.5" fill="#ed1c24" />
-      <path
-        d="M17 32c1.8 2 4.1 3 7 3s5.2-1 7-3"
-        stroke="#ed1c24"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-      <path d="M3 22v8M45 22v8" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+    <svg className="ai-robot-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <g className="ai-robot-float">
+        <path d="M32 9V5" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+        <circle className="ai-robot-antenna" cx="32" cy="5" r="4" fill="#fff" />
+        <path d="M9 32H5M59 32h-4" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+        <path d="M20 53v4m24-4v4" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
+        <rect x="8" y="15" width="48" height="39" rx="16" fill="#fff" />
+        <rect x="8" y="15" width="48" height="39" rx="16" stroke="#b80f1b" strokeWidth="2.5" />
+        <path
+          d="M9.5 30c0-8.01 6.49-14.5 14.5-14.5h17c8.01 0 14.5 6.49 14.5 14.5v1h-46v-1Z"
+          fill="#ffedf0"
+        />
+        <path d="M12 31h40" stroke="#ed1c24" strokeWidth="2" />
+        <path
+          d="M19 37c0-2.3 1.55-4 3.4-4s3.4 1.7 3.4 4-1.55 4-3.4 4-3.4-1.7-3.4-4Zm19 0c0-2.3 1.55-4 3.4-4s3.4 1.7 3.4 4-1.55 4-3.4 4-3.4-1.7-3.4-4Z"
+          fill="#171b2b"
+        />
+        <circle cx="23.2" cy="36" r="1" fill="white" />
+        <circle cx="42.2" cy="36" r="1" fill="white" />
+        <ellipse cx="15.5" cy="43" rx="3" ry="1.8" fill="#ffc9cd" />
+        <ellipse cx="48.5" cy="43" rx="3" ry="1.8" fill="#ffc9cd" />
+        <path
+          d="M25 44c1.7 2.2 4 3.2 7 3.2s5.3-1 7-3.2"
+          stroke="#ed1c24"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        <rect x="27" y="52" width="10" height="7" rx="2.5" fill="#fff" />
+        <text x="32" y="57.2" fill="#ed1c24" fontSize="5" fontWeight="900" textAnchor="middle">
+          M
+        </text>
+      </g>
     </svg>
   );
 }
