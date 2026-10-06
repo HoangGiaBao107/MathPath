@@ -132,6 +132,12 @@ export function HomeExperience() {
                 : `Current goal: ${formatTargetScore(targetScore, locale)} · Change goal`}
           </button>
         </div>
+        <div className="hero-art" aria-hidden="true">
+          <span className="hero-art-orbit" />
+          <span className="hero-art-chip hero-art-chip--one">∫ x²</span>
+          <span className="hero-art-chip hero-art-chip--two">f(x)</span>
+          <span className="hero-art-chip hero-art-chip--three">π</span>
+        </div>
         <span className="hero-geometry hero-geometry--one" aria-hidden="true" />
         <span className="hero-geometry hero-geometry--two" aria-hidden="true" />
       </section>
