@@ -229,6 +229,8 @@ export type Database = {
         language: "vi" | "en";
         target_score: number | null;
         role: "student" | "admin";
+        vip_started_at: string | null;
+        vip_expires_at: string | null;
         created_at: string;
         updated_at: string;
       }>;
@@ -262,8 +264,85 @@ export type Database = {
         path: string;
         viewed_at: string;
       }>;
+      plans: Table<{
+        id: string;
+        slug: string;
+        name: string;
+        description: string | null;
+        amount_vnd: number | null;
+        currency: string;
+        billing_interval: "month" | "one_time" | null;
+        credits: number | null;
+        daily_ai_limit: number | null;
+        duration_days: number | null;
+        active: boolean;
+        created_at: string;
+        updated_at: string;
+      }>;
+      payment_orders: Table<{
+        id: string;
+        user_id: string;
+        plan_id: string;
+        plan_code: string;
+        plan_name_snapshot: string;
+        amount_vnd: number;
+        currency: string;
+        payment_code: string;
+        order_code: string;
+        status: string;
+        provider: string;
+        provider_transaction_id: string | null;
+        provider_reference: string | null;
+        created_at: string;
+        updated_at: string;
+        expires_at: string;
+        paid_at: string | null;
+      }>;
+      subscriptions: Table<{
+        id: string;
+        user_id: string;
+        plan_code: string;
+        status: "ACTIVE" | "EXPIRED" | "CANCELLED";
+        started_at: string;
+        expires_at: string;
+        source_order_id: string | null;
+        created_at: string;
+        updated_at: string;
+      }>;
+      payment_transactions: Table<{
+        id: string;
+        order_id: string;
+        provider: string;
+        provider_transaction_id: string | null;
+        provider_reference: string | null;
+        amount_vnd: number;
+        description: string;
+        status: "PAID" | "REJECTED" | "REFUNDED";
+        raw_payload: Json;
+        paid_at: string | null;
+        created_at: string;
+      }>;
+      payment_webhook_events: Table<{
+        id: string;
+        provider: string;
+        event_id: string;
+        order_id: string | null;
+        payload: Json;
+        processed: boolean;
+        processed_at: string | null;
+        created_at: string;
+      }>;
     };
-    Views: Record<string, never>;
+    Views: {
+      subscription_plans: {
+        Row: { id: string; code: string; name: string; price_vnd: number | null; currency: string; duration_days: number | null; ai_daily_limit: number | null; is_active: boolean; created_at: string; updated_at: string };
+        Relationships: [];
+      };
+      orders: {
+        Row: { id: string; user_id: string; plan_code: string; plan_name_snapshot: string; amount_vnd: number; currency: string; status: string; order_code: string; expires_at: string; paid_at: string | null; created_at: string; updated_at: string };
+        Relationships: [];
+      };
+    };
     Functions: {
       get_exam_runtime: { Args: { p_slug: string }; Returns: Json };
       find_current_exam_attempt: {
@@ -384,6 +463,8 @@ export type Database = {
         };
         Returns: boolean;
       };
+      create_payment_order: { Args: { p_user_id: string; p_plan_code: string; p_provider: string }; Returns: Json };
+      process_payment_webhook: { Args: { p_provider: string; p_event_id: string; p_order_code: string; p_transaction_id: string | null; p_provider_reference: string | null; p_amount_vnd: number; p_description: string; p_payload: Json }; Returns: Json };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

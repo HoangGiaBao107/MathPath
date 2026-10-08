@@ -14,7 +14,7 @@ describe("Phase 9 quota contract", () => {
     ).toEqual([
       ["plus", 15],
       ["pro", 25],
-      ["pro_max", 50],
+      ["pro_max", 40],
     ]);
   });
 

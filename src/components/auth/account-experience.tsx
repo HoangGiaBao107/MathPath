@@ -13,6 +13,8 @@ import { PasswordInput } from "@/components/auth/password-input";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { creditPolicy } from "@/lib/credits/types";
 import { getScoreGoalMessage } from "@/lib/analytics/score-encouragement";
+import { PaymentAccountPanel } from "@/components/payments/payment-account-panel";
+import { PaymentPlanCards } from "@/components/payments/payment-plan-cards";
 
 export function AccountExperience({
   email,
@@ -188,6 +190,11 @@ export function AccountExperience({
               </Card>
             </div>
           </div>
+          <section className="account-plans-panel" aria-labelledby="account-plans-title">
+            <div className="account-panel-heading"><div><p className="eyebrow">{vi ? "GÓI HỌC MATHPATH" : "MATHPATH PLANS"}</p><h2 id="account-plans-title">{vi ? "Chọn hoặc gia hạn gói học" : "Choose or renew a plan"}</h2></div></div>
+            <PaymentPlanCards currentPlan={currentPlan} />
+          </section>
+          <PaymentAccountPanel />
 
         </>
       )}

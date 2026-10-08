@@ -59,6 +59,7 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
         <a href="#attempt-history">◷ <span>{vi ? "Lịch sử làm bài" : "Attempt history"}</span></a>
         <a href="#users">♙ <span>{vi ? "Người dùng" : "Users"}</span></a>
         <a href="#plans">◇ <span>{vi ? "Gói thành viên" : "Membership plans"}</span></a>
+        <a href="/admin/payments">₫ <span>{vi ? "Thanh toán" : "Payments"}</span></a>
         <a href="/" className="admin-sidebar-back">← <span>{vi ? "Về trang học tập" : "Back to platform"}</span></a>
       </aside>
       <main className="page-shell analytics-page admin-analytics-page" id="main-content">
