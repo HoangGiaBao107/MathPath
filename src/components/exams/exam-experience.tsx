@@ -19,6 +19,7 @@ import { interpolate } from "@/lib/i18n/messages";
 import { MathContentView } from "@/components/problems/math-content-view";
 import { validateShortAnswer } from "@/lib/exams/short-answer";
 import type { ExamAnswer, ExamPublicSummary, PublicExamAttempt } from "@/lib/exams/types";
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type Phase = "loading" | "intro" | "active" | "submitted" | "error";
 type DraftState = { answer: ExamAnswer | null; markedForReview: boolean };
@@ -103,7 +104,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
     async () => {
       setRequestError("");
       try {
-        const response = await fetch(`/api/attempts?examId=${encodeURIComponent(exam.id)}`, {
+        const response = await fetchExamApi(`/api/attempts?examId=${encodeURIComponent(exam.id)}`, {
           cache: "no-store",
         });
         if (!response.ok) throw new Error("load");
@@ -129,6 +130,23 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
   useEffect(() => {
     const timer = window.setTimeout(() => void loadCurrent(), 0);
     return () => window.clearTimeout(timer);
+  }, [loadCurrent]);
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+    try {
+      const { data } = getSupabaseBrowserClient().auth.onAuthStateChange((event, session) => {
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session?.user) {
+          // Let Supabase finish persisting its refreshed auth cookies before
+          // asking the server to resolve the attempt owner again.
+          window.setTimeout(() => void loadCurrent(), 0);
+        }
+      });
+      unsubscribe = () => data.subscription.unsubscribe();
+    } catch {
+      // Guest practice remains available when Supabase Auth is not configured.
+    }
+    return () => unsubscribe?.();
   }, [loadCurrent]);
 
   useEffect(() => {
@@ -174,7 +192,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
       setRequestError("");
       submitKeyRef.current ??= crypto.randomUUID();
       try {
-        const response = await fetch(`/api/attempts/${attempt.id}/submit`, {
+        const response = await fetchExamApi(`/api/attempts/${attempt.id}/submit`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ requestId: submitKeyRef.current, reason }),
@@ -232,7 +250,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
     setRequestError("");
     startKeyRef.current ??= crypto.randomUUID();
     try {
-      const response = await fetch("/api/attempts", {
+      const response = await fetchExamApi("/api/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ examId: exam.id, requestKey: startKeyRef.current }),
@@ -309,7 +327,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
     saveQueueRef.current = saveQueueRef.current
       .catch(() => undefined)
       .then(async () => {
-        const response = await fetch(`/api/attempts/${attempt.id}`, {
+        const response = await fetchExamApi(`/api/attempts/${attempt.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -922,6 +940,19 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
       </div>
     </main>
   );
+}
+
+async function fetchExamApi(input: string, init: RequestInit = {}): Promise<Response> {
+  const headers = new Headers(init.headers);
+  try {
+    const { data } = await getSupabaseBrowserClient().auth.getSession();
+    if (data.session?.access_token) {
+      headers.set("Authorization", `Bearer ${data.session.access_token}`);
+    }
+  } catch {
+    // Guest exam API calls continue without an Authorization header.
+  }
+  return fetch(input, { ...init, headers, credentials: "same-origin" });
 }
 
 function onShortAnswerChange(

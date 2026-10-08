@@ -6,10 +6,27 @@ const migration = readFileSync(
   "utf8",
 );
 const repository = readFileSync("src/lib/exams/attempt-repository.supabase.ts", "utf8");
+const ownerResolver = readFileSync("src/lib/exams/guest-session.server.ts", "utf8");
 const experience = readFileSync("src/components/exams/exam-experience.tsx", "utf8");
+const attemptsApi = readFileSync("src/app/api/attempts/route.ts", "utf8");
+const attemptApi = readFileSync("src/app/api/attempts/[attemptId]/route.ts", "utf8");
+const submitApi = readFileSync("src/app/api/attempts/[attemptId]/submit/route.ts", "utf8");
 const stylesheet = readFileSync("src/app/globals.css", "utf8");
 
 describe("published exam runtime contract", () => {
+  it("identifies signed-in users even when local attempts use the mock adapter", () => {
+    expect(ownerResolver).toContain("isSupabasePublicConfigured()");
+    expect(ownerResolver).not.toContain("isSupabaseAttemptPersistenceConfigured()");
+    expect(ownerResolver).toContain("supabase.auth.getUser(accessToken)");
+    expect(experience).toContain("headers.set(\"Authorization\", `Bearer ${data.session.access_token}`)");
+    expect(experience).toContain('event === "SIGNED_IN" || event === "INITIAL_SESSION"');
+    expect(experience).toContain("window.setTimeout(() => void loadCurrent(), 0)");
+    expect(attemptsApi).toContain("readExamOwner(request)");
+    expect(attemptsApi).toContain("getOrCreateExamOwner(request)");
+    expect(attemptApi).toContain("readExamOwner(request)");
+    expect(submitApi).toContain("readExamOwner(request)");
+  });
+
   it("preserves explicit demo flags while allowing approved published sets into the exam player", () => {
     expect(migration).toContain(
       "where slug = p_slug and review_status = 'approved' and publication_status = 'published'",

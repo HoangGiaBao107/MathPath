@@ -10,10 +10,10 @@ const saveSchema = z.object({
   markedForReview: z.boolean(),
 });
 
-export async function GET(_request: Request, context: RouteContext<"/api/attempts/[attemptId]">) {
+export async function GET(request: Request, context: RouteContext<"/api/attempts/[attemptId]">) {
   try {
     const { attemptId } = await context.params;
-    const owner = await readExamOwner();
+    const owner = await readExamOwner(request);
     if (!owner) return apiError("attempt_not_found", 404);
     const repository = getAttemptRepository();
     const attempt = await repository.get(attemptId, owner);
@@ -29,7 +29,7 @@ export async function PATCH(request: Request, context: RouteContext<"/api/attemp
     const parsed = saveSchema.safeParse(await request.json());
     if (!parsed.success) return apiError("invalid_request", 400);
     const { attemptId } = await context.params;
-    const owner = await readExamOwner();
+    const owner = await readExamOwner(request);
     if (!owner) return apiError("attempt_not_found", 404);
     const repository = getAttemptRepository();
     const attempt = await repository.get(attemptId, owner);

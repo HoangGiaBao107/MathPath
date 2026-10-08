@@ -4,14 +4,22 @@ import { createHash, randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import type { AttemptOwner } from "./types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { isSupabaseAttemptPersistenceConfigured } from "@/lib/supabase/config";
+import { isSupabasePublicConfigured } from "@/lib/supabase/config";
 
 const COOKIE_NAME = "mathpath_exam_session";
 const COOKIE_LIFETIME_SECONDS = 60 * 60 * 24 * 90;
 
-export async function readExamOwner(): Promise<AttemptOwner | null> {
-  if (isSupabaseAttemptPersistenceConfigured()) {
+export async function readExamOwner(request?: Request): Promise<AttemptOwner | null> {
+  // Authentication is independent from the selected attempt storage adapter.
+  // Verify a browser bearer token for Supabase client sessions, then fall back
+  // to the standard SSR cookie session.
+  if (isSupabasePublicConfigured()) {
     const supabase = await createSupabaseServerClient();
+    const accessToken = readBearerToken(request);
+    if (accessToken) {
+      const { data: tokenData } = await supabase.auth.getUser(accessToken);
+      if (tokenData.user) return { kind: "user", userId: tokenData.user.id };
+    }
     const { data } = await supabase.auth.getUser();
     if (data.user) return { kind: "user", userId: data.user.id };
   }
@@ -25,9 +33,14 @@ export async function readGuestExamOwner(): Promise<AttemptOwner | null> {
   return { kind: "guest", guestSessionHash: hashSession(value) };
 }
 
-export async function getOrCreateExamOwner(): Promise<AttemptOwner> {
-  if (isSupabaseAttemptPersistenceConfigured()) {
+export async function getOrCreateExamOwner(request?: Request): Promise<AttemptOwner> {
+  if (isSupabasePublicConfigured()) {
     const supabase = await createSupabaseServerClient();
+    const accessToken = readBearerToken(request);
+    if (accessToken) {
+      const { data: tokenData } = await supabase.auth.getUser(accessToken);
+      if (tokenData.user) return { kind: "user", userId: tokenData.user.id };
+    }
     const { data } = await supabase.auth.getUser();
     if (data.user) return { kind: "user", userId: data.user.id };
   }
@@ -43,6 +56,12 @@ export async function getOrCreateExamOwner(): Promise<AttemptOwner> {
     maxAge: COOKIE_LIFETIME_SECONDS,
   });
   return { kind: "guest", guestSessionHash: hashSession(token) };
+}
+
+function readBearerToken(request?: Request): string | null {
+  const authorization = request?.headers.get("authorization");
+  const match = authorization?.match(/^Bearer\s+([^\s]+)$/i);
+  return match?.[1] ?? null;
 }
 
 export async function getCurrentGuestSessionHash(): Promise<string | null> {

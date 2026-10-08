@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   try {
     const examId = new URL(request.url).searchParams.get("examId");
     if (!examId) return apiError("exam_id_required", 400);
-    const owner = await readExamOwner();
+    const owner = await readExamOwner(request);
     if (!owner)
       return NextResponse.json(
         { attempt: null, guestQuestionUsage: 0, isGuest: true },
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   try {
     const parsed = startSchema.safeParse(await request.json());
     if (!parsed.success) return apiError("invalid_request", 400);
-    const owner = await getOrCreateExamOwner();
+    const owner = await getOrCreateExamOwner(request);
     const attempt = await getAttemptRepository().start(
       parsed.data.examId,
       owner,

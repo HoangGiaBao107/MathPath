@@ -16,7 +16,7 @@ export async function POST(
     const parsed = submitSchema.safeParse(await request.json());
     if (!parsed.success) return apiError("invalid_request", 400);
     const { attemptId } = await context.params;
-    const owner = await readExamOwner();
+    const owner = await readExamOwner(request);
     if (!owner) return apiError("attempt_not_found", 404);
     const attempt = await getAttemptRepository().submit(
       attemptId,
