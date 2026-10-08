@@ -2066,6 +2066,9 @@ textarea {
     radial-gradient(rgb(17 24 39 / 5%) 0.8px, transparent 0.8px) 0 0 / 20px 20px,
     linear-gradient(180deg, #fff 0%, #fff 62%, #fffafa 100%);
 }
+.site-main.problem-bank-page {
+  overflow: visible;
+}
 .problem-bank-hero {
   position: relative;
   overflow: hidden;
@@ -6054,7 +6057,7 @@ main.site-main {
 
 .problem-bank-tools {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .problem-bank-tools::before {

@@ -62,7 +62,7 @@ const examSchema = z.object({
   title: z.string(),
   description: z.string(),
   mode: z.enum(["official_thptqg", "practice", "school_mock"]),
-  demo: z.literal(true),
+  demo: z.boolean(),
   timingMode: z.enum(["countdown", "elapsed"]),
   durationSeconds: z.number().positive().nullable(),
   totalScore: z.number().positive(),

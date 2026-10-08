@@ -69,7 +69,7 @@ export type ExamDefinition = {
   title: string;
   description: string;
   mode: ExamMode;
-  demo: true;
+  demo: boolean;
   timingMode: ExamTimingMode;
   durationSeconds: number | null;
   totalScore: number;

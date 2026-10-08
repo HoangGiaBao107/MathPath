@@ -100,7 +100,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
   }, []);
 
   const loadCurrent = useCallback(
-    async (restartPreviousAttempt = false) => {
+    async () => {
       setRequestError("");
       try {
         const response = await fetch(`/api/attempts?examId=${encodeURIComponent(exam.id)}`, {
@@ -116,15 +116,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
         guestLimitReachedRef.current = data.isGuest === true && guestQuestionUsageRef.current >= 10;
         setIsGuest(data.isGuest === true);
         setGuestLimitReached(guestLimitReachedRef.current);
-        if (data.attempt && restartPreviousAttempt) {
-          const abandonResponse = await fetch(`/api/attempts/${data.attempt.id}/abandon`, {
-            method: "POST",
-            keepalive: true,
-          });
-          if (!abandonResponse.ok) throw new Error("abandon");
-          attemptRef.current = null;
-          setPhase("intro");
-        } else if (data.attempt) applyAttempt(data.attempt);
+        if (data.attempt) applyAttempt(data.attempt);
         else setPhase("intro");
       } catch {
         setRequestError(copy.loadError);
@@ -135,7 +127,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
   );
 
   useEffect(() => {
-    const timer = window.setTimeout(() => void loadCurrent(true), 0);
+    const timer = window.setTimeout(() => void loadCurrent(), 0);
     return () => window.clearTimeout(timer);
   }, [loadCurrent]);
 
