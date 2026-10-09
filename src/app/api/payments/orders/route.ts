@@ -27,7 +27,16 @@ export async function POST(request: Request) {
   });
   if (error || !data || typeof data !== "object" || Array.isArray(data)) {
     const unavailable = error?.message.includes("payment_plan_unavailable");
-    return NextResponse.json({ error: unavailable ? "plan_unavailable" : "order_creation_failed" }, { status: unavailable ? 409 : 503 });
+    if (error) {
+      console.error("[payments] create_payment_order RPC failed", {
+        code: error.code,
+        message: error.message,
+      });
+    }
+    return NextResponse.json({
+      error: unavailable ? "plan_unavailable" : "order_creation_failed",
+      ...(error?.code ? { diagnosticCode: error.code } : {}),
+    }, { status: unavailable ? 409 : 503 });
   }
   const order = data as Record<string, unknown>;
   return NextResponse.json({ orderId: order.id, checkoutUrl: `/checkout/${order.id}` }, { status: 201, headers: { "Cache-Control": "no-store" } });
