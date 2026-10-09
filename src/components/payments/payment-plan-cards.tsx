@@ -36,12 +36,28 @@ export function PaymentPlanCards({ currentPlan }: { currentPlan?: string }) {
       const response = await fetch("/api/payments/orders", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planCode }),
       });
-      const payload = await response.json() as { checkoutUrl?: string; error?: string };
+      const payload = await response.json() as { checkoutUrl?: string; error?: string; diagnosticCode?: string };
       if (response.status === 401) { router.push(`/auth/login?next=${encodeURIComponent(location.pathname + "#plans")}`); return; }
-      if (!response.ok || !payload.checkoutUrl) throw new Error(payload.error ?? "order_creation_failed");
+      if (!response.ok || !payload.checkoutUrl) {
+        if (payload.error === "plan_unavailable") {
+          setError(vi ? "Gói này đang tạm thời chưa khả dụng. Bạn thử lại sau nhé." : "This plan is temporarily unavailable. Please try again later.");
+          return;
+        }
+        if (payload.error === "admin_subscription_not_required") {
+          setError(vi ? "Tài khoản quản trị không cần mua gói học." : "Admin accounts do not need a learning plan.");
+          return;
+        }
+        const code = payload.diagnosticCode ? ` (${payload.diagnosticCode})` : "";
+        setError(vi
+          ? `Chưa tạo được đơn hàng${code}. Gửi mã này cho MathPath để kiểm tra nhé.`
+          : `We couldn't create the order${code}. Send this code to MathPath for help.`);
+        return;
+      }
       router.push(payload.checkoutUrl as Route);
-    } catch {
-      setError(vi ? "Chưa tạo được đơn hàng. Vui lòng thử lại." : "Could not create an order. Please retry.");
+    } catch (error) {
+      setError(error instanceof TypeError
+        ? (vi ? "Không kết nối được máy chủ. Bạn kiểm tra mạng rồi thử lại nhé." : "Could not reach the server. Check your connection and retry.")
+        : (vi ? "Phản hồi từ máy chủ chưa đúng định dạng. Vui lòng thử lại sau." : "The server response was invalid. Please try again later."));
     } finally { setBusyPlan(""); }
   }
 
