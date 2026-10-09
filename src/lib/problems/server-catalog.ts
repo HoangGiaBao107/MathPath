@@ -1,5 +1,6 @@
 import "server-only";
 
+import { connection } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProblemSetRow } from "./database.types";
 import { filterAndSortProblemSets, paginateProblemSets } from "./catalog";
@@ -9,6 +10,8 @@ import type { ProblemSetPage, ProblemSetPageQuery } from "./types";
 const QUESTION_PAGE_SIZE = 1000;
 
 export async function getProblemBank(query: ProblemSetPageQuery = {}): Promise<ProblemSetPage> {
+  // Published sets are request-time database data; do not query Supabase during build.
+  await connection();
   const client = await createSupabaseServerClient();
   const { data: sets, error: setError } = await client
     .from("problem_sets")

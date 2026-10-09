@@ -1,5 +1,6 @@
 import "server-only";
 
+import { connection } from "next/server";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -163,6 +164,10 @@ const attemptResultSchema = z.object({
 });
 
 export async function getAuthenticatedActor() {
+  // Authentication and the Supabase client require request-time cookies/config.
+  // Keep protected pages dynamic so a deployment build without runtime Supabase
+  // credentials never tries to prerender an authenticated dashboard.
+  await connection();
   const client = await createSupabaseServerClient();
   const {
     data: { user },
