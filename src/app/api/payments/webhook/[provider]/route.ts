@@ -14,14 +14,23 @@ export async function POST(request: Request, context: RouteContext<"/api/payment
   const rawBody = await readBoundedBody(request.body);
   if (!rawBody) return NextResponse.json({ error: "payload_too_large" }, { status: 413 });
   const rawText = new TextDecoder().decode(rawBody);
-  if (!provider.verifyWebhook(rawBody, request.headers.get("x-mathpath-signature"))) {
+  if (!provider.verifyWebhook(
+    rawBody,
+    request.headers.get("x-sepay-signature"),
+    request.headers.get("x-sepay-timestamp"),
+  )) {
     return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
   let payload: unknown;
   try { payload = JSON.parse(rawText) as unknown; }
   catch { return NextResponse.json({ error: "invalid_payload" }, { status: 400 }); }
   const transaction = provider.parseTransaction(payload);
-  if (!transaction) return NextResponse.json({ error: "invalid_payment_event" }, { status: 400 });
+  if (!transaction) {
+    // Signature is valid, but this event does not match the incoming coded-transfer
+    // contract (for example an outgoing transfer or a transfer without an MP code).
+    // It cannot activate an order and is not recoverable by retrying the same event.
+    return NextResponse.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
+  }
 
   const { data, error } = await getSupabaseAdminClient().rpc("process_payment_webhook", {
     p_provider: provider.name,
@@ -36,8 +45,10 @@ export async function POST(request: Request, context: RouteContext<"/api/payment
   if (error || !data || typeof data !== "object" || Array.isArray(data)) {
     return NextResponse.json({ error: "webhook_processing_failed" }, { status: 503 });
   }
-  const result = (data as Record<string, unknown>).result;
-  return NextResponse.json({ received: true, result }, { headers: { "Cache-Control": "no-store" } });
+  // SePay expects HTTP 200/201 and exactly { success: true }.
+  // A validly signed but non-matchable payment is acknowledged to prevent endless retries;
+  // only the atomic database RPC can activate an order.
+  return NextResponse.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
 }
 
 async function readBoundedBody(body: ReadableStream<Uint8Array> | null): Promise<Uint8Array | null> {

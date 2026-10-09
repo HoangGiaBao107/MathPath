@@ -153,7 +153,9 @@ begin
       'expiresAt', existing_order.expires_at);
   end if;
 
-  next_code := 'MP' || upper(encode(gen_random_bytes(5), 'hex'));
+  -- pgcrypto lives in the `extensions` schema on production; this SECURITY DEFINER
+  -- function has an empty search_path, so the function must be schema-qualified.
+  next_code := 'MP' || upper(encode(extensions.gen_random_bytes(5), 'hex'));
   insert into public.payment_orders (user_id, plan_id, amount_vnd, currency, payment_code,
     order_code, plan_code, plan_name_snapshot, status, provider, expires_at)
   values (p_user_id, selected_plan.id, selected_plan.amount_vnd, selected_plan.currency,

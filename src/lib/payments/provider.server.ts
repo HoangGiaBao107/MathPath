@@ -1,7 +1,7 @@
 import "server-only";
 
 import { readServerEnv } from "@/lib/config/env";
-import { buildVietQrUrl, parseGenericPaymentWebhook, verifyHmacWebhook, type ParsedPaymentWebhook } from "./provider-core";
+import { createVietQrPaymentData, parseSePayWebhook, verifySePayWebhook, type ParsedPaymentWebhook } from "./provider-core";
 
 export type PaymentOrderForProvider = {
   id: string;
@@ -23,40 +23,33 @@ export type PaymentDisplayData = {
 export interface PaymentProvider {
   readonly name: string;
   createPayment(order: PaymentOrderForProvider): PaymentDisplayData;
-  verifyWebhook(rawBody: Uint8Array, signature: string | null): boolean;
+  verifyWebhook(rawBody: Uint8Array, signature: string | null, timestamp: string | null): boolean;
   parseTransaction(payload: unknown): ParsedPaymentWebhook | null;
 }
 
 export function getPaymentProvider(name: string | undefined = readServerEnv().PAYMENT_PROVIDER): PaymentProvider | null {
-  if (name !== "generic_hmac") return null;
-  return new GenericHmacBankTransferProvider();
+  if (name !== "sepay") return null;
+  return new SePayBankTransferProvider();
 }
 
-class GenericHmacBankTransferProvider implements PaymentProvider {
-  readonly name = "generic_hmac";
+class SePayBankTransferProvider implements PaymentProvider {
+  readonly name = "sepay";
 
   createPayment(order: PaymentOrderForProvider): PaymentDisplayData {
     const env = readServerEnv();
-    const bankReady = Boolean(env.PAYMENT_BANK_CODE && env.PAYMENT_BANK_ACCOUNT && env.PAYMENT_ACCOUNT_NAME);
-    const qrImageUrl = bankReady
-      ? buildVietQrUrl(env.PAYMENT_BANK_CODE!, env.PAYMENT_BANK_ACCOUNT!, env.PAYMENT_ACCOUNT_NAME!, order.orderCode, order.amountVnd)
-      : null;
-    return {
-      provider: this.name,
-      bankCode: env.PAYMENT_BANK_CODE ?? null,
-      accountNumber: env.PAYMENT_BANK_ACCOUNT ?? null,
-      accountName: env.PAYMENT_ACCOUNT_NAME ?? null,
-      transferDescription: order.orderCode,
-      qrImageUrl,
-      providerReady: bankReady && Boolean(env.PAYMENT_WEBHOOK_SECRET),
-    };
+    return createVietQrPaymentData(order, {
+      bankCode: env.PAYMENT_BANK_CODE,
+      accountNumber: env.PAYMENT_BANK_ACCOUNT,
+      accountName: env.PAYMENT_ACCOUNT_NAME,
+      webhookSecret: env.PAYMENT_WEBHOOK_SECRET,
+    });
   }
 
-  verifyWebhook(rawBody: Uint8Array, signature: string | null): boolean {
-    return verifyHmacWebhook(rawBody, signature, readServerEnv().PAYMENT_WEBHOOK_SECRET);
+  verifyWebhook(rawBody: Uint8Array, signature: string | null, timestamp: string | null): boolean {
+    return verifySePayWebhook(rawBody, signature, timestamp, readServerEnv().PAYMENT_WEBHOOK_SECRET);
   }
 
   parseTransaction(payload: unknown): ParsedPaymentWebhook | null {
-    return parseGenericPaymentWebhook(payload);
+    return parseSePayWebhook(payload);
   }
 }
