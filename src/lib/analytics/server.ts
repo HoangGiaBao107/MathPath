@@ -106,6 +106,17 @@ const adminOperationalMetricsSchema = z.object({
   ),
 });
 
+const adminHistoricalSubscriptionMetricsSchema = z.object({
+  totalVip: z.number().int().nonnegative(),
+  subscriptions: z.object({
+    free: z.number().int().nonnegative(),
+    plus: z.number().int().nonnegative(),
+    pro: z.number().int().nonnegative(),
+    proMax: z.number().int().nonnegative(),
+    otherVip: z.number().int().nonnegative(),
+  }),
+});
+
 const attemptResultSchema = z.object({
   attemptId: z.string().uuid(),
   examSlug: z.string().nullable(),
@@ -208,9 +219,10 @@ export async function getStudentAttemptResult(
 
 export async function getAdminAnalytics(actorUserId: string): Promise<AdminAnalytics> {
   const admin = getSupabaseAdminClient();
-  const [{ data, error }, operationalResult] = await Promise.all([
+  const [{ data, error }, operationalResult, historicalSubscriptionResult] = await Promise.all([
     admin.rpc("get_admin_analytics", { p_actor_user_id: actorUserId }),
     admin.rpc("get_admin_operational_metrics", { p_actor_user_id: actorUserId }),
+    admin.rpc("get_admin_historical_subscription_metrics", { p_actor_user_id: actorUserId }),
   ]);
   if (error)
     throw new Error(
@@ -220,9 +232,15 @@ export async function getAdminAnalytics(actorUserId: string): Promise<AdminAnaly
   const operational = operationalResult.error
     ? null
     : adminOperationalMetricsSchema.safeParse(operationalResult.data).data ?? null;
+  const historicalSubscriptions = historicalSubscriptionResult.error
+    ? null
+    : adminHistoricalSubscriptionMetricsSchema.safeParse(historicalSubscriptionResult.data).data ?? null;
   const trafficByDate = new Map(operational?.dailyTraffic.map((day) => [day.date, day]) ?? []);
   return {
     ...base,
+    totalVip: historicalSubscriptions?.totalVip ?? base.totalVip,
+    subscriptionHistoryComplete: historicalSubscriptions !== null,
+    subscriptions: historicalSubscriptions?.subscriptions ?? base.subscriptions,
     totalAiRequests: operational?.totalAiRequests ?? null,
     totalRevenueVnd: operational?.totalRevenueVnd ?? null,
     dailyActivity: base.dailyActivity.map((day) => ({

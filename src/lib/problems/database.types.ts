@@ -433,6 +433,10 @@ export type Database = {
         Args: { p_actor_user_id: string };
         Returns: Json;
       };
+      get_admin_historical_subscription_metrics: {
+        Args: { p_actor_user_id: string };
+        Returns: Json;
+      };
       record_site_page_view: { Args: { p_path: string }; Returns: undefined };
       confirm_unconfirmed_admin_by_email: {
         Args: { target_email: string };

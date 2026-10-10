@@ -46,33 +46,34 @@ export function AdminPaymentOrders({ orders, migrationReady }: { orders: AdminPa
   return <>
     {message ? <p className="payment-admin-feedback" role="status">{message}</p> : null}
     {orders.length ? <div className="payment-admin-table-wrap"><table className="payment-admin-table">
-      <thead><tr><th>Mã đơn</th><th>Người dùng</th><th>Gói</th><th>Số tiền</th><th>Trạng thái</th><th>Provider</th><th>Tạo lúc / hạn</th><th>Thanh toán / duyệt</th><th>Thao tác</th></tr></thead>
-      <tbody>{orders.map((order) => <tr key={order.id}>
-        <td><code>{order.order_code}</code></td><td>{order.email}</td><td>{order.plan_name_snapshot}</td>
-        <td>{new Intl.NumberFormat("vi-VN").format(order.amount_vnd)} đ</td>
-        <td><span className={`payment-status payment-status--${order.status}`}>{statusText(order.status)}</span>{order.customer_reported_paid_at ? <small className="payment-admin-reported">Khách báo đã chuyển</small> : null}</td>
-        <td>{order.provider}</td><td>{dateText(order.created_at)}<small className="payment-admin-reported">Hạn: {dateText(order.expires_at)}</small></td>
-        <td>{order.paid_at ? dateText(order.paid_at) : order.review ? `${order.review.action === "approved" ? "Duyệt" : "Hủy"} · ${dateText(order.review.created_at)}` : "—"}{order.payment_reference || order.review?.transaction_reference ? <small className="payment-admin-reported">Ref: {order.payment_reference ?? order.review?.transaction_reference}</small> : null}</td>
+      <thead><tr><th>Đơn hàng</th><th>Khách hàng</th><th>Gói học</th><th>Trạng thái</th><th>Thời gian</th><th>Đối soát</th><th>Thao tác</th></tr></thead>
+      <tbody>{orders.map((order) => <tr className={`payment-admin-row payment-admin-row--${order.status}${order.customer_reported_paid_at && order.status !== "paid" ? " payment-admin-row--reported" : ""}`} key={order.id}>
+        <td><code className="payment-admin-order-code">{order.order_code}</code><small className="payment-admin-reported">{order.provider}</small></td>
+        <td><strong className="payment-admin-email">{order.email}</strong>{order.customer_reported_paid_at ? <small className="payment-admin-reported payment-admin-reported--alert">Khách đã báo chuyển · {dateText(order.customer_reported_paid_at)}</small> : null}</td>
+        <td><strong>{order.plan_name_snapshot}</strong><small className="payment-admin-reported">{new Intl.NumberFormat("vi-VN").format(order.amount_vnd)} đ</small></td>
+        <td><span className={`payment-status payment-status--${order.status}`}>{statusText(order.status)}</span></td>
+        <td><strong>{dateText(order.created_at)}</strong><small className="payment-admin-reported">Hạn: {dateText(order.expires_at)}</small></td>
+        <td>{order.paid_at ? <><strong>{dateText(order.paid_at)}</strong>{order.payment_reference ? <small className="payment-admin-reported">Ref: {order.payment_reference}</small> : null}</> : order.review ? <><strong>{order.review.action === "approved" ? "Đã duyệt" : "Đã hủy"}</strong><small className="payment-admin-reported">{dateText(order.review.created_at)}</small>{order.review.transaction_reference ? <small className="payment-admin-reported">Ref: {order.review.transaction_reference}</small> : null}</> : <span className="payment-admin-no-review">Chưa đối soát</span>}</td>
         <td className="payment-admin-actions">{(order.status === "pending" || order.status === "expired") && migrationReady ? <>
           {selectedOrder === order.id ? <form onSubmit={(event) => { event.preventDefault(); void review(order.id, "approve"); }} className="payment-review-form">
-            {order.status === "expired" ? <small>Đơn đã hết hạn. Chỉ duyệt khi đã thấy giao dịch tiền vào khớp trong SePay.</small> : null}
+            <div className="payment-review-form-heading"><strong>{order.status === "expired" ? "Đối soát đơn hết hạn" : "Xác nhận tiền vào"}</strong><small>Chỉ tiếp tục sau khi giao dịch khớp trong SePay.</small></div>
             <label>Mã giao dịch / mã tham chiếu SePay<input value={reference} onChange={(event) => setReference(event.target.value)} maxLength={200} required /></label>
             <label>Ghi chú (không bắt buộc)<input value={note} onChange={(event) => setNote(event.target.value)} maxLength={1000} /></label>
             <label className="payment-review-verify"><input type="checkbox" checked={verified} onChange={(event) => setVerified(event.target.checked)} required /> Tôi đã kiểm tra tiền vào trong SePay</label>
             <button className="button button--primary" type="submit" disabled={busy === order.id || !verified || !reference.trim()}>{busy === order.id ? "Đang xử lý…" : "Xác nhận duyệt"}</button>
             <button className="button button--secondary" type="button" onClick={() => setSelectedOrder(null)}>Đóng</button>
           </form> : <div className="payment-review-buttons">
-            <button className="button button--primary" type="button" onClick={() => { setSelectedOrder(order.id); setReference(""); setNote(""); setVerified(false); }}>{order.status === "expired" ? "Đối soát & duyệt" : "Duyệt"}</button>
+            <button className="button button--primary" type="button" onClick={() => { setSelectedOrder(order.id); setReference(""); setNote(""); setVerified(false); }}>{order.status === "expired" ? "Đối soát tiền vào" : "Kiểm tra tiền vào"}</button>
             {order.status === "pending" ? <button className="button button--secondary" type="button" disabled={busy === order.id} onClick={() => { if (window.confirm(`Hủy đơn ${order.order_code}?`)) void review(order.id, "cancel"); }}>Hủy</button> : null}
           </div>}
-        </> : order.status === "pending" ? <span>Chờ cập nhật database</span> : "—"}</td>
+        </> : order.status === "pending" ? <span>Chờ cập nhật database</span> : <span className="payment-admin-no-review">—</span>}</td>
       </tr>)}</tbody>
-    </table></div> : <p className="analytics-empty-message">Chưa có đơn thanh toán ở trạng thái này.</p>}
+    </table></div> : <div className="payment-admin-empty"><strong>Chưa có đơn ở trạng thái này</strong><span>Đơn thanh toán mới sẽ xuất hiện tại đây.</span></div>}
   </>;
 }
 
 function statusText(status: string) {
-  return ({ pending: "Chờ xử lý", paid: "Đã thanh toán · đã kích hoạt", expired: "Hết hạn", cancelled: "Đã hủy" } as Record<string, string>)[status] ?? status;
+  return ({ pending: "Chờ thanh toán", paid: "Đã kích hoạt", expired: "Đã hết hạn", cancelled: "Đã hủy" } as Record<string, string>)[status] ?? status;
 }
 function dateText(value: string) {
   return new Intl.DateTimeFormat("vi-VN", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(value));

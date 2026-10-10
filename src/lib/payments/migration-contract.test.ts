@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const statusMigration = readFileSync("supabase/migrations/20261008000100_add_cancelled_payment_status.sql", "utf8");
 const migration = readFileSync("supabase/migrations/20261008000200_phase10_payment_system.sql", "utf8");
 const adminReviewMigration = readFileSync("supabase/migrations/20261010000100_payment_admin_review_and_five_minute_expiry.sql", "utf8");
+const historicalSubscriptionMigration = readFileSync("supabase/migrations/20261010000200_admin_historical_subscription_metrics.sql", "utf8");
 
 describe("Phase 10 payment migration contract", () => {
   it("reuses the existing plans and orders and applies the catalog limits", () => {
@@ -70,5 +71,16 @@ describe("payment admin review and expiry migration contract", () => {
     expect(adminReviewMigration).toContain("public.process_payment_webhook(");
     expect(adminReviewMigration).toContain("grant execute on function public.admin_review_payment_order");
     expect(adminReviewMigration).toContain("payment_order_reviews");
+  });
+});
+
+describe("admin historical subscription metrics migration contract", () => {
+  it("counts accounts that ever received a paid plan, including expired subscriptions", () => {
+    expect(historicalSubscriptionMigration).toContain("get_admin_historical_subscription_metrics");
+    expect(historicalSubscriptionMigration).toContain("ca.paid_plan_slug is not null");
+    expect(historicalSubscriptionMigration).toContain("p.vip_started_at is not null");
+    expect(historicalSubscriptionMigration).not.toContain("vip_expires_at > now()");
+    expect(historicalSubscriptionMigration).toContain("po.status = 'paid'");
+    expect(historicalSubscriptionMigration).toContain("grant execute on function public.get_admin_historical_subscription_metrics(uuid) to service_role");
   });
 });

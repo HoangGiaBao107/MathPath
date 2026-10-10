@@ -84,6 +84,7 @@ export type AdminAnalytics = {
   totalAiRequests: number | null;
   totalRevenueVnd: number | null;
   totalVip: number;
+  subscriptionHistoryComplete: boolean;
   totalAttempts: number;
   averageScore: number | null;
   completedAttempts: number;

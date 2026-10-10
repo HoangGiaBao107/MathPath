@@ -21,18 +21,16 @@ export default async function AdminPaymentsPage({ searchParams }: PageProps<"/ad
   await admin.from("payment_orders").update({ status: "expired", updated_at: now })
     .eq("status", "pending").lte("expires_at", now);
 
-  let query = admin.from("payment_orders")
+  const query = admin.from("payment_orders")
     .select("id, user_id, order_code, plan_code, plan_name_snapshot, amount_vnd, currency, status, provider, created_at, expires_at, paid_at, customer_reported_paid_at")
     .order("created_at", { ascending: false }).limit(100);
-  if (status !== "all") query = query.eq("status", status);
   let { data, error } = await query;
   let migrationReady = true;
   if (error?.code === "42703") {
     migrationReady = false;
-    let fallback = admin.from("payment_orders")
+    const fallback = admin.from("payment_orders")
       .select("id, user_id, order_code, plan_code, plan_name_snapshot, amount_vnd, currency, status, provider, created_at, expires_at, paid_at")
       .order("created_at", { ascending: false }).limit(100);
-    if (status !== "all") fallback = fallback.eq("status", status);
     const legacyResult = await fallback;
     data = legacyResult.data?.map((order) => ({ ...order, customer_reported_paid_at: null })) ?? null;
     error = legacyResult.error;
@@ -63,7 +61,7 @@ export default async function AdminPaymentsPage({ searchParams }: PageProps<"/ad
     if (reviewError) migrationReady = false;
   }
 
-  const orders: AdminPaymentOrder[] = await Promise.all((data ?? []).map(async (order) => {
+  const recentOrders: AdminPaymentOrder[] = await Promise.all((data ?? []).map(async (order) => {
     const { data: authUser } = await admin.auth.admin.getUserById(order.user_id);
     return {
       ...order,
@@ -73,6 +71,14 @@ export default async function AdminPaymentsPage({ searchParams }: PageProps<"/ad
       review: reviewByOrder.get(order.id) ?? null,
     };
   }));
+  const orders = status === "all" ? recentOrders : recentOrders.filter((order) => order.status === status);
+  const stats = {
+    pending: recentOrders.filter((order) => order.status === "pending").length,
+    reported: recentOrders.filter((order) => order.customer_reported_paid_at && order.status !== "paid").length,
+    paid: recentOrders.filter((order) => order.status === "paid").length,
+    expired: recentOrders.filter((order) => order.status === "expired").length,
+    cancelled: recentOrders.filter((order) => order.status === "cancelled").length,
+  };
   const filters: [FilterStatus, string][] = [["all", "Tất cả"], ["pending", "Chờ xử lý"], ["paid", "Đã thanh toán"], ["expired", "Hết hạn"], ["cancelled", "Đã hủy"]];
 
   return <div className="admin-dashboard-layout">
@@ -84,12 +90,21 @@ export default async function AdminPaymentsPage({ searchParams }: PageProps<"/ad
       <Link href="/">← <span>Về trang học tập</span></Link>
     </aside>
     <main className="page-shell admin-payments-page" id="main-content">
-      <header className="analytics-page-heading"><p className="eyebrow">ADMIN · MATHPATH</p><h1>Đơn thanh toán</h1><p>Duyệt đơn sau khi đối soát giao dịch trong SePay. Đơn chưa xử lý tự hết hạn sau 5 phút.</p></header>
+      <header className="payment-admin-heading"><div><p className="eyebrow">ADMIN · MATHPATH</p><h1>Trung tâm thanh toán</h1><p>Theo dõi đơn hàng và đối soát giao dịch SePay trước khi kích hoạt gói học.</p></div><span className="payment-admin-heading-badge"><span /> Đơn chờ tự hết hạn sau 5 phút</span></header>
       {!migrationReady ? <p className="payment-admin-migration-note" role="status">Cần áp dụng migration `20261010000100_payment_admin_review_and_five_minute_expiry.sql` trên Supabase để bật báo đã chuyển, duyệt và hủy đơn.</p> : null}
-      <nav className="payment-admin-filters" aria-label="Lọc trạng thái">
-        {filters.map(([value, label]) => <Link aria-current={status === value ? "page" : undefined} className={status === value ? "is-active" : ""} href={value === "all" ? "/admin/payments" : `/admin/payments?status=${value}`} key={value}>{label}</Link>)}
-      </nav>
-      <AdminPaymentOrders orders={orders} migrationReady={migrationReady} />
+      <section className="payment-admin-overview" aria-label="Tổng quan 100 đơn gần nhất">
+        <article className="payment-admin-stat payment-admin-stat--attention"><span>Chờ xử lý</span><strong>{stats.pending}</strong><small>Đơn còn trong thời hạn</small></article>
+        <article className="payment-admin-stat payment-admin-stat--reported"><span>Khách báo đã chuyển</span><strong>{stats.reported}</strong><small>Cần đối chiếu với giao dịch SePay</small></article>
+        <article className="payment-admin-stat"><span>Đã thanh toán</span><strong>{stats.paid}</strong><small>Gói học đã được kích hoạt</small></article>
+        <article className="payment-admin-stat"><span>Hết hạn</span><strong>{stats.expired}</strong><small>Có thể đối soát nếu tiền về trễ</small></article>
+      </section>
+      <section className="payment-admin-orders-panel">
+        <div className="payment-admin-panel-heading"><div><h2>Giao dịch gần đây</h2><p>Hiển thị tối đa 100 đơn mới nhất · xác minh tiền vào trước khi duyệt</p></div><span className="payment-admin-live"><span /> Cập nhật mỗi 15 giây</span></div>
+        <nav className="payment-admin-filters" aria-label="Lọc trạng thái">
+          {filters.map(([value, label]) => <Link aria-current={status === value ? "page" : undefined} className={status === value ? "is-active" : ""} href={value === "all" ? "/admin/payments" : `/admin/payments?status=${value}`} key={value}>{label}{value !== "all" ? <span>{stats[value as keyof typeof stats] ?? 0}</span> : null}</Link>)}
+        </nav>
+        <AdminPaymentOrders orders={orders} migrationReady={migrationReady} />
+      </section>
     </main>
   </div>;
 }

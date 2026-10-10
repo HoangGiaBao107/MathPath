@@ -80,7 +80,7 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
           value={data.totalRevenueVnd === null ? "—" : formatVnd(data.totalRevenueVnd, locale)}
           accent
         />
-        <AdminMetric label={copy.activeVip} value={formatCount(data.totalVip, locale)} accent />
+        <AdminMetric label={data.subscriptionHistoryComplete ? copy.activeVip : vi ? "VIP đang còn hạn" : "Currently active VIP"} value={formatCount(data.totalVip, locale)} accent />
         <AdminMetric label={copy.allAttempts} value={formatCount(data.totalAttempts, locale)} />
         <AdminMetric
           label={copy.averageScore}
@@ -233,7 +233,10 @@ export function AdminAnalyticsExperience({ data }: { data: AdminAnalytics }) {
           <div className="analytics-panel-heading">
             <div>
               <p className="eyebrow">{copy.subscriptions}</p>
-              <h2>{copy.subscriptions}</h2>
+              <h2>{data.subscriptionHistoryComplete ? copy.subscriptions : vi ? "Gói đang còn hạn" : "Currently active plans"}</h2>
+              <p className="analytics-panel-description">{data.subscriptionHistoryComplete
+                ? vi ? "Tính cả gói đã hết hạn; mỗi tài khoản chỉ tính một lần theo gói gần nhất." : "Includes expired plans; each account is counted once under its latest plan."
+                : vi ? "Để tính cả tài khoản có gói đã hết hạn, cần áp dụng migration thống kê lịch sử gói." : "Apply the historical plan metrics migration to include expired accounts."}</p>
             </div>
           </div>
           <div className="analytics-plan-total">
