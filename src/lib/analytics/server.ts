@@ -1,5 +1,6 @@
 import "server-only";
 
+import { connection } from "next/server";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -163,6 +164,9 @@ const attemptResultSchema = z.object({
 });
 
 export async function getAuthenticatedActor() {
+  // Authentication requires request cookies and Supabase runtime configuration.
+  // Defer every page that uses this helper until a real request arrives.
+  await connection();
   const client = await createSupabaseServerClient();
   const {
     data: { user },
