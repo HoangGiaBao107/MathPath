@@ -7,9 +7,13 @@
 - `public.subscriptions` is the subscription history and current active-term ledger. `profiles.vip_*` and `credit_accounts.paid_plan_slug` are kept as an atomic compatibility projection for the existing server quota implementation.
 - `payment_transactions` and `payment_webhook_events` record verified provider callbacks. Client roles cannot write these records.
 
-## Current provider adapter
+## Current provider adapters
 
-The repository contains a `generic_hmac` signed bank-transfer adapter and a VietQR image URL builder. This is an integration contract, not a production bank/payment provider. It expects a trusted server-to-server callback with the exact JSON shape below and an HMAC-SHA256 hex signature in `x-mathpath-signature` over the raw request bytes:
+The app supports `sepay` and keeps `generic_hmac` only as a legacy integration contract. Select `PAYMENT_PROVIDER=sepay` for the SePay webhook adapter. It verifies SePay's `X-SePay-Signature` and `X-SePay-Timestamp` HMAC-SHA256 headers over `{timestamp}.{raw_body}` and accepts the documented JSON fields `id`, `code`, `content`, `transferType`, `transferAmount`, and `referenceCode`. It rejects outgoing transfers and payment codes that are not exactly `MP` plus ten hexadecimal characters. The server-side payment RPC remains responsible for exact order/amount/status/expiry checks and idempotent subscription activation.
+
+The VietQR Quick Link is assembled on the server from the saved order's amount and unique code, plus server environment bank configuration. The description is `MATHPATH <ORDER_CODE>`. No client-provided price or status is used. A QR is not returned unless the bank details and webhook secret are all present; checkout says which configuration is missing and never marks an order paid by itself.
+
+The legacy `generic_hmac` adapter expects this JSON shape and an HMAC-SHA256 hex signature in `x-mathpath-signature` over the raw request bytes:
 
 ```json
 {
@@ -23,18 +27,20 @@ The repository contains a `generic_hmac` signed bank-transfer adapter and a Viet
 }
 ```
 
-No production payment provider has been selected or configured. Do not point a provider at this generic endpoint until its signature and payload format have been mapped and validated in a provider-specific adapter. A provider credential/API key is not currently needed by the generic test contract; `PAYMENT_PROVIDER_API_KEY` is reserved for a future adapter.
+The generic adapter is not SePay-compatible. Do not point SePay at it. A provider credential/API key is not required for the SePay HMAC webhook; `PAYMENT_PROVIDER_API_KEY` is unused by this integration.
 
 ## Required environment configuration
 
 Configure these only in the deployment secret manager, never in client code or Git:
 
-- `PAYMENT_PROVIDER=generic_hmac` only after the callback contract is implemented by a trusted sender.
-- `PAYMENT_WEBHOOK_SECRET` as a unique random secret shared with that sender.
-- `PAYMENT_BANK_CODE`, `PAYMENT_BANK_ACCOUNT`, and `PAYMENT_ACCOUNT_NAME` with the actual receiving account details.
+- `PAYMENT_PROVIDER=sepay`.
+- `PAYMENT_MODE=disabled` by default; use `sandbox` only with SePay Test mode and an isolated test database. Set `live` only after end-to-end sandbox verification and the owner's production go-live decision.
+- `PAYMENT_WEBHOOK_SECRET` as the exact SePay HMAC Secret Key; keep it server-only.
+- `PAYMENT_BANK_CODE`, `PAYMENT_BANK_ACCOUNT`, and `PAYMENT_ACCOUNT_NAME` with the receiving account details.
+- SePay webhook URL: `https://mathpath.com.vn/api/payments/webhook/sepay` for Live, or the equivalent route on the explicitly selected sandbox host during isolated sandbox testing.
 
-When provider or bank configuration is incomplete, the system can still create an owned pending order, but checkout presents setup status, omits the QR/account details when unavailable, and never reports a payment as successful. Provider callbacks are rejected until the signature secret is set.
+When provider or bank configuration is incomplete, or `PAYMENT_MODE=disabled`, the system can still create an owned pending order, but checkout omits the QR. It never reports a payment as successful from the browser. Provider callbacks are rejected while payment mode is disabled or the signature secret is unset. A sandbox webhook must be tested against an isolated sandbox database; do not use Production credentials for simulated transactions.
 
 ## Apply and verify
 
-The migrations are additive and have not been applied to the production Supabase project by this code change. Review the Supabase migration history first, validate against a disposable local database, and apply once in order. After applying them, verify the new plan rows, owner/admin RLS, and RPC grants before enabling a provider callback.
+The payment migrations were previously reconciled and recorded as applied on Production by the project owner. This code change does not modify database schema or data. Before accepting real payments, configure the Live Vercel variables and SePay webhook, then complete sandbox end-to-end verification with an isolated database. Do not treat unit/contract tests as a verified SePay delivery.

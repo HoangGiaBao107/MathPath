@@ -9,19 +9,32 @@ export async function POST(request: Request, context: RouteContext<"/api/payment
   const { provider: providerName } = await context.params;
   const provider = getPaymentProvider();
   if (!provider || provider.name !== providerName) return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });
-  if (!readServerEnv().PAYMENT_WEBHOOK_SECRET) return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });
+  const env = readServerEnv();
+  if (env.PAYMENT_MODE === "disabled" || !env.PAYMENT_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });
+  }
   if (Number(request.headers.get("content-length") ?? 0) > MAX_WEBHOOK_BYTES) return NextResponse.json({ error: "payload_too_large" }, { status: 413 });
   const rawBody = await readBoundedBody(request.body);
   if (!rawBody) return NextResponse.json({ error: "payload_too_large" }, { status: 413 });
   const rawText = new TextDecoder().decode(rawBody);
-  if (!provider.verifyWebhook(rawBody, request.headers.get("x-mathpath-signature"))) {
+  const signature = provider.name === "sepay"
+    ? request.headers.get("x-sepay-signature")
+    : request.headers.get("x-mathpath-signature");
+  const timestamp = provider.name === "sepay" ? request.headers.get("x-sepay-timestamp") : null;
+  if (!provider.verifyWebhook(rawBody, signature, timestamp)) {
     return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
   }
   let payload: unknown;
   try { payload = JSON.parse(rawText) as unknown; }
   catch { return NextResponse.json({ error: "invalid_payload" }, { status: 400 }); }
   const transaction = provider.parseTransaction(payload);
-  if (!transaction) return NextResponse.json({ error: "invalid_payment_event" }, { status: 400 });
+  if (!transaction) {
+    // A validly signed SePay event without an incoming recognized order code
+    // cannot activate anything and is acknowledged to prevent futile retries.
+    return provider.name === "sepay"
+      ? NextResponse.json({ success: true }, { headers: { "Cache-Control": "no-store" } })
+      : NextResponse.json({ error: "invalid_payment_event" }, { status: 400 });
+  }
 
   const { data, error } = await getSupabaseAdminClient().rpc("process_payment_webhook", {
     p_provider: provider.name,
@@ -37,6 +50,9 @@ export async function POST(request: Request, context: RouteContext<"/api/payment
     return NextResponse.json({ error: "webhook_processing_failed" }, { status: 503 });
   }
   const result = (data as Record<string, unknown>).result;
+  if (provider.name === "sepay") {
+    return NextResponse.json({ success: true }, { headers: { "Cache-Control": "no-store" } });
+  }
   return NextResponse.json({ received: true, result }, { headers: { "Cache-Control": "no-store" } });
 }
 

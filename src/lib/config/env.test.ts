@@ -26,4 +26,24 @@ describe("server environment parsing", () => {
       }),
     ).toThrow();
   });
+
+  it("accepts SePay as an explicitly configured server-side payment provider", () => {
+    const env = readServerEnv({
+      NODE_ENV: "test",
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+      PAYMENT_PROVIDER: "sepay",
+      PAYMENT_BANK_CODE: "VCB",
+      PAYMENT_BANK_ACCOUNT: "0123456789",
+      PAYMENT_ACCOUNT_NAME: "MATHPATH TEST",
+      PAYMENT_WEBHOOK_SECRET: "test-only-secret",
+      PAYMENT_MODE: "sandbox",
+    });
+    expect(env.PAYMENT_PROVIDER).toBe("sepay");
+    expect(env.PAYMENT_BANK_CODE).toBe("VCB");
+    expect(env.PAYMENT_MODE).toBe("sandbox");
+  });
+
+  it("keeps payments disabled by default", () => {
+    expect(readServerEnv({ NODE_ENV: "test", NEXT_PUBLIC_APP_URL: "http://localhost:3000" }).PAYMENT_MODE).toBe("disabled");
+  });
 });

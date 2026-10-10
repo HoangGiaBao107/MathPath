@@ -32,7 +32,8 @@ export async function GET(_request: Request, context: RouteContext<"/api/payment
   const provider = getPaymentProvider(order.provider === "unconfigured" ? undefined : order.provider);
   const payment = provider?.createPayment({ id: order.id, orderCode: order.order_code, amountVnd: order.amount_vnd, expiresAt: order.expires_at }) ?? {
     provider: null, bankCode: null, accountNumber: null, accountName: null,
-    transferDescription: order.order_code, qrImageUrl: null, providerReady: false,
+    transferDescription: `MATHPATH ${order.order_code}`, qrImageUrl: null, providerReady: false,
+    setupStatus: "provider_not_configured" as const,
   };
   return NextResponse.json({ order: { ...order, ...plan, status }, payment }, { headers: { "Cache-Control": "no-store" } });
 }
