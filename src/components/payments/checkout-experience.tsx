@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 type CheckoutOrder = {
   id: string; plan_code: string; plan_name_snapshot: string; amount_vnd: number; currency: string;
   order_code: string; status: string; expires_at: string; paid_at: string | null; duration_days: number; daily_ai_limit: number;
+  customer_reported_paid_at: string | null;
 };
 type PaymentData = {
   provider: string | null;
@@ -32,13 +33,17 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [confirmationAvailable, setConfirmationAvailable] = useState(false);
+  const [returnedFromProvider, setReturnedFromProvider] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [reportError, setReportError] = useState("");
 
   const refresh = useCallback(async () => {
     try {
       const response = await fetch(`/api/payments/orders/${orderId}`, { cache: "no-store" });
       if (!response.ok) throw new Error();
-      const payload = await response.json() as { order: CheckoutOrder; payment: PaymentData };
-      setOrder(payload.order); setPayment(payload.payment); setFailed(false);
+      const payload = await response.json() as { order: CheckoutOrder; payment: PaymentData; confirmationAvailable?: boolean };
+      setOrder(payload.order); setPayment(payload.payment); setConfirmationAvailable(payload.confirmationAvailable === true); setFailed(false);
     } catch { setFailed(true); }
     finally { setLoading(false); }
   }, [orderId]);
@@ -49,7 +54,17 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
   }, [refresh]);
 
   useEffect(() => {
-    if (!order || order.status !== "pending") return;
+    const timer = window.setTimeout(() => {
+      const paymentReturn = new URLSearchParams(window.location.search).get("payment");
+      setReturnedFromProvider(paymentReturn === "return");
+      if (paymentReturn === "error") setReportError(vi ? "SePay báo giao dịch chưa hoàn tất. Bạn có thể thử lại nếu đơn còn hạn." : "SePay reports that payment was not completed. Retry while the order is active.");
+      if (paymentReturn === "cancel") setReportError(vi ? "Bạn đã hủy bước thanh toán tại SePay." : "You cancelled the SePay checkout.");
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [vi]);
+
+  useEffect(() => {
+    if (!order || (order.status !== "pending" && !(order.status === "expired" && order.customer_reported_paid_at))) return;
     const timer = window.setInterval(() => void refresh(), 5000);
     return () => window.clearInterval(timer);
   }, [order?.status, order, refresh]);
@@ -58,6 +73,24 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
     if (!payment) return;
     try { await navigator.clipboard.writeText(payment.transferDescription); setCopied(true); window.setTimeout(() => setCopied(false), 1800); }
     catch { setCopied(false); }
+  }
+
+  async function reportPayment() {
+    setReporting(true); setReportError("");
+    try {
+      const response = await fetch(`/api/payments/orders/${orderId}/confirm`, { method: "POST" });
+      const payload = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(payload.error ?? "payment_confirmation_failed");
+      await refresh();
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "payment_confirmation_failed";
+      setReportError(code === "order_not_pending"
+        ? (vi ? "Đơn đã hết hạn hoặc đã được xử lý. Đang cập nhật trạng thái…" : "This order expired or was already processed. Refreshing status…")
+        : code === "payment_migration_required"
+          ? (vi ? "Cần cập nhật cơ sở dữ liệu thanh toán trước khi dùng chức năng này." : "The payment database migration is required for this action.")
+          : (vi ? "Chưa gửi được xác nhận. Vui lòng thử lại." : "Could not send the confirmation. Please retry."));
+      await refresh();
+    } finally { setReporting(false); }
   }
 
   const money = order ? new Intl.NumberFormat(vi ? "vi-VN" : "en-US").format(order.amount_vnd) : "";
@@ -77,7 +110,13 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
                 <p>{vi ? `Gói ${order.plan_name_snapshot} đã được kích hoạt. Hạn dùng được cập nhật trong tài khoản.` : `${order.plan_name_snapshot} is active. Your account shows the updated term.`}</p>
                 <Link className="button button--primary" href="/account">{vi ? "Về tài khoản" : "Back to account"}</Link></div>
             </div> : order.status === "expired" || order.status === "cancelled" ? <div className="checkout-result" role="status">
-              <strong>{order.status === "expired" ? (vi ? "Đơn hàng đã hết hạn" : "Order expired") : (vi ? "Đơn hàng đã hủy" : "Order cancelled")}</strong>
+              <strong>{order.status === "expired" ? (vi ? "Đơn thanh toán đã hết hạn sau 5 phút." : "This payment order expired after five minutes.") : (vi ? "Đơn hàng đã hủy" : "Order cancelled")}</strong>
+              {order.status === "expired" && (returnedFromProvider || order.customer_reported_paid_at) ? <div className="checkout-return-confirmation">
+                <h2>{vi ? "Bạn đã thanh toán?" : "Did you complete the payment?"}</h2>
+                <p>{vi ? "Cảm ơn bạn. Hãy báo MathPath để admin đối soát mã giao dịch trong SePay. Đơn hết hạn không tự kích hoạt gói; chỉ admin xác minh giao dịch thật mới có thể duyệt." : "Thank you. Notify MathPath so an admin can reconcile the transaction in SePay. An expired order never activates a plan automatically; an admin must verify the real transaction."}</p>
+                {confirmationAvailable && !order.customer_reported_paid_at ? <Button type="button" onClick={() => void reportPayment()} disabled={reporting}>{reporting ? (vi ? "Đang gửi…" : "Sending…") : (vi ? "Tôi đã thanh toán – báo MathPath" : "I paid – notify MathPath")}</Button> : null}
+                {reportError ? <p className="checkout-setup-note" role="alert">{reportError}</p> : null}
+              </div> : null}
               <Link className="button button--secondary" href="/#plans">{vi ? "Quay lại chọn gói" : "Choose another plan"}</Link>
             </div> : (
               <>
@@ -121,7 +160,18 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
                     </dl>
                   </div>
                 </div>}
-                <p className="checkout-pending" role="status"><span />{vi ? "Đang chờ thanh toán hợp lệ…" : "Waiting for a verified payment…"}</p>
+                {order.customer_reported_paid_at || returnedFromProvider ? <section className="checkout-return-confirmation" aria-live="polite">
+                  <p className="checkout-pending"><span />{order.customer_reported_paid_at
+                    ? (vi ? "MathPath đã nhận thông báo của bạn." : "MathPath received your payment notice.")
+                    : (vi ? "Bạn đã quay lại từ SePay. MathPath đang chờ xác nhận giao dịch." : "You returned from SePay. MathPath is waiting to verify the payment.")}</p>
+                  <h2>{vi ? "Cảm ơn bạn đã thanh toán!" : "Thank you for your payment!"}</h2>
+                  <p>{vi ? "Gói học sẽ được cập nhật sau khi SePay gửi xác nhận hoặc admin đối soát giao dịch. Nút này chỉ báo cho MathPath biết bạn đã chuyển tiền; nó không tự xác nhận thanh toán." : "Your plan will update after SePay confirms the transaction or an admin reconciles it. This button only notifies MathPath; it does not mark a payment as successful."}</p>
+                  {confirmationAvailable && !order.customer_reported_paid_at ? <Button type="button" onClick={() => void reportPayment()} disabled={reporting}>
+                    {reporting ? (vi ? "Đang gửi…" : "Sending…") : (vi ? "Tôi đã thanh toán – báo MathPath" : "I paid – notify MathPath")}
+                  </Button> : null}
+                  {reportError ? <p className="checkout-setup-note" role="alert">{reportError}</p> : null}
+                  {!confirmationAvailable ? <p className="checkout-setup-note" role="alert">{vi ? "Chức năng xác nhận đang chờ cập nhật cơ sở dữ liệu." : "Payment confirmation is waiting for a database update."}</p> : null}
+                </section> : <p className="checkout-pending" role="status"><span />{vi ? "Đang chờ thanh toán hợp lệ…" : "Waiting for a verified payment…"}</p>}
                 {payment?.provider !== "sepay_gateway" && !payment?.providerReady ? <p className="checkout-setup-note" role="alert">{setupMessage(payment?.setupStatus, vi)}</p> : null}
                 <p className="checkout-expiry">{vi ? "Đơn hết hạn lúc" : "Order expires"} {date}</p>
               </>
@@ -137,8 +187,8 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
 function setupMessage(status: PaymentData["setupStatus"] | undefined, vi: boolean): string {
   if (vi) {
     switch (status) {
-      case "payments_disabled": return "Thanh toán đang được tắt. MathPath chỉ mở nhận thanh toán sau khi kiểm thử SePay thành công.";
-      case "gateway_credentials_missing": return "Thiếu SePay Sandbox Merchant ID hoặc Secret Key. Hãy cấu hình trong môi trường Preview của Vercel.";
+      case "payments_disabled": return "Thanh toán hiện đang tạm tắt. Vui lòng quay lại sau.";
+      case "gateway_credentials_missing": return "Thiếu Merchant ID hoặc Secret Key SePay cho môi trường thanh toán này. Vui lòng liên hệ MathPath.";
       case "environment_mismatch": return "Cấu hình SePay không khớp chế độ thanh toán. Kiểm tra PAYMENT_MODE và SEPAY_ENVIRONMENT.";
       case "bank_details_missing": return "Chưa cấu hình đủ mã ngân hàng, số tài khoản hoặc tên chủ tài khoản. Chưa thể chuyển khoản.";
       case "webhook_secret_missing": return "Thiếu SePay webhook secret. QR đang được ẩn để tránh nhận tiền mà chưa thể xác minh giao dịch.";
@@ -147,8 +197,8 @@ function setupMessage(status: PaymentData["setupStatus"] | undefined, vi: boolea
     }
   }
   switch (status) {
-    case "payments_disabled": return "Payments are disabled until SePay sandbox verification is complete.";
-    case "gateway_credentials_missing": return "SePay Sandbox Merchant ID or Secret Key is missing from Vercel Preview settings.";
+    case "payments_disabled": return "Payments are temporarily disabled. Please try again later.";
+    case "gateway_credentials_missing": return "The SePay Merchant ID or Secret Key for this payment environment is missing. Contact MathPath.";
     case "environment_mismatch": return "SePay environment does not match the payment mode.";
     case "bank_details_missing": return "Bank code, account number, or account name is missing. Transfer is unavailable.";
     case "webhook_secret_missing": return "The SePay webhook secret is missing. The QR is hidden until payments can be verified.";

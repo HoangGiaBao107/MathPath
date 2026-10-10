@@ -297,6 +297,17 @@ export type Database = {
         updated_at: string;
         expires_at: string;
         paid_at: string | null;
+        customer_reported_paid_at: string | null;
+      }>;
+      payment_order_reviews: Table<{
+        id: string;
+        order_id: string;
+        admin_user_id: string;
+        source_provider: string;
+        action: string;
+        transaction_reference: string | null;
+        note: string;
+        created_at: string;
       }>;
       subscriptions: Table<{
         id: string;
@@ -465,6 +476,7 @@ export type Database = {
       };
       create_payment_order: { Args: { p_user_id: string; p_plan_code: string; p_provider: string }; Returns: Json };
       process_payment_webhook: { Args: { p_provider: string; p_event_id: string; p_order_code: string; p_transaction_id: string | null; p_provider_reference: string | null; p_amount_vnd: number; p_description: string; p_payload: Json }; Returns: Json };
+      admin_review_payment_order: { Args: { p_admin_user_id: string; p_order_id: string; p_action: string; p_transaction_reference?: string | null; p_note?: string }; Returns: Json };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

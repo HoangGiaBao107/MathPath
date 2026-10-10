@@ -14,9 +14,18 @@ export async function GET(_request: Request, context: RouteContext<"/api/payment
   if (!user) return NextResponse.json({ error: "authentication_required" }, { status: 401 });
 
   const admin = getSupabaseAdminClient();
-  const { data: order, error } = await admin.from("payment_orders")
-    .select("id, user_id, plan_code, plan_name_snapshot, amount_vnd, currency, order_code, status, provider, created_at, expires_at, paid_at")
+  let { data: order, error } = await admin.from("payment_orders")
+    .select("id, user_id, plan_code, plan_name_snapshot, amount_vnd, currency, order_code, status, provider, created_at, expires_at, paid_at, customer_reported_paid_at")
     .eq("id", orderId).eq("user_id", user.id).maybeSingle();
+  let confirmationAvailable = true;
+  if (error?.code === "42703") {
+    confirmationAvailable = false;
+    const fallback = await admin.from("payment_orders")
+      .select("id, user_id, plan_code, plan_name_snapshot, amount_vnd, currency, order_code, status, provider, created_at, expires_at, paid_at")
+      .eq("id", orderId).eq("user_id", user.id).maybeSingle();
+    order = fallback.data ? { ...fallback.data, customer_reported_paid_at: null } : null;
+    error = fallback.error;
+  }
   if (error || !order) return NextResponse.json({ error: "order_not_found" }, { status: 404 });
   const { data: plan, error: planError } = await admin.from("plans")
     .select("duration_days, daily_ai_limit").eq("slug", order.plan_code).maybeSingle();
@@ -35,5 +44,5 @@ export async function GET(_request: Request, context: RouteContext<"/api/payment
     transferDescription: `MATHPATH ${order.order_code}`, qrImageUrl: null, providerReady: false,
     setupStatus: "provider_not_configured" as const,
   };
-  return NextResponse.json({ order: { ...order, ...plan, status }, payment }, { headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json({ order: { ...order, ...plan, status, customer_reported_paid_at: order.customer_reported_paid_at ?? null }, payment, confirmationAvailable }, { headers: { "Cache-Control": "no-store" } });
 }

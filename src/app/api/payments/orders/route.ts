@@ -38,6 +38,45 @@ export async function POST(request: Request) {
       ...(error?.code ? { diagnosticCode: error.code } : {}),
     }, { status: unavailable ? 409 : 503 });
   }
-  const order = data as Record<string, unknown>;
-  return NextResponse.json({ orderId: order.id, checkoutUrl: `/checkout/${order.id}` }, { status: 201, headers: { "Cache-Control": "no-store" } });
+  let order = data as Record<string, unknown>;
+  if (typeof order.id !== "string") {
+    return NextResponse.json({ error: "order_creation_failed" }, { status: 503 });
+  }
+  const admin = getSupabaseAdminClient();
+  let orderId = order.id;
+  const initialOrderRead = await admin.from("payment_orders")
+    .select("created_at, expires_at, status")
+    .eq("id", order.id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  let persistedOrder = initialOrderRead.data;
+  if (initialOrderRead.error || !persistedOrder) {
+    return NextResponse.json({ error: "order_creation_failed" }, { status: 503 });
+  }
+  let safeExpiry = new Date(Math.min(Date.parse(persistedOrder.expires_at), Date.parse(persistedOrder.created_at) + 5 * 60_000)).toISOString();
+  if (persistedOrder.status === "pending" && Date.parse(safeExpiry) <= Date.now()) {
+    await admin.from("payment_orders").update({ status: "expired", updated_at: new Date().toISOString() })
+      .eq("id", orderId).eq("status", "pending");
+    const replacement = await admin.rpc("create_payment_order", {
+      p_user_id: user.id,
+      p_plan_code: parsed.data.planCode,
+      p_provider: provider?.name ?? "unconfigured",
+    });
+    if (replacement.error || !replacement.data || typeof replacement.data !== "object" || Array.isArray(replacement.data)) {
+      return NextResponse.json({ error: "order_creation_failed" }, { status: 503 });
+    }
+    order = replacement.data as Record<string, unknown>;
+    if (typeof order.id !== "string") return NextResponse.json({ error: "order_creation_failed" }, { status: 503 });
+    orderId = order.id;
+    const latest = await admin.from("payment_orders").select("created_at, expires_at, status")
+      .eq("id", orderId).eq("user_id", user.id).maybeSingle();
+    if (latest.error || !latest.data) return NextResponse.json({ error: "order_creation_failed" }, { status: 503 });
+    persistedOrder = latest.data;
+    safeExpiry = new Date(Math.min(Date.parse(latest.data.expires_at), Date.parse(latest.data.created_at) + 5 * 60_000)).toISOString();
+  }
+  if (persistedOrder.status === "pending" && safeExpiry !== persistedOrder.expires_at) {
+    await admin.from("payment_orders").update({ expires_at: safeExpiry, updated_at: new Date().toISOString() })
+      .eq("id", orderId).eq("status", "pending").gt("expires_at", safeExpiry);
+  }
+  return NextResponse.json({ orderId, checkoutUrl: `/checkout/${orderId}` }, { status: 201, headers: { "Cache-Control": "no-store" } });
 }

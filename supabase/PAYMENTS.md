@@ -16,6 +16,10 @@ The app supports two different SePay integrations and keeps `generic_hmac` only 
 
 SePay browser return URLs are only navigation; they never activate a subscription. The hosted gateway, not MathPath, presents the bank-transfer QR.
 
+The payment review screen at `/admin/payments` lists pending, paid, expired, and cancelled orders. A customer may report that they paid after returning from SePay; this is only a notification and does not change payment status. Admin approval requires the SePay transaction/reference and an explicit confirmation that the incoming transfer was checked in SePay. The server-side RPC records the review and activates the plan atomically through the existing payment processor. Admin cancellation is restricted to pending, unexpired orders. Orders expire after five minutes; expiry prevents automatic activation, while an admin may reconcile a late transfer only after verifying its transaction reference in SePay.
+
+The admin review controls and customer payment notice require migration `20261010000100_payment_admin_review_and_five_minute_expiry.sql`. Apply it to the intended Supabase environment before enabling those controls. The app displays a migration-required message if the new schema is not present. No production database was changed by the code implementation.
+
 The VietQR Quick Link is assembled on the server from the saved order's amount and unique code, plus server environment bank configuration. The description is `MATHPATH <ORDER_CODE>`. No client-provided price or status is used. A QR is not returned unless the bank details and webhook secret are all present; checkout says which configuration is missing and never marks an order paid by itself.
 
 The legacy `generic_hmac` adapter expects this JSON shape and an HMAC-SHA256 hex signature in `x-mathpath-signature` over the raw request bytes:
