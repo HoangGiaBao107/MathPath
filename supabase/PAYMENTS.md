@@ -9,7 +9,12 @@
 
 ## Current provider adapters
 
-The app supports `sepay` and keeps `generic_hmac` only as a legacy integration contract. Select `PAYMENT_PROVIDER=sepay` for the SePay webhook adapter. It verifies SePay's `X-SePay-Signature` and `X-SePay-Timestamp` HMAC-SHA256 headers over `{timestamp}.{raw_body}` and accepts the documented JSON fields `id`, `code`, `content`, `transferType`, `transferAmount`, and `referenceCode`. It rejects outgoing transfers and payment codes that are not exactly `MP` plus ten hexadecimal characters. The server-side payment RPC remains responsible for exact order/amount/status/expiry checks and idempotent subscription activation.
+The app supports two different SePay integrations and keeps `generic_hmac` only as a legacy contract:
+
+- `PAYMENT_PROVIDER=sepay` is SePay's bank-balance webhook adapter. It verifies `X-SePay-Signature` and `X-SePay-Timestamp` over `{timestamp}.{raw_body}` and parses bank transaction events.
+- `PAYMENT_PROVIDER=sepay_gateway` is SePay's hosted Payment Gateway. MathPath creates the signed `BANK_TRANSFER` form on the server from the saved order, then the browser posts those signed fields to SePay's Sandbox or Production checkout URL. The IPN endpoint is `/api/payments/webhook/sepay_gateway`; it verifies the configured `X-Secret-Key` using constant-time comparison and accepts only `ORDER_PAID`, `CAPTURED`, `PAYMENT`, `APPROVED`, VND callbacks whose order and transaction amounts agree. The database RPC still checks the actual MathPath order code, amount, pending status, expiry and duplicate event/transaction IDs before activating a subscription.
+
+SePay browser return URLs are only navigation; they never activate a subscription. The hosted gateway, not MathPath, presents the bank-transfer QR.
 
 The VietQR Quick Link is assembled on the server from the saved order's amount and unique code, plus server environment bank configuration. The description is `MATHPATH <ORDER_CODE>`. No client-provided price or status is used. A QR is not returned unless the bank details and webhook secret are all present; checkout says which configuration is missing and never marks an order paid by itself.
 
@@ -33,13 +38,15 @@ The generic adapter is not SePay-compatible. Do not point SePay at it. A provide
 
 Configure these only in the deployment secret manager, never in client code or Git:
 
-- `PAYMENT_PROVIDER=sepay`.
+- Choose exactly one provider: `PAYMENT_PROVIDER=sepay_gateway` for SePay's hosted checkout (the integration shown by the PHP sample) or `PAYMENT_PROVIDER=sepay` for direct bank transfer plus balance webhooks.
 - `PAYMENT_MODE=disabled` by default; use `sandbox` only with SePay Test mode and an isolated test database. Set `live` only after end-to-end sandbox verification and the owner's production go-live decision.
-- `PAYMENT_WEBHOOK_SECRET` as the exact SePay HMAC Secret Key; keep it server-only.
+- For the hosted gateway, set `PAYMENT_PROVIDER=sepay_gateway`, `SEPAY_ENVIRONMENT=sandbox`, `SEPAY_MERCHANT_ID`, and `SEPAY_SECRET_KEY` from the SePay Sandbox integration panel. Keep credentials server-only. `PAYMENT_MODE=sandbox` is required to enable the hosted form.
+- Configure the gateway IPN authentication as `SECRET_KEY` and the endpoint `https://<preview-host>/api/payments/webhook/sepay_gateway`. SePay's IPN `X-Secret-Key` must match the server-side `SEPAY_SECRET_KEY`.
+- For bank-balance webhooks only, `PAYMENT_WEBHOOK_SECRET` is the SePay webhook signing secret; it is not interchangeable with the Payment Gateway secret.
 - `PAYMENT_BANK_CODE`, `PAYMENT_BANK_ACCOUNT`, and `PAYMENT_ACCOUNT_NAME` with the receiving account details.
-- SePay webhook URL: `https://mathpath.com.vn/api/payments/webhook/sepay` for Live, or the equivalent route on the explicitly selected sandbox host during isolated sandbox testing.
+- Gateway Live uses `SEPAY_ENVIRONMENT=production`, production merchant credentials, `PAYMENT_MODE=live`, and IPN URL `https://mathpath.com.vn/api/payments/webhook/sepay_gateway`. Do not enable this until Sandbox end-to-end tests pass.
 
-When provider or bank configuration is incomplete, or `PAYMENT_MODE=disabled`, the system can still create an owned pending order, but checkout omits the QR. It never reports a payment as successful from the browser. Provider callbacks are rejected while payment mode is disabled or the signature secret is unset. A sandbox webhook must be tested against an isolated sandbox database; do not use Production credentials for simulated transactions.
+When provider configuration is incomplete, or `PAYMENT_MODE=disabled`, the system can still create an owned pending order, but checkout hides the SePay form/QR. It never reports a payment as successful from the browser. Provider callbacks are rejected while payment mode is disabled or authentication credentials are missing. A sandbox webhook must be tested against an isolated sandbox database; do not use Production credentials for simulated transactions.
 
 ## Apply and verify
 

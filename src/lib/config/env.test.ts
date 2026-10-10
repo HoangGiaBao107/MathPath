@@ -46,4 +46,18 @@ describe("server environment parsing", () => {
   it("keeps payments disabled by default", () => {
     expect(readServerEnv({ NODE_ENV: "test", NEXT_PUBLIC_APP_URL: "http://localhost:3000" }).PAYMENT_MODE).toBe("disabled");
   });
+
+  it("accepts server-only SePay Gateway sandbox credentials", () => {
+    const env = readServerEnv({
+      NODE_ENV: "test",
+      NEXT_PUBLIC_APP_URL: "https://preview.example.test",
+      PAYMENT_PROVIDER: "sepay_gateway",
+      PAYMENT_MODE: "sandbox",
+      SEPAY_MERCHANT_ID: "SP-TEST-MERCHANT",
+      SEPAY_SECRET_KEY: "test-only-secret",
+      SEPAY_ENVIRONMENT: "sandbox",
+    });
+    expect(env.PAYMENT_PROVIDER).toBe("sepay_gateway");
+    expect(env.SEPAY_ENVIRONMENT).toBe("sandbox");
+  });
 });

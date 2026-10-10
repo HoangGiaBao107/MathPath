@@ -10,16 +10,21 @@ export async function POST(request: Request, context: RouteContext<"/api/payment
   const provider = getPaymentProvider();
   if (!provider || provider.name !== providerName) return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });
   const env = readServerEnv();
-  if (env.PAYMENT_MODE === "disabled" || !env.PAYMENT_WEBHOOK_SECRET) {
+  const webhookSecretConfigured = provider.name === "sepay_gateway"
+    ? Boolean(env.SEPAY_SECRET_KEY)
+    : Boolean(env.PAYMENT_WEBHOOK_SECRET);
+  if (env.PAYMENT_MODE === "disabled" || !webhookSecretConfigured) {
     return NextResponse.json({ error: "provider_not_configured" }, { status: 503 });
   }
   if (Number(request.headers.get("content-length") ?? 0) > MAX_WEBHOOK_BYTES) return NextResponse.json({ error: "payload_too_large" }, { status: 413 });
   const rawBody = await readBoundedBody(request.body);
   if (!rawBody) return NextResponse.json({ error: "payload_too_large" }, { status: 413 });
   const rawText = new TextDecoder().decode(rawBody);
-  const signature = provider.name === "sepay"
-    ? request.headers.get("x-sepay-signature")
-    : request.headers.get("x-mathpath-signature");
+  const signature = provider.name === "sepay_gateway"
+    ? request.headers.get("x-secret-key")
+    : provider.name === "sepay"
+      ? request.headers.get("x-sepay-signature")
+      : request.headers.get("x-mathpath-signature");
   const timestamp = provider.name === "sepay" ? request.headers.get("x-sepay-timestamp") : null;
   if (!provider.verifyWebhook(rawBody, signature, timestamp)) {
     return NextResponse.json({ error: "invalid_signature" }, { status: 401 });
@@ -31,7 +36,7 @@ export async function POST(request: Request, context: RouteContext<"/api/payment
   if (!transaction) {
     // A validly signed SePay event without an incoming recognized order code
     // cannot activate anything and is acknowledged to prevent futile retries.
-    return provider.name === "sepay"
+    return provider.name === "sepay" || provider.name === "sepay_gateway"
       ? NextResponse.json({ success: true }, { headers: { "Cache-Control": "no-store" } })
       : NextResponse.json({ error: "invalid_payment_event" }, { status: 400 });
   }

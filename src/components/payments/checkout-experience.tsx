@@ -19,7 +19,9 @@ type PaymentData = {
   transferDescription: string;
   qrImageUrl: string | null;
   providerReady: boolean;
-  setupStatus: "ready" | "provider_not_configured" | "payments_disabled" | "bank_details_missing" | "webhook_secret_missing" | "bank_and_webhook_missing";
+  setupStatus: "ready" | "provider_not_configured" | "payments_disabled" | "bank_details_missing" | "webhook_secret_missing" | "bank_and_webhook_missing" | "gateway_credentials_missing" | "environment_mismatch";
+  checkoutUrl?: string | null;
+  checkoutFields?: Record<string, string> | null;
 };
 
 export function CheckoutExperience({ orderId }: { orderId: string }) {
@@ -85,7 +87,25 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
                   <span>{vi ? "Lượt AI" : "AI requests"}<strong>{order.daily_ai_limit}/{vi ? "ngày" : "day"}</strong></span>
                   <span>{vi ? "Số tiền" : "Amount"}<strong>{money} {vi ? "VNĐ" : "VND"}</strong></span>
                 </div>
-                <div className="checkout-payment-grid">
+                {payment?.provider === "sepay_gateway" ? (
+                  <div className="checkout-payment-grid">
+                    <div className="checkout-qr-box">
+                      <div className="checkout-qr-placeholder" aria-label={vi ? "Thanh toán qua SePay" : "Pay through SePay"}><span>SePay</span><small>{vi ? "SePay sẽ hiển thị mã QR ở bước tiếp theo" : "SePay shows the payment QR on the next step"}</small></div>
+                      <p>{vi ? "Bạn sẽ được chuyển tới cổng thanh toán SePay." : "You will continue to SePay's hosted checkout."}</p>
+                    </div>
+                    <div className="checkout-bank-details">
+                      <h2>{vi ? "Thanh toán an toàn qua SePay" : "Secure payment with SePay"}</h2>
+                      <dl>
+                        <div><dt>{vi ? "Mã đơn hàng" : "Order code"}</dt><dd><code>{order.order_code}</code></dd></div>
+                        <div><dt>{vi ? "Nội dung" : "Description"}</dt><dd><code>MATHPATH {order.order_code}</code></dd></div>
+                      </dl>
+                      {payment.providerReady && payment.checkoutUrl && payment.checkoutFields ? <form action={payment.checkoutUrl} method="post">
+                        {Object.entries(payment.checkoutFields).map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
+                        <Button type="submit">{vi ? "Tiếp tục tới SePay" : "Continue to SePay"}</Button>
+                      </form> : <p className="checkout-setup-note" role="alert">{setupMessage(payment.setupStatus, vi)}</p>}
+                    </div>
+                  </div>
+                ) : <div className="checkout-payment-grid">
                   <div className="checkout-qr-box">
                     {payment?.providerReady && payment.qrImageUrl ? <Image className="checkout-qr-image" src={payment.qrImageUrl} alt={vi ? "Mã QR chuyển khoản" : "Bank transfer QR code"} width={300} height={300} unoptimized /> : <div className="checkout-qr-placeholder" aria-label={vi ? "Mã QR chưa khả dụng" : "QR code unavailable"}><span>MP</span><small>{vi ? "Chưa thể tạo QR thanh toán" : "Payment QR is unavailable"}</small></div>}
                     <p>{payment?.providerReady ? (vi ? "Quét QR bằng ứng dụng ngân hàng" : "Scan with your banking app") : (vi ? "Chưa thể thanh toán: cấu hình VietQR/SePay chưa đầy đủ." : "Payment is unavailable because VietQR/SePay setup is incomplete.")}</p>
@@ -100,9 +120,9 @@ export function CheckoutExperience({ orderId }: { orderId: string }) {
                       <div><dt>{vi ? "Nội dung chuyển khoản" : "Transfer description"}</dt><dd><code>{payment?.transferDescription ?? `MATHPATH ${order.order_code}`}</code><Button size="small" variant="secondary" onClick={() => void copyCode()}>{copied ? (vi ? "Đã chép" : "Copied") : (vi ? "Sao chép" : "Copy")}</Button></dd></div>
                     </dl>
                   </div>
-                </div>
+                </div>}
                 <p className="checkout-pending" role="status"><span />{vi ? "Đang chờ thanh toán hợp lệ…" : "Waiting for a verified payment…"}</p>
-                {!payment?.providerReady ? <p className="checkout-setup-note" role="alert">{setupMessage(payment?.setupStatus, vi)}</p> : null}
+                {payment?.provider !== "sepay_gateway" && !payment?.providerReady ? <p className="checkout-setup-note" role="alert">{setupMessage(payment?.setupStatus, vi)}</p> : null}
                 <p className="checkout-expiry">{vi ? "Đơn hết hạn lúc" : "Order expires"} {date}</p>
               </>
             )}
@@ -118,6 +138,8 @@ function setupMessage(status: PaymentData["setupStatus"] | undefined, vi: boolea
   if (vi) {
     switch (status) {
       case "payments_disabled": return "Thanh toán đang được tắt. MathPath chỉ mở nhận thanh toán sau khi kiểm thử SePay thành công.";
+      case "gateway_credentials_missing": return "Thiếu SePay Sandbox Merchant ID hoặc Secret Key. Hãy cấu hình trong môi trường Preview của Vercel.";
+      case "environment_mismatch": return "Cấu hình SePay không khớp chế độ thanh toán. Kiểm tra PAYMENT_MODE và SEPAY_ENVIRONMENT.";
       case "bank_details_missing": return "Chưa cấu hình đủ mã ngân hàng, số tài khoản hoặc tên chủ tài khoản. Chưa thể chuyển khoản.";
       case "webhook_secret_missing": return "Thiếu SePay webhook secret. QR đang được ẩn để tránh nhận tiền mà chưa thể xác minh giao dịch.";
       case "bank_and_webhook_missing": return "Chưa cấu hình thông tin ngân hàng và SePay webhook. Đơn hàng đã lưu nhưng chưa thể thanh toán.";
@@ -126,6 +148,8 @@ function setupMessage(status: PaymentData["setupStatus"] | undefined, vi: boolea
   }
   switch (status) {
     case "payments_disabled": return "Payments are disabled until SePay sandbox verification is complete.";
+    case "gateway_credentials_missing": return "SePay Sandbox Merchant ID or Secret Key is missing from Vercel Preview settings.";
+    case "environment_mismatch": return "SePay environment does not match the payment mode.";
     case "bank_details_missing": return "Bank code, account number, or account name is missing. Transfer is unavailable.";
     case "webhook_secret_missing": return "The SePay webhook secret is missing. The QR is hidden until payments can be verified.";
     case "bank_and_webhook_missing": return "Bank details and SePay webhook are not configured. The order is saved but cannot be paid.";

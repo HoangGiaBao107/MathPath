@@ -4,9 +4,12 @@ import { readServerEnv } from "@/lib/config/env";
 import {
   buildVietQrUrl,
   createVietQrPaymentData,
+  createSePayCheckoutFields,
   parseGenericPaymentWebhook,
+  parseSePayGatewayIpn,
   parseSePayWebhook,
   verifyHmacWebhook,
+  verifySePayGatewayIpn,
   verifySePayWebhook,
   type ParsedPaymentWebhook,
 } from "./provider-core";
@@ -26,7 +29,9 @@ export type PaymentDisplayData = {
   transferDescription: string;
   qrImageUrl: string | null;
   providerReady: boolean;
-  setupStatus: "ready" | "provider_not_configured" | "payments_disabled" | "bank_details_missing" | "webhook_secret_missing" | "bank_and_webhook_missing";
+  setupStatus: "ready" | "provider_not_configured" | "payments_disabled" | "bank_details_missing" | "webhook_secret_missing" | "bank_and_webhook_missing" | "gateway_credentials_missing" | "environment_mismatch";
+  checkoutUrl?: string | null;
+  checkoutFields?: Record<string, string> | null;
 };
 
 export interface PaymentProvider {
@@ -38,8 +43,50 @@ export interface PaymentProvider {
 
 export function getPaymentProvider(name: string | undefined = readServerEnv().PAYMENT_PROVIDER): PaymentProvider | null {
   if (name === "sepay") return new SePayBankTransferProvider();
+  if (name === "sepay_gateway") return new SePayPaymentGatewayProvider();
   if (name === "generic_hmac") return new GenericHmacBankTransferProvider();
   return null;
+}
+
+class SePayPaymentGatewayProvider implements PaymentProvider {
+  readonly name = "sepay_gateway";
+
+  createPayment(order: PaymentOrderForProvider): PaymentDisplayData {
+    const env = readServerEnv();
+    const gateway = createSePayCheckoutFields(
+      { orderCode: order.orderCode, amountVnd: order.amountVnd, orderId: order.id },
+      {
+        mode: env.PAYMENT_MODE,
+        environment: env.SEPAY_ENVIRONMENT,
+        merchantId: env.SEPAY_MERCHANT_ID,
+        secretKey: env.SEPAY_SECRET_KEY,
+        appUrl: env.NEXT_PUBLIC_APP_URL,
+      },
+    );
+    return {
+      provider: gateway.provider,
+      bankCode: null,
+      accountNumber: null,
+      accountName: null,
+      transferDescription: `MATHPATH ${order.orderCode.toUpperCase()}`,
+      qrImageUrl: null,
+      providerReady: gateway.providerReady,
+      setupStatus: gateway.setupStatus,
+      checkoutUrl: gateway.checkoutUrl,
+      checkoutFields: gateway.checkoutFields,
+    };
+  }
+
+  verifyWebhook(_rawBody: Uint8Array, secretHeader: string | null): boolean {
+    const env = readServerEnv();
+    const environmentMatches = (env.PAYMENT_MODE === "sandbox" && env.SEPAY_ENVIRONMENT === "sandbox") ||
+      (env.PAYMENT_MODE === "live" && env.SEPAY_ENVIRONMENT === "production");
+    return environmentMatches && verifySePayGatewayIpn(secretHeader, env.SEPAY_SECRET_KEY);
+  }
+
+  parseTransaction(payload: unknown): ParsedPaymentWebhook | null {
+    return parseSePayGatewayIpn(payload);
+  }
 }
 
 class SePayBankTransferProvider implements PaymentProvider {
