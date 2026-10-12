@@ -5,14 +5,13 @@ import { useRouter } from "next/navigation";
 import type { Route } from "next";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/providers/locale-provider";
-
-type Plan = { slug: "plus" | "pro" | "pro_max"; name: string; amount_vnd: number; currency: string; duration_days: number; daily_ai_limit: number };
+import { mergeAvailablePlans, type PaidPlan } from "@/lib/payments/plan-catalog";
 
 export function PaymentPlanCards({ currentPlan }: { currentPlan?: string }) {
   const router = useRouter();
   const { locale } = useLocale();
   const vi = locale === "vi";
-  const [plans, setPlans] = useState<Plan[]>([]);
+  const [databasePlans, setDatabasePlans] = useState<PaidPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyPlan, setBusyPlan] = useState("");
   const [error, setError] = useState("");
@@ -21,8 +20,13 @@ export function PaymentPlanCards({ currentPlan }: { currentPlan?: string }) {
     let active = true;
     void fetch("/api/payments/plans", { cache: "no-store" })
       .then(async (response) => {
-        const result = await response.json() as { plans?: Plan[] };
-        if (response.ok && active) setPlans(result.plans ?? []);
+        const result = await response.json() as { plans?: PaidPlan[] };
+        if (response.ok && active) {
+          setDatabasePlans(result.plans ?? []);
+          if (!result.plans?.length) {
+            setError(vi ? "Máy chủ chưa cung cấp cấu hình gói trả phí. Nút mua đang tạm khóa." : "Paid plan configuration is unavailable. Purchasing is temporarily disabled.");
+          }
+        }
         else if (active) setError(vi ? "Chưa tải được danh sách gói. Thử lại sau nhé." : "Plans are unavailable. Please try again later.");
       })
       .catch(() => { if (active) setError(vi ? "Kết nối chưa ổn định." : "Connection unavailable."); })
@@ -30,7 +34,7 @@ export function PaymentPlanCards({ currentPlan }: { currentPlan?: string }) {
     return () => { active = false; };
   }, [vi]);
 
-  async function buy(planCode: Plan["slug"]) {
+  async function buy(planCode: PaidPlan["slug"]) {
     setError(""); setBusyPlan(planCode);
     try {
       const response = await fetch("/api/payments/orders", {
@@ -62,6 +66,7 @@ export function PaymentPlanCards({ currentPlan }: { currentPlan?: string }) {
   }
 
   const formatMoney = (amount: number) => new Intl.NumberFormat(vi ? "vi-VN" : "en-US").format(amount);
+  const plans = mergeAvailablePlans(databasePlans);
 
   return (
     <>
@@ -75,16 +80,15 @@ export function PaymentPlanCards({ currentPlan }: { currentPlan?: string }) {
         {plans.map((plan) => (
           <article className={`account-plan-card${currentPlan === plan.slug ? " is-current" : ""}`} key={plan.slug}>
             <div className="account-plan-card-heading"><h3>{plan.name}</h3>{currentPlan === plan.slug ? <span>{vi ? "ĐANG DÙNG" : "CURRENT"}</span> : null}</div>
-            <p className="account-plan-price">{formatMoney(plan.amount_vnd)} <small>{vi ? "đ / 30 ngày" : "VND / 30 days"}</small></p>
+            <p className="account-plan-price">{formatMoney(plan.amount_vnd)} <small>{vi ? `đ / ${plan.duration_days} ngày` : `VND / ${plan.duration_days} days`}</small></p>
             <p className="account-plan-quota"><strong>{plan.daily_ai_limit}</strong> {vi ? "lượt AI mỗi ngày" : "AI requests per day"}</p>
-            <Button className="home-plan-action" size="small" disabled={Boolean(busyPlan)} onClick={() => void buy(plan.slug)}>
-              {busyPlan === plan.slug ? (vi ? "Đang tạo đơn…" : "Creating order…") : currentPlan === plan.slug ? (vi ? "Gia hạn gói" : "Renew plan") : (vi ? "Mua gói" : "Choose plan")}
+            <Button className="home-plan-action" size="small" disabled={Boolean(busyPlan) || loading || !plan.available} onClick={() => void buy(plan.slug)}>
+              {busyPlan === plan.slug ? (vi ? "Đang tạo đơn…" : "Creating order…") : !plan.available ? (vi ? "Tạm thời chưa khả dụng" : "Temporarily unavailable") : currentPlan === plan.slug ? (vi ? "Gia hạn gói" : "Renew plan") : (vi ? "Mua gói" : "Choose plan")}
             </Button>
           </article>
         ))}
       </div>
       {error ? <p className="auth-message auth-message--error" role="alert">{error}</p> : null}
-      {!loading && plans.length === 0 && !error ? <p>{vi ? "Các gói trả phí hiện chưa sẵn sàng." : "Paid plans are not available yet."}</p> : null}
     </>
   );
 }
