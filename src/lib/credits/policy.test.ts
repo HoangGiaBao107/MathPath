@@ -6,11 +6,11 @@ describe("credit policy", () => {
     expect(creditPolicy).toEqual({
       timezone: "Asia/Ho_Chi_Minh",
       guestTotalRequests: 5,
-      registeredFreeDailyRequests: 5,
+      registeredFreeDailyRequests: 10,
       paidPlans: [
-        { slug: "plus", name: "Plus", monthlyPriceVnd: 70_000, requestsPerDay: 15 },
-        { slug: "pro", name: "Pro", monthlyPriceVnd: 100_000, requestsPerDay: 25 },
-        { slug: "pro_max", name: "Pro Max", monthlyPriceVnd: 125_000, requestsPerDay: 40 },
+        { slug: "plus", name: "Plus", monthlyPriceVnd: 70_000, requestsPerDay: 20 },
+        { slug: "pro", name: "Pro", monthlyPriceVnd: 100_000, requestsPerDay: 30 },
+        { slug: "pro_max", name: "Pro Max", monthlyPriceVnd: 125_000, requestsPerDay: 50 },
       ],
     });
     expect(creditPolicy).not.toHaveProperty("registrationBonusRequests");
@@ -18,7 +18,7 @@ describe("credit policy", () => {
 
   it("does not grant guest signup bonus requests", () => {
     expect(creditPolicy.guestTotalRequests).toBe(5);
-    expect(creditPolicy.registeredFreeDailyRequests).toBe(5);
+    expect(creditPolicy.registeredFreeDailyRequests).toBe(10);
     expect(creditPolicy).not.toHaveProperty("registrationBonusRequests");
   });
 });

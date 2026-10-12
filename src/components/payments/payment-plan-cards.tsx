@@ -69,7 +69,7 @@ export function PaymentPlanCards({ currentPlan }: { currentPlan?: string }) {
         <article className="account-plan-card is-current">
           <div className="account-plan-card-heading"><h3>Starter</h3><span>{vi ? "MIỄN PHÍ" : "FREE"}</span></div>
           <p className="account-plan-price">{vi ? "0đ" : "Free"}</p>
-          <p className="account-plan-quota"><strong>5</strong> {vi ? "lượt AI mỗi ngày" : "AI requests per day"}</p>
+          <p className="account-plan-quota"><strong>10</strong> {vi ? "lượt AI mỗi ngày" : "AI requests per day"}</p>
         </article>
         {loading ? <p role="status">{vi ? "Đang tải gói học…" : "Loading plans…"}</p> : null}
         {plans.map((plan) => (

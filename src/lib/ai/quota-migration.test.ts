@@ -4,18 +4,24 @@ import { creditPolicy } from "@/lib/credits/types";
 
 const migration = readFileSync("supabase/migrations/20261006000100_phase9_ai_system.sql", "utf8");
 const paidPlanTermMigration = readFileSync("supabase/migrations/20261006000700_expire_paid_plans_after_30_days.sql", "utf8");
+const currentQuotaMigration = readFileSync("supabase/migrations/20261012000200_update_ai_daily_plan_limits.sql", "utf8");
 
 describe("Phase 9 quota contract", () => {
-  it("uses the approved guest, free, and paid limits", () => {
+  it("keeps guest allowance and reflects the current registered and paid limits", () => {
     expect(creditPolicy.guestTotalRequests).toBe(5);
-    expect(creditPolicy.registeredFreeDailyRequests).toBe(5);
+    expect(creditPolicy.registeredFreeDailyRequests).toBe(10);
     expect(
       creditPolicy.paidPlans.map(({ slug, requestsPerDay }) => [slug, requestsPerDay]),
     ).toEqual([
-      ["plus", 15],
-      ["pro", 25],
-      ["pro_max", 40],
+      ["plus", 20],
+      ["pro", 30],
+      ["pro_max", 50],
     ]);
+    expect(currentQuotaMigration).toContain("when 'plus' then 20");
+    expect(currentQuotaMigration).toContain("when 'pro' then 30");
+    expect(currentQuotaMigration).toContain("when 'pro_max' then 50");
+    expect(currentQuotaMigration).toContain("account_daily_limit set default 10");
+    expect(currentQuotaMigration).toContain("set account_daily_limit = 10");
   });
 
   it("reserves atomically on the existing credit account and checks admin from profiles", () => {
