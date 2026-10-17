@@ -5755,29 +5755,58 @@ textarea {
 .ai-muted {
   color: var(--color-text-secondary);
 }
-.ai-result-improvement {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.result-ai-next-steps {
+  display: grid;
   gap: var(--space-4);
-  margin-block: var(--space-4);
-  padding: var(--space-4);
-  border-color: #f0b2b5;
-  background: #fffafb;
+  margin-block: var(--space-5);
 }
-.ai-result-improvement h2 {
-  margin: 0.2rem 0 0.5rem;
-  font-size: 1.2rem;
+.result-ai-heading h2 {
+  margin: 0.25rem 0 0.4rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  letter-spacing: -0.035em;
 }
-.ai-result-improvement p {
+.result-ai-heading > p:last-child {
   margin: 0;
   color: var(--color-text-secondary);
+  line-height: 1.6;
 }
-.ai-result-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
+.result-ai-heading > p:last-child strong { color: var(--color-text); }
+.result-ai-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
 }
+.result-ai-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
+  align-items: start;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: clamp(var(--space-4), 2.4vw, var(--space-5));
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.result-ai-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgb(17 24 39 / 8%);
+}
+.result-ai-card--analysis { background: linear-gradient(145deg, #fff 55%, #fff8f1); }
+.result-ai-card--practice { border-color: rgb(215 25 32 / 24%); background: linear-gradient(145deg, #fff 50%, #fff5f5); }
+.result-ai-card-icon {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+.result-ai-card--analysis .result-ai-card-icon { background: #fff0df; color: #a04c00; }
+.result-ai-card h3 { margin: 0 0 0.45rem; font-size: 1.05rem; letter-spacing: -0.02em; }
+.result-ai-card p { margin: 0; color: var(--color-text-secondary); font-size: 0.88rem; line-height: 1.6; }
+.result-ai-card .button { grid-column: 2; justify-self: start; margin-top: var(--space-1); }
 @media (max-width: 650px) {
   .ai-chat-widget {
     right: max(0.8rem, env(safe-area-inset-right));
