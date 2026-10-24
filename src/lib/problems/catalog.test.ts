@@ -3,6 +3,17 @@ import { filterAndSortProblemSets, paginateProblemSets } from "./catalog";
 import { demoProblemSets } from "./demo-data.mock";
 
 describe("problem bank catalogue", () => {
+  it("shows all 19 exams across two pages without duplicates and searches the second page", () => {
+    const sets = Array.from({ length: 19 }, (_, index) => ({ ...demoProblemSets[0], id: `exam-${index}`, title: `Exam ${index}`, slug: `exam-${index}` }));
+    const first = paginateProblemSets(sets, { limit: 12 });
+    const second = paginateProblemSets(sets, { limit: 12, cursor: first.nextCursor });
+    expect(first.totalCount).toBe(19);
+    expect(first.items).toHaveLength(12);
+    expect(second.items).toHaveLength(7);
+    expect(second.nextCursor).toBeNull();
+    expect(new Set([...first.items, ...second.items].map(item => item.id)).size).toBe(19);
+    expect(paginateProblemSets(filterAndSortProblemSets(sets, { query: "Exam 18" })).items.map(item => item.id)).toEqual(["exam-18"]);
+  });
   it("searches Vietnamese topic names without requiring tone marks", () => {
     const result = filterAndSortProblemSets(demoProblemSets, { query: "ham so" });
     expect(result.length).toBe(3);

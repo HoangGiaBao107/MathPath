@@ -1,0 +1,8 @@
+#problem-bank-list { scroll-margin-top: 7rem; }
+.bank-page-range { display: block; margin-top: .6rem; font-size: 1rem; color: var(--color-text-secondary); font-weight: 400; }
+.bank-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .6rem; margin: 1.5rem 0; }
+.bank-pagination button { min-width: 2.8rem; min-height: 2.8rem; padding: .65rem 1rem; border: 1px solid var(--color-border); border-radius: .75rem; background: #fff; color: var(--color-text); font: inherit; font-weight: 650; cursor: pointer; }
+.bank-pagination button[aria-current="page"] { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.bank-pagination button:disabled { opacity: .4; cursor: default; }
+.bank-pagination button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+@media (max-width: 480px) { .bank-pagination { gap: .35rem; } .bank-pagination button { padding: .6rem .7rem; font-size: .9rem; } }

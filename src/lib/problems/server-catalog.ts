@@ -4,11 +4,15 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ProblemSetRow } from "./database.types";
 import { filterAndSortProblemSets, paginateProblemSets } from "./catalog";
 import { toPublicProblemSet } from "./catalog-mapping";
-import type { ProblemSetPage, ProblemSetPageQuery } from "./types";
+import type { ProblemSetPage, ProblemSetPageQuery, PublicProblemSet } from "./types";
 
 const QUESTION_PAGE_SIZE = 1000;
 
 export async function getProblemBank(query: ProblemSetPageQuery = {}): Promise<ProblemSetPage> {
+  return paginateProblemSets(filterAndSortProblemSets(await getPublishedProblemSets(), query), query);
+}
+
+export async function getPublishedProblemSets(): Promise<PublicProblemSet[]> {
   const client = await createSupabaseServerClient();
   const { data: sets, error: setError } = await client
     .from("problem_sets")
@@ -52,7 +56,7 @@ export async function getProblemBank(query: ProblemSetPageQuery = {}): Promise<P
     return toPublicProblemSet(problemSet, questionCounts.get(problemSet.id) ?? 0);
   });
 
-  return paginateProblemSets(filterAndSortProblemSets(items, query), query);
+  return items;
 }
 
 async function loadPublishedQuestionCounts(

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { ProblemBankExperience } from "@/components/problems/problem-bank-experience";
-import { getProblemBank } from "@/lib/problems/server-catalog";
+import { getPublishedProblemSets } from "@/lib/problems/server-catalog";
 
 export const metadata: Metadata = {
   title: "Problem Bank — MathPath",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function ProblemBankPage() {
   await connection();
-  const problemBank = await getProblemBank({ limit: 12, sort: "newest" });
+  const problemSets = await getPublishedProblemSets();
 
-  return <ProblemBankExperience problemSets={problemBank.items} />;
+  return <ProblemBankExperience problemSets={problemSets} />;
 }

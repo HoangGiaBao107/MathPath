@@ -1,4 +1,5 @@
 "use client";
+import "./problem-bank-pagination.css";
 
 import Link from "next/link";
 import type { Route } from "next";
@@ -8,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
-import { filterAndSortProblemSets } from "@/lib/problems/catalog";
+import { filterAndSortProblemSets, paginateProblemSets } from "@/lib/problems/catalog";
 import type {
   ProblemSetCategory,
   ProblemSetFilters,
@@ -25,6 +26,7 @@ export function ProblemBankExperience({
   const { locale, messages } = useLocale();
   const copy = messages.problemBank;
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [category, setCategory] = useState<ProblemSetCategory | "all">("all");
   const [sort, setSort] = useState<NonNullable<ProblemSetFilters["sort"]>>("newest");
   const categoryOptions = [
@@ -42,8 +44,27 @@ export function ProblemBankExperience({
     () => filterAndSortProblemSets(problemSets, { query, category, sort, locale }),
     [problemSets, query, category, sort, locale],
   );
+  const pageSize = 12;
+  const totalPages = Math.max(1, Math.ceil(visibleSets.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pageSets = paginateProblemSets(visibleSets, { limit: pageSize, cursor: String((currentPage - 1) * pageSize) }).items;
+  const paging = locale === "vi"
+    ? { label: "Phân trang bộ đề", page: "Trang", previous: "Trang trước", next: "Trang sau", showing: "Đang hiển thị" }
+    : { label: "Exam pages", page: "Page", previous: "Previous", next: "Next", showing: "Showing" };
+  function goToPage(next: number) {
+    setPage(next);
+    document.getElementById("problem-bank-list")?.scrollIntoView({ block: "start" });
+  }
+  function pagination() {
+    return totalPages > 1 ? <nav className="bank-pagination" aria-label={paging.label}>
+      <button type="button" disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}>← {paging.previous}</button>
+      {Array.from({ length: totalPages }, (_, index) => index + 1).map(number => <button type="button" key={number} aria-label={`${paging.page} ${number}`} aria-current={number === currentPage ? "page" : undefined} onClick={() => goToPage(number)}>{number}</button>)}
+      <button type="button" disabled={currentPage === totalPages} onClick={() => goToPage(currentPage + 1)}>{paging.next} →</button>
+    </nav> : null;
+  }
 
   function clearFilters() {
+    setPage(1);
     setQuery("");
     setCategory("all");
     setSort("newest");
@@ -93,7 +114,7 @@ export function ProblemBankExperience({
                 autoComplete="off"
                 className="input"
                 id="problem-search"
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => { setQuery(event.target.value); setPage(1); }}
                 placeholder={copy.searchPlaceholder}
                 type="search"
                 value={query}
@@ -104,24 +125,26 @@ export function ProblemBankExperience({
             label={copy.categoryLabel}
             value={category}
             options={categoryOptions}
-            onChange={(value) => setCategory(value as ProblemSetCategory | "all")}
+            onChange={(value) => { setCategory(value as ProblemSetCategory | "all"); setPage(1); }}
           />
           <StyledDropdown
             label={copy.sortLabel}
             value={sort}
             options={sortOptions}
             className="problem-bank-sort"
-            onChange={(value) => setSort(value as NonNullable<ProblemSetFilters["sort"]>)}
+            onChange={(value) => { setSort(value as NonNullable<ProblemSetFilters["sort"]>); setPage(1); }}
           />
         </section>
 
-        <div className="problem-bank-results" aria-live="polite" aria-atomic="true">
+        <div className="problem-bank-results" id="problem-bank-list" aria-live="polite" aria-atomic="true">
           {interpolate(copy.resultCount, { count: visibleSets.length })}
+          {visibleSets.length > 0 ? <span className="bank-page-range">{paging.showing} {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, visibleSets.length)} / {visibleSets.length} · {paging.page} {currentPage}/{totalPages}</span> : null}
         </div>
+        {pagination()}
 
         {visibleSets.length > 0 ? (
           <section className="problem-set-grid" aria-label={copy.accessiblyFiltered}>
-            {visibleSets.map((problemSet) => {
+            {pageSets.map((problemSet) => {
               const examHref = previewOnly
                 ? problemSet.id.startsWith("word-exam-")
                   ? `/exams/preview/${problemSet.slug}`
@@ -242,6 +265,7 @@ export function ProblemBankExperience({
             </Button>
           </section>
         )}
+        {pagination()}
       </div>
     </main>
   );
