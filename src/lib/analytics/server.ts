@@ -1,4 +1,5 @@
 import "server-only";
+import { examDisplayTitle } from "@/lib/exams/display-title";
 
 import { connection } from "next/server";
 import { z } from "zod";
@@ -27,7 +28,7 @@ const studentProgressSchema = z.object({
   trend: z.array(
     z.object({
       attemptId: z.string().uuid(),
-      examTitle: z.string(),
+      examTitle: z.string().transform(examDisplayTitle),
       submittedAt: z.string(),
       score: z.number(),
     }),
@@ -38,7 +39,7 @@ const studentProgressSchema = z.object({
     z.object({
       attemptId: z.string().uuid(),
       examSlug: z.string().nullable(),
-      examTitle: z.string(),
+      examTitle: z.string().transform(examDisplayTitle),
       submittedAt: z.string(),
       status: z.enum(["submitted", "auto_submitted"]),
       score: z.number(),
@@ -120,7 +121,7 @@ const adminHistoricalSubscriptionMetricsSchema = z.object({
 const attemptResultSchema = z.object({
   attemptId: z.string().uuid(),
   examSlug: z.string().nullable(),
-  examTitle: z.string(),
+  examTitle: z.string().transform(examDisplayTitle),
   submittedAt: z.string(),
   durationSeconds: z.number().int().nonnegative().nullable().default(null),
   status: z.enum(["submitted", "auto_submitted"]),

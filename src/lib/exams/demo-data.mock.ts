@@ -1,4 +1,5 @@
 import { REAL_EXAM_TIME_LIMIT_SECONDS } from "../config/exam.ts";
+import { examDisplayTitle } from "./display-title";
 import { isExamLabEnabled, labExam } from "./lab-exam.fixture";
 import type {
   ExamDefinition,
@@ -220,7 +221,7 @@ export function getMockExam(examId: string): ExamDefinition | null {
 
 export function toExamPublicSummary(exam: ExamDefinition): ExamPublicSummary {
   const { questions, ...summary } = exam;
-  return { ...summary, questionCount: questions.length };
+  return { ...summary, title: examDisplayTitle(summary.title), questionCount: questions.length };
 }
 
 export function toSafeQuestion(question: ExamQuestion): SafeExamQuestion {

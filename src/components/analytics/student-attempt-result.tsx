@@ -1,6 +1,8 @@
 "use client";
+import "./result-refinements.css";
 
 import Link from "next/link";
+import { examDisplayTitle } from "@/lib/exams/display-title";
 import type { Route } from "next";
 import { useLocale } from "@/components/providers/locale-provider";
 import { ResultQuestionReview } from "@/components/analytics/result-question-review";
@@ -57,9 +59,9 @@ export function StudentAttemptResultExperience({
           ← {view === "overview" ? (basePath ? design.library : copy.resultBack) : design.backToResult}
         </Link>
         <p className="eyebrow">{copy.resultTitle}</p>
-        <h1>{view === "overview" ? attempt.examTitle : detailCards.find(card => card.key === view)?.title}</h1>
+        <h1>{view === "overview" ? examDisplayTitle(attempt.examTitle) : detailCards.find(card => card.key === view)?.title}</h1>
         <p>
-          {view !== "overview" ? `${attempt.examTitle} · ` : ""}
+          {view !== "overview" ? `${examDisplayTitle(attempt.examTitle)} · ` : ""}
           {formatDateTime(attempt.submittedAt, locale)} ·{" "}
           {attempt.status === "submitted" ? copy.submitted : copy.autoSubmitted}
         </p>
@@ -152,7 +154,7 @@ export function StudentAttemptResultExperience({
           </Card>
         </div>
       </section>
-      <section className="analytics-primary-grid">
+      <section className="analytics-primary-grid result-breakdown-grid">
         <Card className="analytics-panel">
           <p className="eyebrow">{copy.sectionBreakdown}</p>
           <h2>{copy.sectionBreakdown}</h2>
@@ -200,13 +202,14 @@ export function StudentAttemptResultExperience({
                   ];
                   const title = `${topic.topic}${topic.subtopic ? ` · ${topic.subtopic}` : ""}`;
                   return (
-                    <div className="result-weakness-row" key={`${title}-${index}`}>
-                      <div className="result-weakness-title">
+                    <details className="result-weakness-row" key={`${title}-${index}`}>
+                      <summary className="result-weakness-title">
                         <strong>{title}</strong>
                         <span>
                           {count} {messages.problemBank.questionCount}
                         </span>
-                      </div>
+                        <span className="result-topic-chevron" aria-hidden="true">⌄</span>
+                      </summary>
                       <div
                         className="result-weakness-track"
                         role="img"
@@ -230,7 +233,7 @@ export function StudentAttemptResultExperience({
                           </span>
                         ))}
                       </div>
-                    </div>
+                    </details>
                   );
                 })}
             </div>

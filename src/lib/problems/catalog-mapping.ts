@@ -1,4 +1,5 @@
 import type { ProblemSetRow } from "./database.types";
+import { examDisplayTitle } from "@/lib/exams/display-title";
 import type { ProblemDifficulty, PublicProblemSet } from "./types";
 
 type CatalogRow = Pick<
@@ -33,7 +34,7 @@ export function toPublicProblemSet(row: CatalogRow, questionCount: number): Publ
   return {
     id: row.id,
     slug: row.slug,
-    title: row.title,
+    title: examDisplayTitle(row.title),
     description: row.description ?? "",
     language: row.language,
     category: row.category,

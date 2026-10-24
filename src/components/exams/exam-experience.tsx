@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { examDisplayTitle } from "@/lib/exams/display-title";
 import type { Route } from "next";
 import {
   useCallback,
@@ -28,7 +30,8 @@ type DraftState = { answer: ExamAnswer | null; markedForReview: boolean };
 export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSummary; resultPathPrefix?: string }) {
   const { locale, messages } = useLocale();
   const copy = messages.exam;
-  const title = exam.title;
+  const title = examDisplayTitle(exam.title);
+  const router = useRouter();
   const description = exam.description;
   const [phase, setPhase] = useState<Phase>("loading");
   const [attempt, setAttempt] = useState<PublicExamAttempt | null>(null);
@@ -45,6 +48,12 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
   const [guestLimitReached, setGuestLimitReached] = useState(false);
   const guestLimitReachedRef = useRef(false);
   const [isGuest, setIsGuest] = useState(false);
+  const showDetailedResult = Boolean(resultPathPrefix) || (!isGuest && !exam.demo);
+  useEffect(() => {
+    if (phase === "submitted" && attempt?.result && showDetailedResult) {
+      router.replace(`${resultPathPrefix ?? "/progress/attempts/"}${attempt.id}` as Route);
+    }
+  }, [phase, attempt, showDetailedResult, resultPathPrefix, router]);
   const guestQuestionUsageRef = useRef(0);
   const persistedDraftsRef = useRef<Record<string, DraftState>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -874,7 +883,7 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
           </>
         ) : null}
 
-        {phase === "submitted" && attempt?.result ? (
+        {phase === "submitted" && attempt?.result && !showDetailedResult ? (
           <Card className="exam-result-card" aria-labelledby="exam-result-title">
             <Badge tone="primary">
               {attempt.status === "auto_submitted" ? copy.autoSubmittedTitle : copy.submittedTitle}
