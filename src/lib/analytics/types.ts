@@ -102,6 +102,7 @@ export type StudentAttemptResult = {
   examSlug: string | null;
   examTitle: string;
   submittedAt: string;
+  durationSeconds: number | null;
   status: "submitted" | "auto_submitted";
   result: {
     score: number;
@@ -121,11 +122,15 @@ export type StudentAttemptResult = {
       state: "unanswered" | "correct" | "partially_correct" | "incorrect";
       pointsEarned: number;
       pointsPossible: number;
+      gradingStatus?: "graded" | "needs_review";
+      correctStatementCount?: number;
+      scoringRule?: number[];
       review: {
         questionType: "multiple_choice" | "true_false" | "short_answer" | null;
         statement: string | null;
         options: { key: string; text: string }[];
         substatements: { key: string; text: string }[];
+        assets: { path: string; altText: string; placement: "stem" }[];
         selectedAnswer: Record<string, unknown> | null;
         correctAnswer: Record<string, unknown> | null;
         explanation: string | null;

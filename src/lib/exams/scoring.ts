@@ -1,4 +1,4 @@
-import { normalizeShortAnswer } from "./short-answer";
+import { compareShortAnswer } from "./short-answer";
 import type { ExamAnswer, ExamDefinition, ExamScore, QuestionOutcome } from "./types";
 
 function isAnswered(answer: ExamAnswer | null | undefined): boolean {
@@ -28,6 +28,10 @@ export function scoreExam(
     }
 
     let earned = 0;
+    let gradingStatus: "graded" | "needs_review" = "graded";
+    let statementResults: QuestionOutcome["statementResults"];
+    let correctStatementCount: number | undefined;
+    let scoringRule: number[] | undefined;
     if (question.type === "multiple_choice" && answer?.type === "multiple_choice") {
       earned = answer.optionKey === question.correctOptionKey ? question.points : 0;
     } else if (question.type === "true_false" && answer?.type === "true_false") {
@@ -37,15 +41,27 @@ export function scoreExam(
           Number(answer.statements[statement.key] === question.correctStatements[statement.key]),
         0,
       );
-      if (question.scoring.kind === "all_or_nothing") {
+      statementResults = question.statements.map(statement => ({
+        key: statement.key,
+        selected: answer.statements[statement.key] ?? null,
+        correct: question.correctStatements[statement.key],
+        matched: answer.statements[statement.key] === question.correctStatements[statement.key],
+      }));
+      correctStatementCount = correctCount;
+      scoringRule = exam.mode === "official_thptqg" ? [0, 0.1, 0.25, 0.5, 1]
+        : question.scoring.kind === "partial" ? question.scoring.pointsByCorrectCount
+        : question.statements.map(() => 0).concat(question.points);
+      if (exam.mode !== "official_thptqg" && question.scoring.kind === "all_or_nothing") {
         earned = correctCount === question.statements.length ? question.points : 0;
       } else {
-        earned = question.scoring.pointsByCorrectCount[correctCount] ?? 0;
+        earned = scoringRule[correctCount] ?? 0;
       }
     } else if (question.type === "short_answer" && answer?.type === "short_answer") {
       const accepted = question.acceptedNormalizedAnswers ?? [question.canonicalAnswer];
-      const normalizedAccepted = accepted.map(normalizeShortAnswer);
-      earned = normalizedAccepted.includes(normalizeShortAnswer(answer.raw)) ? question.points : 0;
+      const comparison = compareShortAnswer(answer.raw, accepted,
+        exam.mode === "official_thptqg" ? { kind: "thptqg_numeric" } : question.inputPolicy);
+      earned = comparison === "equivalent" ? question.points : 0;
+      if (comparison === "unverified") gradingStatus = "needs_review";
     }
 
     return {
@@ -57,6 +73,8 @@ export function scoreExam(
       state: earned >= question.points ? "correct" : earned > 0 ? "partially_correct" : "incorrect",
       pointsEarned: earned,
       pointsPossible: question.points,
+      gradingStatus,
+      ...(statementResults ? { statementResults, correctStatementCount, scoringRule } : {}),
     };
   });
 

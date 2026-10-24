@@ -3,8 +3,10 @@ export type ExamTimingMode = "countdown" | "elapsed";
 
 export type ExamOption = { key: string; text: string; displayTextEn?: string | null };
 export type ExamStatement = { key: string; text: string; displayTextEn?: string | null };
+export type ExamFigure = { url: string; alt: string };
 
 export type MultipleChoiceQuestion = {
+  figures?: ExamFigure[];
   id: string;
   sectionId: string;
   number: string;
@@ -20,6 +22,7 @@ export type MultipleChoiceQuestion = {
 };
 
 export type TrueFalseQuestion = {
+  figures?: ExamFigure[];
   id: string;
   sectionId: string;
   number: string;
@@ -36,6 +39,7 @@ export type TrueFalseQuestion = {
 };
 
 export type ShortAnswerQuestion = {
+  figures?: ExamFigure[];
   id: string;
   sectionId: string;
   number: string;
@@ -48,6 +52,7 @@ export type ShortAnswerQuestion = {
   points: number;
   canonicalAnswer: string;
   acceptedNormalizedAnswers?: string[];
+  inputPolicy?: import("./short-answer").ShortAnswerPolicy;
 };
 
 export type ExamQuestion = MultipleChoiceQuestion | TrueFalseQuestion | ShortAnswerQuestion;
@@ -86,6 +91,10 @@ export type QuestionOutcome = {
   state: "unanswered" | "correct" | "partially_correct" | "incorrect";
   pointsEarned: number;
   pointsPossible: number;
+  gradingStatus?: "graded" | "needs_review";
+  statementResults?: { key: string; selected: boolean | null; correct: boolean; matched: boolean }[];
+  correctStatementCount?: number;
+  scoringRule?: number[];
 };
 
 export type KnowledgeOutcome = {

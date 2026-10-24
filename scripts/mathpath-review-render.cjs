@@ -1,0 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* global require, document */
+const {chromium}=require('playwright'),fs=require('node:fs/promises'),path=require('node:path'),{pathToFileURL}=require('node:url'),process=require('node:process');
+(async()=>{const plan=JSON.parse(await fs.readFile('tmp/mathpath-new/visual-sample-plan.json','utf8'));const browser=await chromium.launch({headless:true,channel:'chrome'});try{const page=await browser.newPage({viewport:{width:1200,height:1100}});for(let i=0;i<plan.pages;i++){await page.goto(pathToFileURL(path.resolve(`tmp/mathpath-new/review-${i}.html`)).href);await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:`tmp/mathpath-new/review-${i}.png`,fullPage:true});}}finally{await browser.close();}})().catch(()=>{process.exitCode=1;});

@@ -1,0 +1,10 @@
+tmp/
+.codex-test-temp/
+content/extracted/
+content/source-pdfs/
+content/processed/
+*.zip
+*.docx
+*.pdf
+.env*
+!.env.example

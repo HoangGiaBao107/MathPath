@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/problems/database.types";
 import { scoreExam } from "./scoring";
+import { shortAnswerPolicySchema } from "./short-answer-policy-schema";
 import { toExamPublicSummary, toSafeQuestion } from "./demo-data.mock";
 import type {
   AttemptOwner,
@@ -21,6 +22,7 @@ const questionSchema = z.discriminatedUnion("type", [
     number: z.string(),
     type: z.literal("multiple_choice"),
     stem: z.string(),
+    figures: z.array(z.object({url:z.string().regex(/^\/problem-assets\/[A-Za-z0-9._/-]+$/),alt:z.string()})).optional(),
     topic: z.string().nullable().optional(),
     subtopic: z.string().nullable().optional(),
     options: z.array(z.object({ key: z.string(), text: z.string() })),
@@ -33,6 +35,7 @@ const questionSchema = z.discriminatedUnion("type", [
     number: z.string(),
     type: z.literal("true_false"),
     stem: z.string(),
+    figures: z.array(z.object({url:z.string().regex(/^\/problem-assets\/[A-Za-z0-9._/-]+$/),alt:z.string()})).optional(),
     topic: z.string().nullable().optional(),
     subtopic: z.string().nullable().optional(),
     statements: z.array(z.object({ key: z.string(), text: z.string() })),
@@ -49,11 +52,13 @@ const questionSchema = z.discriminatedUnion("type", [
     number: z.string(),
     type: z.literal("short_answer"),
     stem: z.string(),
+    figures: z.array(z.object({url:z.string().regex(/^\/problem-assets\/[A-Za-z0-9._/-]+$/),alt:z.string()})).optional(),
     topic: z.string().nullable().optional(),
     subtopic: z.string().nullable().optional(),
     points: z.number().nonnegative(),
     canonicalAnswer: z.string(),
     acceptedNormalizedAnswers: z.array(z.string()).optional(),
+    inputPolicy: shortAnswerPolicySchema.optional(),
   }),
 ]);
 
@@ -75,6 +80,16 @@ const examSchema = z.object({
     }),
   ),
   questions: z.array(questionSchema),
+}).superRefine((exam, ctx) => {
+  if (exam.mode !== "official_thptqg") return;
+  const mc = exam.questions.filter(q => q.type === "multiple_choice");
+  const tf = exam.questions.filter(q => q.type === "true_false");
+  const sa = exam.questions.filter(q => q.type === "short_answer");
+  if (mc.length !== 12 || tf.length !== 4 || sa.length !== 6 || exam.totalScore !== 10 ||
+    mc.some(q => q.points !== 0.25) || sa.some(q => q.points !== 0.5 || (q.inputPolicy && q.inputPolicy.kind !== "thptqg_numeric")) ||
+    tf.some(q => q.points !== 1 || q.statements.length !== 4 || q.scoring.kind !== "partial" || JSON.stringify(q.scoring.pointsByCorrectCount) !== "[0,0.1,0.25,0.5,1]")) {
+    ctx.addIssue({ code: "custom", message: "Invalid official THPTQG scoring/input configuration" });
+  }
 });
 
 const attemptPayloadSchema = z.object({

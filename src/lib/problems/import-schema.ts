@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { shortAnswerPolicySchema } from "../exams/short-answer-policy-schema";
 import type {
   ProblemDifficulty,
   PublicationRightsStatus,
@@ -15,6 +16,7 @@ const answerSchema = z.discriminatedUnion("type", [
     accepted_values: z.array(z.string().min(1)).min(1),
     case_sensitive: z.boolean().default(false),
     tolerance: z.number().nonnegative().optional(),
+    input_policy: shortAnswerPolicySchema.optional(),
   }),
 ]);
 

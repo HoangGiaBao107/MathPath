@@ -1,4 +1,5 @@
 import { REAL_EXAM_TIME_LIMIT_SECONDS } from "../config/exam.ts";
+import { isExamLabEnabled, labExam } from "./lab-exam.fixture";
 import type {
   ExamDefinition,
   ExamQuestion,
@@ -212,6 +213,8 @@ export const mockExams: ExamDefinition[] = [
 ];
 
 export function getMockExam(examId: string): ExamDefinition | null {
+  if (isExamLabEnabled() && examId === labExam.id) return labExam;
+  if (isExamLabEnabled()) { const bankExam = getBankLabExam(examId); if (bankExam) return bankExam; }
   return mockExams.find((exam) => exam.id === examId) ?? null;
 }
 
@@ -228,6 +231,7 @@ export function toSafeQuestion(question: ExamQuestion): SafeExamQuestion {
       number: question.number,
       type: question.type,
       stem: question.stem,
+      figures: question.figures,
       displayStemVi: question.displayStemVi,
       displayStemEn: question.displayStemEn,
       options: question.options,
@@ -241,6 +245,7 @@ export function toSafeQuestion(question: ExamQuestion): SafeExamQuestion {
       number: question.number,
       type: question.type,
       stem: question.stem,
+      figures: question.figures,
       displayStemVi: question.displayStemVi,
       displayStemEn: question.displayStemEn,
       statements: question.statements,
@@ -253,8 +258,11 @@ export function toSafeQuestion(question: ExamQuestion): SafeExamQuestion {
     number: question.number,
     type: question.type,
     stem: question.stem,
+    figures: question.figures,
     displayStemVi: question.displayStemVi,
     displayStemEn: question.displayStemEn,
     points: question.points,
+    inputPolicy: question.inputPolicy,
   };
 }
+import { getBankLabExam } from "./bank-lab.server";

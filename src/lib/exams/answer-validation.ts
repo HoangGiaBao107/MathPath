@@ -44,7 +44,7 @@ export function validateAnswerForQuestion(
     return { valid: false, code: "invalid_answer" };
   }
   if (value.raw === "") return { valid: true, answer: null };
-  const validation = validateShortAnswer(value.raw);
+  const validation = validateShortAnswer(value.raw, question.inputPolicy);
   return validation.valid
     ? { valid: true, answer: { type: "short_answer", raw: validation.raw } }
     : { valid: false, code: validation.reason };

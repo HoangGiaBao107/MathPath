@@ -5,10 +5,13 @@ import { SupabaseConfigurationError } from "@/lib/supabase/config";
 import { DevelopmentAttemptRepository } from "./attempt-repository.mock";
 import { SupabaseAttemptRepository } from "./attempt-repository.supabase";
 import type { AttemptRepository } from "./attempt-repository";
+import { isExamLabEnabled } from "./lab-exam.fixture";
+import { labAttemptRepository } from "./attempt-repository.lab";
 
 let repository: AttemptRepository | null = null;
 
 export function getAttemptRepository(): AttemptRepository {
+  if (isExamLabEnabled()) return labAttemptRepository;
   if (repository) return repository;
   const env = readServerEnv();
   const mode =

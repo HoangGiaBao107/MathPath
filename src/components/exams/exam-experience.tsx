@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import {
   useCallback,
   useEffect,
@@ -17,19 +18,18 @@ import { Card } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
 import { interpolate } from "@/lib/i18n/messages";
 import { MathContentView } from "@/components/problems/math-content-view";
-import { validateShortAnswer } from "@/lib/exams/short-answer";
+import { validateShortAnswer, shortAnswerMaxLength, type ShortAnswerPolicy } from "@/lib/exams/short-answer";
 import type { ExamAnswer, ExamPublicSummary, PublicExamAttempt } from "@/lib/exams/types";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type Phase = "loading" | "intro" | "active" | "submitted" | "error";
 type DraftState = { answer: ExamAnswer | null; markedForReview: boolean };
 
-export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
+export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSummary; resultPathPrefix?: string }) {
   const { locale, messages } = useLocale();
   const copy = messages.exam;
-  const title = exam.mode === "practice" ? copy.practiceTitle : copy.officialPresetTitle;
-  const description =
-    exam.mode === "practice" ? copy.practiceDescription : copy.officialDescription;
+  const title = exam.title;
+  const description = exam.description;
   const [phase, setPhase] = useState<Phase>("loading");
   const [attempt, setAttempt] = useState<PublicExamAttempt | null>(null);
   const attemptRef = useRef<PublicExamAttempt | null>(null);
@@ -358,7 +358,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
           }
           if (
             response.status === 400 &&
-            ["too_long", "invalid_characters", "invalid_number", "invalid_answer"].includes(
+            ["too_long", "invalid_characters", "invalid_number", "invalid_answer", "unsupported_expression"].includes(
               data?.error?.code ?? "",
             )
           ) {
@@ -587,6 +587,12 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
                         }
                       />
                     </h2>
+                    {currentQuestion.figures?.map(figure => (
+                      <figure key={figure.url} className="result-question-figure">
+                        {/* Original local illustrations are already sized; preserve aspect ratio. */}
+                        <img src={figure.url} alt={figure.alt} style={{maxWidth:"100%",height:"auto",maxHeight:400,objectFit:"contain"}} />
+                      </figure>
+                    ))}
                     {currentQuestion.type === "multiple_choice" ? (
                       <fieldset className="exam-options">
                         <legend>{copy.answerOptions}</legend>
@@ -701,7 +707,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
                           autoComplete="off"
                           id={`short-${currentQuestion.id}`}
                           inputMode="text"
-                          maxLength={4}
+                          maxLength={shortAnswerMaxLength(currentQuestion.inputPolicy)}
                           onChange={(event) =>
                             onShortAnswerChange(
                               event,
@@ -718,6 +724,7 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
                               updateDraft,
                               setValidationErrors,
                               copy.invalidAnswer,
+                              currentQuestion.inputPolicy,
                             )
                           }
                           type="text"
@@ -727,7 +734,9 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
                               : ""
                           }
                         />
-                        <span id={`short-hint-${currentQuestion.id}`}>{copy.shortAnswerHint}</span>
+                        <span id={`short-hint-${currentQuestion.id}`}>{currentQuestion.inputPolicy?.kind === "expression"
+                          ? copy.expressionAnswerHint : currentQuestion.inputPolicy?.kind === "numeric"
+                            ? copy.numericAnswerHint.replace("{max}", String(shortAnswerMaxLength(currentQuestion.inputPolicy))) : copy.shortAnswerHint}</span>
                         {validationErrors[currentQuestion.id] ? (
                           <span
                             className="exam-validation-error"
@@ -932,6 +941,9 @@ export function ExamExperience({ exam }: { exam: ExamPublicSummary }) {
             <Link className="button button--secondary exam-result-link" href="/problems">
               {copy.goToBank}
             </Link>
+            {(!attempt.exam.demo || resultPathPrefix) ? <Link className="button button--primary" href={`${resultPathPrefix ?? "/progress/attempts/"}${attempt.id}` as Route}>
+              {messages.progress.reviewQuestions}
+            </Link> : null}
             <Button className="exam-retake-button" disabled={isStarting} onClick={retakeAttempt}>
               {isStarting ? copy.starting : copy.retake}
             </Button>
@@ -975,11 +987,12 @@ function onShortAnswerPaste(
   update: (id: string, value: Partial<DraftState>) => void,
   setErrors: (updater: (errors: Record<string, string>) => Record<string, string>) => void,
   errorCopy: string,
+  policy?: ShortAnswerPolicy,
 ) {
   const input = event.currentTarget;
   const pasted = event.clipboardData.getData("text");
   const nextValue = `${input.value.slice(0, input.selectionStart ?? input.value.length)}${pasted}${input.value.slice(input.selectionEnd ?? input.value.length)}`;
-  const validation = validateShortAnswer(nextValue);
+  const validation = validateShortAnswer(nextValue, policy);
   if (!validation.valid) {
     event.preventDefault();
     setErrors((errors) => ({ ...errors, [questionId]: errorCopy }));
@@ -998,7 +1011,7 @@ function validateDraft(
 ): boolean {
   if (!answer) return false;
   if (question.type === "short_answer" && answer.type === "short_answer") {
-    return !validateShortAnswer(answer.raw).valid;
+    return !validateShortAnswer(answer.raw, question.inputPolicy).valid;
   }
   return false;
 }

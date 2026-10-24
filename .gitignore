@@ -171,3 +171,14 @@ __pycache__/
 
 # Supabase CLI local state
 /supabase/.temp/
+
+# Private local bank validation, attempt snapshots and database backups
+/tmp/mathpath-new/
+/tmp/mathpath-backups/
+/tmp/exam-lab/
+/tmp/mathpath-python/
+/tmp/mathpath-db/
+/tmp/mathpath-release-code/
+/.codex-test-temp/
+.vercel
+.env*

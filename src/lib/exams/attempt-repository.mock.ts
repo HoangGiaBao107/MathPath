@@ -17,6 +17,17 @@ export class MockAttemptRepository {
 
   constructor(private readonly now: () => number = Date.now) {}
 
+  /** Snapshot used only by the explicitly enabled local acceptance-test lab. */
+  snapshot() {
+    return { attempts: [...this.attempts.entries()], startKeys: [...this.startKeys.entries()],
+      guestAnsweredQuestions: [...this.guestAnsweredQuestions].map(([key, values]) => [key, [...values]] as const) };
+  }
+  restore(snapshot: ReturnType<MockAttemptRepository["snapshot"]>) {
+    for (const [key,value] of snapshot.attempts) this.attempts.set(key,value);
+    for (const [key,value] of snapshot.startKeys) this.startKeys.set(key,value);
+    for (const [key,value] of snapshot.guestAnsweredQuestions) this.guestAnsweredQuestions.set(key,new Set(value));
+  }
+
   start(exam: ExamDefinition, owner: AttemptOwner, requestKey: string): ExamAttempt {
     const startKey = `${owner.kind === "guest" ? owner.guestSessionHash : `user:${owner.userId}`}:${exam.id}:${requestKey}`;
     const existingId = this.startKeys.get(startKey);

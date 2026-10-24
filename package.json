@@ -17,6 +17,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "mathpath:qa": "node scripts/validate-mathpath-bank.mjs",
+    "mathpath:prepare": "node scripts/import-mathpath-bank.mjs",
+    "mathpath:local-db": "node scripts/mathpath-local-db.mjs",
+    "mathpath:local-server": "node scripts/mathpath-local-server.mjs",
     "import:word-exams": "node scripts/import-word-exams.mjs",
     "import:topic-word-exams": "node scripts/import-topic-word-exams.mjs",
     "format": "prettier --write .",
@@ -35,6 +39,7 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.4.3",
     "@eslint/js": "^9.39.5",
     "@types/node": "^24.3.0",
     "@types/react": "^19.1.0",

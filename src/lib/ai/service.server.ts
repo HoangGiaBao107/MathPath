@@ -1,7 +1,8 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { getOrCreateExamOwner } from "@/lib/exams/guest-session.server";
+import { getOrCreateExamOwner, readExamOwner } from "@/lib/exams/guest-session.server";
+import { creditPolicy } from "@/lib/credits/types";
 import type { AttemptOwner } from "@/lib/exams/types";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -59,7 +60,11 @@ function ownerArgs(owner: AttemptOwner) {
 }
 
 export async function readAIQuota(): Promise<QuotaSnapshot> {
-  const { owner } = await getAIIdentity();
+  // A passive quota fetch must not replace a session created by a concurrent
+  // exam start. Create guest identities only for explicit actions.
+  const owner = await readExamOwner();
+  if (!owner) return { kind: "guest", plan: "guest", unlimited: false,
+    remaining: creditPolicy.guestTotalRequests, limit: creditPolicy.guestTotalRequests, resetAt: null };
   const { data, error } = await getSupabaseAdminClient().rpc("get_ai_quota", ownerArgs(owner));
   if (error || !data) throw new AIServiceUnavailableError();
   return parseQuota(data);

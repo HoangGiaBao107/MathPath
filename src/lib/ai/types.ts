@@ -38,6 +38,9 @@ export type SimilarProblem = {
 export type ChatInput = {
   messages: { role: "user" | "assistant"; content: string }[];
   locale: "vi" | "en";
+  groundedContext?: string;
+  responseMode?: "chat" | "hint";
+  hintLevel?: 1 | 2 | 3;
 };
 
 export type RecommendationInput = {

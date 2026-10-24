@@ -122,6 +122,7 @@ const attemptResultSchema = z.object({
   examSlug: z.string().nullable(),
   examTitle: z.string(),
   submittedAt: z.string(),
+  durationSeconds: z.number().int().nonnegative().nullable().default(null),
   status: z.enum(["submitted", "auto_submitted"]),
   result: z.object({
     score: z.number(),
@@ -142,11 +143,21 @@ const attemptResultSchema = z.object({
         state: z.enum(["unanswered", "correct", "partially_correct", "incorrect"]),
         pointsEarned: z.number(),
         pointsPossible: z.number(),
+        gradingStatus: z.enum(["graded", "needs_review"]).optional(),
+        correctStatementCount: z.number().int().nonnegative().optional(),
+        scoringRule: z.array(z.number().nonnegative()).optional(),
         review: z.object({
           questionType: z.enum(["multiple_choice", "true_false", "short_answer"]).nullable(),
           statement: z.string().nullable(),
           options: z.array(z.object({ key: z.string(), text: z.string() })),
           substatements: z.array(z.object({ key: z.string(), text: z.string() })),
+          assets: z.array(
+            z.object({
+              path: z.string(),
+              altText: z.string(),
+              placement: z.literal("stem"),
+            }),
+          ).default([]),
           selectedAnswer: z.record(z.string(), z.unknown()).nullable(),
           correctAnswer: z.record(z.string(), z.unknown()).nullable(),
           explanation: z.string().nullable(),
