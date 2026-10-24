@@ -8,6 +8,7 @@ import { SiteVisitTracker } from "@/components/analytics/site-visit-tracker";
 import { LocaleProvider } from "@/components/providers/locale-provider";
 import "./globals.css";
 import "katex/dist/katex.min.css";
+import "./typography.css";
 
 export const metadata: Metadata = {
   title: {

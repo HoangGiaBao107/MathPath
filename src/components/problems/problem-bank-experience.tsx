@@ -161,7 +161,7 @@ export function ProblemBankExperience({
                     <Badge tone="primary">{copy.categories[problemSet.category]}</Badge>
                   </div>
                   <h2>{problemSet.title}</h2>
-                  <p className="problem-set-description">{problemSet.description}</p>
+                  <p className="problem-set-description">{problemSet.description === "Bộ câu hỏi MathPath biên soạn mới." ? (problemSet.category === "mock_exam" ? copy.mockDescription : copy.practiceDescription) : problemSet.description}</p>
 
                   <div className="problem-set-topics" aria-label={copy.categoryLabel}>
                     {problemSet.topicNames.map((topic) => (
@@ -210,13 +210,6 @@ export function ProblemBankExperience({
                   </dl>
 
                   <div className="problem-set-timer-mode">
-                    <span>
-                      {problemSet.timingMode === "countdown"
-                        ? copy.timeLimitLabel
-                        : problemSet.estimatedDurationMinutes === null
-                          ? copy.elapsedTimerLabel
-                          : copy.estimatedDurationLabel}
-                    </span>
                     <strong>
                       {problemSet.timingMode === "countdown"
                         ? copy.countdownBehavior

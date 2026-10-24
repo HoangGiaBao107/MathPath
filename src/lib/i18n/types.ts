@@ -136,6 +136,8 @@ export type TranslationMessages = {
     elapsedTimerLabel: string;
     countdownBehavior: string;
     elapsedBehavior: string;
+    mockDescription: string;
+    practiceDescription: string;
     examMetadata: string;
     demoBadge: string;
     previewBadge: string;
