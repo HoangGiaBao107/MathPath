@@ -25,6 +25,9 @@ describe("student-facing exam title", () => {
     expect(examDisplayTitle("Rèn luyện tư duy toán học · Đề nâng cao 02", "en")).toBe(
       "Mathematical Reasoning Practice · Advanced Set 02",
     );
+    expect(examDisplayTitle("Tư duy toán học tổng hợp – Practice Exam 1", "en")).toBe(
+      "Comprehensive Mathematical Reasoning – Practice Exam 1",
+    );
     expect(examDisplayTitle("Tổ hợp và xác suất · Đề nâng cao 04", "en")).toBe(
       "Combinatorics and Probability · Advanced Set 04",
     );

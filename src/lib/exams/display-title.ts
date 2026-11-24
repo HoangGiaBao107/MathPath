@@ -18,6 +18,7 @@ function translateExamTitle(title: string): string {
 
   const phrases: Array<[RegExp, string]> = [
     [/\b100 bai toan ren luyen tu duy cuc cao\b/gi, "100 Advanced Reasoning Problems"],
+    [/\btu duy toan hoc tong hop\b/gi, "Comprehensive Mathematical Reasoning"],
     [/\bren luyen tu duy toan hoc\b/gi, "Mathematical Reasoning Practice"],
     [/\bde thi thu tot nghiep thpt nang cao\b/gi, "Advanced High School Graduation Mock Exam"],
     [/\bde thi thu tot nghiep thpt\b/gi, "High School Graduation Mock Exam"],
