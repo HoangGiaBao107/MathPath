@@ -7,16 +7,17 @@
     "unrs-resolver": true
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/copy-pdfjs-worker.mjs && next dev",
+    "build": "node scripts/copy-pdfjs-worker.mjs && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "mathpath:advanced-stress": "node --experimental-strip-types scripts/stress-mathpath-advanced-bank.mjs",
     "mathpath:qa": "node scripts/validate-mathpath-bank.mjs",
     "mathpath:prepare": "node scripts/import-mathpath-bank.mjs",
     "mathpath:local-db": "node scripts/mathpath-local-db.mjs",
@@ -25,7 +26,8 @@
     "import:topic-word-exams": "node scripts/import-topic-word-exams.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "supabase:seed:demo": "node --experimental-strip-types --env-file=.env.local scripts/seed-demo-exams.mjs"
+    "supabase:seed:demo": "node --experimental-strip-types --env-file=.env.local scripts/seed-demo-exams.mjs",
+    "postinstall": "node scripts/copy-pdfjs-worker.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
@@ -36,7 +38,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "server-only": "^0.0.1",
-    "zod": "4.1.12"
+    "zod": "4.1.12",
+    "pdfjs-dist": "^6.5.438"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.4.3",

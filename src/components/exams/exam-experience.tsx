@@ -20,6 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Modal } from "@/components/ui/modal";
 import { interpolate } from "@/lib/i18n/messages";
 import { MathContentView } from "@/components/problems/math-content-view";
+import { ExamQuestionAssets } from "@/components/exams/question-assets";
 import { validateShortAnswer, shortAnswerMaxLength, type ShortAnswerPolicy } from "@/lib/exams/short-answer";
 import type { ExamAnswer, ExamPublicSummary, PublicExamAttempt } from "@/lib/exams/types";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -587,7 +588,8 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                     </Button>
                   </div>
                   <div ref={currentQuestionRef} className="exam-question-body" tabIndex={-1}>
-                    <h2>
+                    {((locale === "en" && currentQuestion.displayStemEn) ||
+                      (currentQuestion.displayStemVi ?? currentQuestion.stem).trim()) ? <h2>
                       <MathContentView
                         value={
                           locale === "en" && currentQuestion.displayStemEn
@@ -595,13 +597,8 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                             : (currentQuestion.displayStemVi ?? currentQuestion.stem)
                         }
                       />
-                    </h2>
-                    {currentQuestion.figures?.map(figure => (
-                      <figure key={figure.url} className="result-question-figure">
-                        {/* Original local illustrations are already sized; preserve aspect ratio. */}
-                        <img src={figure.url} alt={figure.alt} style={{maxWidth:"100%",height:"auto",maxHeight:400,objectFit:"contain"}} />
-                      </figure>
-                    ))}
+                    </h2> : null}
+                    <ExamQuestionAssets figures={currentQuestion.figures} />
                     {currentQuestion.type === "multiple_choice" ? (
                       <fieldset className="exam-options">
                         <legend>{copy.answerOptions}</legend>
@@ -623,7 +620,7 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                               value={option.key}
                             />
                             <span className="exam-option-key">{option.key}</span>
-                            <span>
+                            {option.text.trim() ? <span>
                               <MathContentView
                                 value={
                                   locale === "en" && option.displayTextEn
@@ -631,7 +628,7 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                                     : option.text
                                 }
                               />
-                            </span>
+                            </span> : null}
                           </label>
                         ))}
                       </fieldset>
@@ -745,7 +742,8 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                         />
                         <span id={`short-hint-${currentQuestion.id}`}>{currentQuestion.inputPolicy?.kind === "expression"
                           ? copy.expressionAnswerHint : currentQuestion.inputPolicy?.kind === "numeric"
-                            ? copy.numericAnswerHint.replace("{max}", String(shortAnswerMaxLength(currentQuestion.inputPolicy))) : copy.shortAnswerHint}</span>
+                            ? copy.numericAnswerHint.replace("{max}", String(shortAnswerMaxLength(currentQuestion.inputPolicy))) : currentQuestion.inputPolicy?.kind === "text"
+                              ? copy.textAnswerHint : copy.shortAnswerHint}</span>
                         {validationErrors[currentQuestion.id] ? (
                           <span
                             className="exam-validation-error"

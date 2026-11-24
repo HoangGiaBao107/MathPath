@@ -33,7 +33,7 @@ describe("Supabase problem set catalog mapping", () => {
       difficulty: "mixed",
       topic: "Toán THPT",
       category: "mock_exam",
-      exam_metadata: { organization: "MathPath source", session: "Mã đề 01" },
+      exam_metadata: { organization: "MathPath source", session: "Mã đề 01", curriculum_level: "advanced" },
       created_at: "2026-10-04T00:00:00.000Z",
     };
 
@@ -49,6 +49,7 @@ describe("Supabase problem set catalog mapping", () => {
       examYear: 2027,
       examOrganization: "MathPath source",
       examSession: "Mã đề 01",
+      curriculumLevel: "advanced",
     });
     expect(JSON.stringify(visible)).not.toContain("correct_answer");
   });
@@ -94,6 +95,7 @@ describe("Supabase problem set catalog mapping", () => {
       timeLimitMinutes: null,
       estimatedDurationMinutes: null,
       difficulty: "mixed",
+      curriculumLevel: "basic",
     });
   });
 });

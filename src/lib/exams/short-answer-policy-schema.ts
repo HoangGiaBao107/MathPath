@@ -7,4 +7,5 @@ export const shortAnswerPolicySchema = z.discriminatedUnion("kind", [
     absoluteTolerance: z.number().finite().nonnegative().optional(),
   }).strict(),
   z.object({ kind: z.literal("expression"), maxLength: z.number().int().min(1).max(256) }).strict(),
+  z.object({ kind: z.literal("text"), maxLength: z.number().int().min(1).max(256) }).strict(),
 ]);

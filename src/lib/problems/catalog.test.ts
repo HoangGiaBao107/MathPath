@@ -24,6 +24,19 @@ describe("problem bank catalogue", () => {
     expect(filterAndSortProblemSets(demoProblemSets, { query: "DE THI THU" })).toHaveLength(1);
   });
 
+  it("keeps existing sets in basic by default and isolates advanced sets", () => {
+    const sets = [
+      { ...demoProblemSets[0], curriculumLevel: "basic" as const },
+      { ...demoProblemSets[0], id: "advanced", slug: "advanced", curriculumLevel: "advanced" as const },
+    ];
+    expect(filterAndSortProblemSets(sets, { curriculumLevel: "basic" }).map((item) => item.id)).toEqual([
+      demoProblemSets[0].id,
+    ]);
+    expect(filterAndSortProblemSets(sets, { curriculumLevel: "advanced" }).map((item) => item.id)).toEqual([
+      "advanced",
+    ]);
+  });
+
   it("combines category and difficulty filters", () => {
     const result = filterAndSortProblemSets(demoProblemSets, {
       category: "topic_review",

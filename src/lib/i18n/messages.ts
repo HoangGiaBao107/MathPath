@@ -126,6 +126,8 @@ export const messages: Record<Locale, TranslationMessages> = {
       searchLabel: "Tìm bộ đề",
       searchPlaceholder: "Thử tìm “Hàm số” hoặc “đề tổng hợp”",
       categoryLabel: "Bạn muốn luyện gì?",
+      curriculumLevelLabel: "Mức đề",
+      curriculumLevels: { basic: "Đề cơ bản", advanced: "Đề nâng cao" },
       allCategories: "Tất cả đề",
       categories: {
         mock_exam: "Đề thi thử",
@@ -199,6 +201,7 @@ export const messages: Record<Locale, TranslationMessages> = {
       shortAnswerLabel: "Nhập đáp án",
       shortAnswerHint: "Tối đa 4 ký tự: chữ số, dấu trừ và dấu phẩy hoặc dấu chấm thập phân.",
       expressionAnswerHint: "Nhập biểu thức chính xác: 1/2, sqrt(5), (3*pi-4)/6 hoặc LaTeX. Chỉ hỗ trợ số, π, căn bậc hai của số hữu tỉ và phép toán + − × ÷, lũy thừa nguyên.",
+      textAnswerHint: "Nếu đáp án có nhiều phần, nhập theo đúng thứ tự và phân cách bằng dấu phẩy.",
       numericAnswerHint: "Nhập số, tối đa {max} ký tự. Dùng dấu phẩy hoặc dấu chấm thập phân.",
       invalidAnswer: "Đáp án ngắn chỉ nhận tối đa 4 ký tự gồm số, dấu trừ, dấu phẩy hoặc dấu chấm.",
       answerSaved: "Đã lưu câu trả lời",
@@ -692,6 +695,8 @@ export const messages: Record<Locale, TranslationMessages> = {
       searchLabel: "Search problem sets",
       searchPlaceholder: "Try “Functions” or “comprehensive”",
       categoryLabel: "Practice type",
+      curriculumLevelLabel: "Exam level",
+      curriculumLevels: { basic: "Basic exams", advanced: "Advanced exams" },
       allCategories: "All types",
       categories: {
         mock_exam: "Mock exams",
@@ -770,6 +775,7 @@ export const messages: Record<Locale, TranslationMessages> = {
       shortAnswerLabel: "Enter your answer",
       shortAnswerHint: "Up to 4 characters: digits, minus sign, and comma or decimal point.",
       expressionAnswerHint: "Enter an exact expression: 1/2, sqrt(5), (3*pi-4)/6 or LaTeX. Supports numbers, π, square roots of rational numbers, arithmetic and integer powers.",
+      textAnswerHint: "For answers with multiple parts, enter them in order and separate them with commas.",
       numericAnswerHint: "Enter a number, up to {max} characters. Use a comma or decimal point.",
       invalidAnswer: "Short answers allow up to 4 characters: digits, minus sign, comma, or point.",
       answerSaved: "Answer saved",

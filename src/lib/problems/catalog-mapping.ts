@@ -38,6 +38,8 @@ export function toPublicProblemSet(row: CatalogRow, questionCount: number): Publ
     description: row.description ?? "",
     language: row.language,
     category: row.category,
+    curriculumLevel:
+      metadataValue(metadata, "curriculum_level") === "advanced" ? "advanced" : "basic",
     difficulty: (row.difficulty ?? "mixed") as ProblemDifficulty,
     topicNames: row.topic ? [row.topic] : [],
     questionCount,

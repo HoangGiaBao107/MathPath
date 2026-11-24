@@ -171,6 +171,9 @@ __pycache__/
 
 # Supabase CLI local state
 /supabase/.temp/
+/tmp/mathpath-new-bank-private/
+/MATHPATH_NEW/
+/public/pdfjs/pdf.worker.min.mjs
 
 # Private local bank validation, attempt snapshots and database backups
 /tmp/mathpath-new/

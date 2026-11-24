@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
 import { filterAndSortProblemSets, paginateProblemSets } from "@/lib/problems/catalog";
 import type {
+  ProblemSetCurriculumLevel,
   ProblemSetCategory,
   ProblemSetFilters,
   PublicProblemSet,
@@ -28,6 +29,7 @@ export function ProblemBankExperience({
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState<ProblemSetCategory | "all">("all");
+  const [curriculumLevel, setCurriculumLevel] = useState<ProblemSetCurriculumLevel>("basic");
   const [sort, setSort] = useState<NonNullable<ProblemSetFilters["sort"]>>("newest");
   const categoryOptions = [
     { value: "all" as const, label: copy.allCategories },
@@ -41,8 +43,8 @@ export function ProblemBankExperience({
     { value: "duration" as const, label: copy.sortDuration },
   ];
   const visibleSets = useMemo(
-    () => filterAndSortProblemSets(problemSets, { query, category, sort, locale }),
-    [problemSets, query, category, sort, locale],
+    () => filterAndSortProblemSets(problemSets, { query, category, curriculumLevel, sort, locale }),
+    [problemSets, query, category, curriculumLevel, sort, locale],
   );
   const pageSize = 12;
   const totalPages = Math.max(1, Math.ceil(visibleSets.length / pageSize));
@@ -67,6 +69,7 @@ export function ProblemBankExperience({
     setPage(1);
     setQuery("");
     setCategory("all");
+    setCurriculumLevel("basic");
     setSort("newest");
   }
 
@@ -102,6 +105,20 @@ export function ProblemBankExperience({
             </div>
           </aside>
         ) : null}
+
+        <div className="problem-bank-level-switch" role="group" aria-label={copy.curriculumLevelLabel}>
+          {(["basic", "advanced"] as const).map((level) => (
+            <button
+              aria-pressed={curriculumLevel === level}
+              className="problem-bank-level-button"
+              key={level}
+              onClick={() => { setCurriculumLevel(level); setPage(1); }}
+              type="button"
+            >
+              {copy.curriculumLevels[level]}
+            </button>
+          ))}
+        </div>
 
         <section className="problem-bank-tools" aria-label={copy.accessiblyFiltered}>
           <div className="problem-bank-search">
@@ -158,7 +175,10 @@ export function ProblemBankExperience({
                     <span className="problem-set-icon" aria-hidden="true">
                       {problemSet.category === "mock_exam" ? "▤" : "∑"}
                     </span>
-                    <Badge tone="primary">{copy.categories[problemSet.category]}</Badge>
+                    <div className="problem-set-card-labels">
+                      <Badge tone="neutral">{copy.curriculumLevels[problemSet.curriculumLevel]}</Badge>
+                      <Badge tone="primary">{copy.categories[problemSet.category]}</Badge>
+                    </div>
                   </div>
                   <h2>{problemSet.title}</h2>
                   <p className="problem-set-description">{problemSet.description === "Bộ câu hỏi MathPath biên soạn mới." ? (problemSet.category === "mock_exam" ? copy.mockDescription : copy.practiceDescription) : problemSet.description}</p>

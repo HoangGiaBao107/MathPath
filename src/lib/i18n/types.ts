@@ -113,6 +113,8 @@ export type TranslationMessages = {
     searchLabel: string;
     searchPlaceholder: string;
     categoryLabel: string;
+    curriculumLevelLabel: string;
+    curriculumLevels: { basic: string; advanced: string };
     allCategories: string;
     categories: {
       mock_exam: string;
@@ -183,6 +185,7 @@ export type TranslationMessages = {
     shortAnswerLabel: string;
     shortAnswerHint: string;
     expressionAnswerHint: string;
+    textAnswerHint: string;
     numericAnswerHint: string;
     invalidAnswer: string;
     answerSaved: string;

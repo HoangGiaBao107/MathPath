@@ -29,6 +29,9 @@ export function filterAndSortProblemSets(
       (!filters.category ||
         filters.category === "all" ||
         problemSet.category === filters.category) &&
+      (!filters.curriculumLevel ||
+        filters.curriculumLevel === "all" ||
+        problemSet.curriculumLevel === filters.curriculumLevel) &&
       (!filters.difficulty ||
         filters.difficulty === "all" ||
         problemSet.difficulty === filters.difficulty)

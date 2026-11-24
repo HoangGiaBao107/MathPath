@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier/flat";
 
 export default tseslint.config(
-  { ignores: [".next/**", "coverage/**", "node_modules/**", "next-env.d.ts", ".codex-test-temp/**", "tmp/**", "content/extracted/**"] },
+  { ignores: [".next/**", "coverage/**", "node_modules/**", "next-env.d.ts", ".codex-test-temp/**", "tmp/**", "content/extracted/**", "public/pdfjs/**"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   reactHooks.configs.flat.recommended,

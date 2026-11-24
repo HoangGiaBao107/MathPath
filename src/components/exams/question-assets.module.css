@@ -1,0 +1,111 @@
+.sourceFigure {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.35rem 0 0;
+  max-width: 100%;
+}
+
+.scrollArea {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.page {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  color-scheme: only light;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+}
+
+.textLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: clip;
+  line-height: 1;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-align: initial;
+  transform-origin: 0 0;
+  opacity: 1;
+  --min-font-size: 1;
+  --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+  --min-font-size-inv: calc(1 / var(--min-font-size));
+}
+
+.textLayer :global(span),
+.textLayer :global(br) {
+  position: absolute;
+  color: transparent;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0 0;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.textLayer > :global(:not(.markedContent)),
+.textLayer :global(.markedContent span:not(.markedContent)) {
+  z-index: 1;
+  --font-height: 0;
+  font-size: calc(var(--text-scale-factor) * var(--font-height));
+  --scale-x: 1;
+  --rotate: 0deg;
+  transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
+
+.textLayer :global(.markedContent) {
+  display: contents;
+}
+
+.overlay {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.standaloneFigure {
+  display: grid;
+  justify-items: start;
+  margin: 0.35rem 0 0;
+}
+
+.standaloneFigure img {
+  display: block;
+  max-width: min(100%, 42rem);
+  max-height: 28rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  object-fit: contain;
+}
+
+.caption {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+}
+
+.loading,
+.error {
+  min-height: 12rem;
+  background: #fff;
+}
+
+.error {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  color: #8b1e2d;
+}

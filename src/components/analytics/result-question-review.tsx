@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useLocale } from "@/components/providers/locale-provider";
 import { MathContentView } from "@/components/problems/math-content-view";
+import { ExamQuestionAssets } from "@/components/exams/question-assets";
 import { Card } from "@/components/ui/card";
 import { resultDesignCopy } from "@/lib/i18n/result-design-copy";
 import {
@@ -125,15 +126,11 @@ function QuestionReview({
             <div className="result-question-statement">
               <p className="result-review-label">{messages.exam.question}</p>
               {review.statement ? <MathContentView value={review.statement} /> : null}
-              {review.assets
-                .filter((asset) => asset.placement === "stem" && asset.path.startsWith("/problem-assets/"))
-                .map((asset) => (
-                  <figure className="result-question-figure" key={asset.path}>
-                    {/* Assets are only returned by the server after their admin review gate. */}
-                    <img src={asset.path} alt={asset.altText} loading="lazy" />
-                    <figcaption>{asset.altText}</figcaption>
-                  </figure>
-                ))}
+              <ExamQuestionAssets
+                figures={review.assets
+                  .filter((asset) => asset.placement === "stem" && asset.path.startsWith("/problem-assets/"))
+                  .map((asset) => ({ url: asset.path, alt: asset.altText }))}
+              />
             </div>
 
             {review.questionType === "multiple_choice" ? (

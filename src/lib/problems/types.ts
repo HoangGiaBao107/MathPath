@@ -9,6 +9,7 @@ export const problemDifficulties = ["easy", "medium", "hard", "mixed"] as const;
 
 export type ProblemSetCategory = (typeof problemSetCategories)[number];
 export type ProblemDifficulty = (typeof problemDifficulties)[number];
+export type ProblemSetCurriculumLevel = "basic" | "advanced";
 export type ProblemSetTimingMode = "countdown" | "elapsed";
 export type QuestionType = "multiple_choice" | "true_false" | "short_answer";
 export type ReviewStatus = "draft" | "needs_review" | "approved";
@@ -31,6 +32,7 @@ export type PublicProblemSet = {
   description: string;
   language: "vi" | "en";
   category: ProblemSetCategory;
+  curriculumLevel: ProblemSetCurriculumLevel;
   difficulty: ProblemDifficulty;
   topicNames: string[];
   questionCount: number;
@@ -48,6 +50,7 @@ export type DemoProblemSet = PublicProblemSet & { isMock: true };
 export type ProblemSetFilters = {
   query?: string;
   category?: ProblemSetCategory | "all";
+  curriculumLevel?: ProblemSetCurriculumLevel | "all";
   difficulty?: ProblemDifficulty | "all";
   sort?: "newest" | "title" | "question_count" | "duration";
   locale?: "vi" | "en";

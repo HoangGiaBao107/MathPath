@@ -6,5 +6,6 @@ content/processed/
 *.zip
 *.docx
 *.pdf
+!public/problem-assets/mathpath-new-20261124/exams/*.pdf
 .env*
 !.env.example

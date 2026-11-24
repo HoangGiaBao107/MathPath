@@ -5,7 +5,8 @@ const SHORT_ANSWER_PATTERN = /^-?\d+(?:[,.]\d+)?$/;
 export type ShortAnswerPolicy =
   | { kind: "thptqg_numeric" }
   | { kind: "numeric"; maxLength: number; absoluteTolerance?: number }
-  | { kind: "expression"; maxLength: number };
+  | { kind: "expression"; maxLength: number }
+  | { kind: "text"; maxLength: number };
 
 export function shortAnswerMaxLength(policy?: ShortAnswerPolicy): number {
   return !policy || policy.kind === "thptqg_numeric" ? 4 : Math.min(256, policy.maxLength);
@@ -23,6 +24,14 @@ export function validateShortAnswer(raw: string, policy?: ShortAnswerPolicy): Sh
       ? { valid: true, raw }
       : { valid: false, reason: "unsupported_expression" };
   }
+  if (policy?.kind === "text") {
+    return [...raw].some((character) => {
+      const code = character.charCodeAt(0);
+      return (code >= 0 && code <= 8) || code === 11 || code === 12 || (code >= 14 && code <= 31);
+    })
+      ? { valid: false, reason: "invalid_characters" }
+      : { valid: true, raw };
+  }
   if ([...raw].some((character) => !/[0-9,.-]/.test(character))) {
     return { valid: false, reason: "invalid_characters" };
   }
@@ -38,6 +47,10 @@ export function compareShortAnswer(raw: string, accepted: string[], policy?: Sho
     const comparisons = accepted.map(value => compareExactExpressions(raw, value));
     if (comparisons.includes("unverified")) return "unverified";
     return comparisons.includes("equivalent") ? "equivalent" : "different";
+  }
+  if (policy?.kind === "text") {
+    const normalized = new Set(accepted.map(normalizeTextAnswer));
+    return normalized.has(normalizeTextAnswer(raw)) ? "equivalent" : "different";
   }
   if (accepted.some(value => !SHORT_ANSWER_PATTERN.test(value))) return "unverified";
   if (accepted.some(value => normalizeShortAnswer(value) === normalizeShortAnswer(raw))) return "equivalent";
@@ -60,4 +73,23 @@ export function normalizeShortAnswer(raw: string): string {
   const normalized = fraction ? `${integer}.${fraction}` : integer;
   if (normalized === "0") return "0";
   return negative ? `-${normalized}` : normalized;
+}
+
+export function normalizeTextAnswer(raw: string): string {
+  return raw
+    .normalize("NFKC")
+    .toLocaleLowerCase("vi")
+    .replace(/\\(?:left|right)/g, "")
+    .replace(/\\sqrt\s*\{([^{}]+)\}/g, "sqrt($1)")
+    .replace(/\\pi/g, "pi")
+    .replace(/[−–]/g, "-")
+    .replace(/[×·]/g, "*")
+    .replace(/÷/g, "/")
+    .replace(/√/g, "sqrt")
+    .replace(/π/g, "pi")
+    .replace(/;/g, ",")
+    .replace(/sqrt(\d+(?:\.\d+)?)/g, "sqrt($1)")
+    .replace(/m\^?2\b/g, "m2")
+    .replace(/\s+/g, "")
+    .replace(/[.。]+$/g, "");
 }
