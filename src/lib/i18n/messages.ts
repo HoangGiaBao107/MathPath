@@ -118,8 +118,7 @@ export const messages: Record<Locale, TranslationMessages> = {
     problemBank: {
       eyebrow: "KHO LUYỆN TẬP MATHPATH",
       title: "Hôm nay bạn muốn luyện đề nào?",
-      description:
-        "Thử sức với một đề thi hoặc chọn phần Toán bạn muốn ôn lại.",
+      description: "Thử sức với một đề thi hoặc chọn phần Toán bạn muốn ôn lại.",
       demoNoticeTitle: "Ôn tập theo chuyên đề",
       demoNoticeDescription:
         "4 đề Đạo hàm, Nguyên hàm đã có đủ câu hỏi. Đồng hồ tính thời gian bạn học.",
@@ -189,6 +188,7 @@ export const messages: Record<Locale, TranslationMessages> = {
       previous: "Câu trước",
       next: "Câu tiếp",
       navigator: "Đi đến câu",
+      unsectionedQuestions: "Câu hỏi khác",
       answered: "Đã trả lời",
       unanswered: "Chưa trả lời",
       marked: "Đánh dấu xem lại",
@@ -200,7 +200,8 @@ export const messages: Record<Locale, TranslationMessages> = {
       falseLabel: "Sai",
       shortAnswerLabel: "Nhập đáp án",
       shortAnswerHint: "Tối đa 4 ký tự: chữ số, dấu trừ và dấu phẩy hoặc dấu chấm thập phân.",
-      expressionAnswerHint: "Nhập biểu thức chính xác: 1/2, sqrt(5), (3*pi-4)/6 hoặc LaTeX. Chỉ hỗ trợ số, π, căn bậc hai của số hữu tỉ và phép toán + − × ÷, lũy thừa nguyên.",
+      expressionAnswerHint:
+        "Nhập biểu thức chính xác: 1/2, sqrt(5), (3*pi-4)/6 hoặc LaTeX. Chỉ hỗ trợ số, π, căn bậc hai của số hữu tỉ và phép toán + − × ÷, lũy thừa nguyên.",
       textAnswerHint: "Nếu đáp án có nhiều phần, nhập theo đúng thứ tự và phân cách bằng dấu phẩy.",
       numericAnswerHint: "Nhập số, tối đa {max} ký tự. Dùng dấu phẩy hoặc dấu chấm thập phân.",
       invalidAnswer: "Đáp án ngắn chỉ nhận tối đa 4 ký tự gồm số, dấu trừ, dấu phẩy hoặc dấu chấm.",
@@ -237,6 +238,10 @@ export const messages: Record<Locale, TranslationMessages> = {
       goToBank: "Về kho luyện tập",
       retake: "Làm lại bài này",
       startError: "Chưa tạo được lượt làm bài. Thử lại nhé.",
+      examDataInvalid:
+        "Dữ liệu hiển thị của đề chưa hợp lệ nên chưa thể mở lượt làm. Hãy báo MathPath kèm tên đề để kiểm tra.",
+      profileMissing:
+        "Tài khoản chưa có hồ sơ học tập được liên kết. Tải lại trang; nếu vẫn gặp lỗi, hãy báo MathPath để kiểm tra hồ sơ.",
       submitError: "Chưa nộp được bài. Bài làm vẫn còn, bạn thử lại nhé.",
       loadError: "Chưa tải được lượt làm bài. Kết nối lại rồi thử nhé.",
       attemptClosed: "Lượt làm bài này đã được chốt.",
@@ -314,12 +319,15 @@ export const messages: Record<Locale, TranslationMessages> = {
       duration: "Thời gian làm bài",
       reviewQuestions: "Đáp án và lời giải tham khảo",
       gradingNeedsReview: "Cần kiểm tra cách chấm",
-      gradingNeedsReviewNote: "Chưa xác minh được biểu thức hoặc cấu hình đáp án. Câu này chưa được cộng điểm; điểm tổng là tạm thời.",
-      trueFalseScoring: "Đúng {correct} ý. Điểm tính theo tổng số ý đúng, không chia đều cho từng ý:",
+      gradingNeedsReviewNote:
+        "Chưa xác minh được biểu thức hoặc cấu hình đáp án. Câu này chưa được cộng điểm; điểm tổng là tạm thời.",
+      trueFalseScoring:
+        "Đúng {correct} ý. Điểm tính theo tổng số ý đúng, không chia đều cho từng ý:",
       reviewQuestion: "Mở câu hỏi",
       questionType: "Dạng câu hỏi",
       pointsReceived: "Điểm nhận được",
-      unverifiedKey: "Đáp án tham khảo chưa được xác minh; câu này không được chấm sai theo đáp án chưa xác minh.",
+      unverifiedKey:
+        "Đáp án tham khảo chưa được xác minh; câu này không được chấm sai theo đáp án chưa xác minh.",
       hintHeading: "Gợi ý theo từng mức",
       hintLevelOne: "Định hướng",
       hintLevelTwo: "Gợi ý công thức",
@@ -763,6 +771,7 @@ export const messages: Record<Locale, TranslationMessages> = {
       previous: "Previous question",
       next: "Next question",
       navigator: "Go to question",
+      unsectionedQuestions: "Other questions",
       answered: "Answered",
       unanswered: "Unanswered",
       marked: "Marked for review",
@@ -774,8 +783,10 @@ export const messages: Record<Locale, TranslationMessages> = {
       falseLabel: "False",
       shortAnswerLabel: "Enter your answer",
       shortAnswerHint: "Up to 4 characters: digits, minus sign, and comma or decimal point.",
-      expressionAnswerHint: "Enter an exact expression: 1/2, sqrt(5), (3*pi-4)/6 or LaTeX. Supports numbers, π, square roots of rational numbers, arithmetic and integer powers.",
-      textAnswerHint: "For answers with multiple parts, enter them in order and separate them with commas.",
+      expressionAnswerHint:
+        "Enter an exact expression: 1/2, sqrt(5), (3*pi-4)/6 or LaTeX. Supports numbers, π, square roots of rational numbers, arithmetic and integer powers.",
+      textAnswerHint:
+        "For answers with multiple parts, enter them in order and separate them with commas.",
       numericAnswerHint: "Enter a number, up to {max} characters. Use a comma or decimal point.",
       invalidAnswer: "Short answers allow up to 4 characters: digits, minus sign, comma, or point.",
       answerSaved: "Answer saved",
@@ -811,6 +822,10 @@ export const messages: Record<Locale, TranslationMessages> = {
       goToBank: "Back to problem bank",
       retake: "Try this set again",
       startError: "The attempt could not be started. Please try again.",
+      examDataInvalid:
+        "This exam has invalid display data and cannot be opened yet. Contact MathPath and include the exam name so it can be checked.",
+      profileMissing:
+        "This account has no linked learning profile. Reload the page; if the issue persists, contact MathPath to check the profile.",
       submitError: "The attempt could not be submitted. Your work is still here; try again.",
       loadError: "The attempt could not be loaded. Reconnect and try again.",
       attemptClosed: "This attempt has already been closed.",
@@ -888,12 +903,15 @@ export const messages: Record<Locale, TranslationMessages> = {
       duration: "Time spent",
       reviewQuestions: "Answers and worked explanations",
       gradingNeedsReview: "Grading needs review",
-      gradingNeedsReviewNote: "The expression or answer configuration could not be verified. No credit has been awarded for this question; the total is provisional.",
-      trueFalseScoring: "{correct} correct statements. Points depend on the total correct, not equal points per statement:",
+      gradingNeedsReviewNote:
+        "The expression or answer configuration could not be verified. No credit has been awarded for this question; the total is provisional.",
+      trueFalseScoring:
+        "{correct} correct statements. Points depend on the total correct, not equal points per statement:",
       reviewQuestion: "Open question",
       questionType: "Question type",
       pointsReceived: "Points earned",
-      unverifiedKey: "The reference answer has not been verified; this question was not graded against an unverified key.",
+      unverifiedKey:
+        "The reference answer has not been verified; this question was not graded against an unverified key.",
       hintHeading: "Step-by-step hints",
       hintLevelOne: "Direction",
       hintLevelTwo: "Formula hint",

@@ -28,7 +28,7 @@ const studentProgressSchema = z.object({
   trend: z.array(
     z.object({
       attemptId: z.string().uuid(),
-      examTitle: z.string().transform(examDisplayTitle),
+      examTitle: z.string().transform((title) => examDisplayTitle(title)),
       submittedAt: z.string(),
       score: z.number(),
     }),
@@ -39,7 +39,7 @@ const studentProgressSchema = z.object({
     z.object({
       attemptId: z.string().uuid(),
       examSlug: z.string().nullable(),
-      examTitle: z.string().transform(examDisplayTitle),
+      examTitle: z.string().transform((title) => examDisplayTitle(title)),
       submittedAt: z.string(),
       status: z.enum(["submitted", "auto_submitted"]),
       score: z.number(),
@@ -121,7 +121,7 @@ const adminHistoricalSubscriptionMetricsSchema = z.object({
 const attemptResultSchema = z.object({
   attemptId: z.string().uuid(),
   examSlug: z.string().nullable(),
-  examTitle: z.string().transform(examDisplayTitle),
+  examTitle: z.string().transform((title) => examDisplayTitle(title)),
   submittedAt: z.string(),
   durationSeconds: z.number().int().nonnegative().nullable().default(null),
   status: z.enum(["submitted", "auto_submitted"]),
@@ -137,8 +137,8 @@ const attemptResultSchema = z.object({
     questionOutcomes: z.array(
       z.object({
         questionId: z.string(),
-        sectionId: z.string(),
-        questionNumber: z.string(),
+        sectionId: z.string().nullable(),
+        questionNumber: z.string().nullable(),
         topic: z.string().nullable(),
         subtopic: z.string().nullable(),
         state: z.enum(["unanswered", "correct", "partially_correct", "incorrect"]),
@@ -147,22 +147,27 @@ const attemptResultSchema = z.object({
         gradingStatus: z.enum(["graded", "needs_review"]).optional(),
         correctStatementCount: z.number().int().nonnegative().optional(),
         scoringRule: z.array(z.number().nonnegative()).optional(),
-        review: z.object({
-          questionType: z.enum(["multiple_choice", "true_false", "short_answer"]).nullable(),
-          statement: z.string().nullable(),
-          options: z.array(z.object({ key: z.string(), text: z.string() })),
-          substatements: z.array(z.object({ key: z.string(), text: z.string() })),
-          assets: z.array(
-            z.object({
-              path: z.string(),
-              altText: z.string(),
-              placement: z.literal("stem"),
-            }),
-          ).default([]),
-          selectedAnswer: z.record(z.string(), z.unknown()).nullable(),
-          correctAnswer: z.record(z.string(), z.unknown()).nullable(),
-          explanation: z.string().nullable(),
-        }).nullable().default(null),
+        review: z
+          .object({
+            questionType: z.enum(["multiple_choice", "true_false", "short_answer"]).nullable(),
+            statement: z.string().nullable(),
+            options: z.array(z.object({ key: z.string(), text: z.string().nullable() })),
+            substatements: z.array(z.object({ key: z.string(), text: z.string().nullable() })),
+            assets: z
+              .array(
+                z.object({
+                  path: z.string(),
+                  altText: z.string(),
+                  placement: z.literal("stem"),
+                }),
+              )
+              .default([]),
+            selectedAnswer: z.record(z.string(), z.unknown()).nullable(),
+            correctAnswer: z.record(z.string(), z.unknown()).nullable(),
+            explanation: z.string().nullable(),
+          })
+          .nullable()
+          .default(null),
       }),
     ),
     sectionOutcomes: z.array(
@@ -243,10 +248,11 @@ export async function getAdminAnalytics(actorUserId: string): Promise<AdminAnaly
   const base = adminAnalyticsSchema.parse(data);
   const operational = operationalResult.error
     ? null
-    : adminOperationalMetricsSchema.safeParse(operationalResult.data).data ?? null;
+    : (adminOperationalMetricsSchema.safeParse(operationalResult.data).data ?? null);
   const historicalSubscriptions = historicalSubscriptionResult.error
     ? null
-    : adminHistoricalSubscriptionMetricsSchema.safeParse(historicalSubscriptionResult.data).data ?? null;
+    : (adminHistoricalSubscriptionMetricsSchema.safeParse(historicalSubscriptionResult.data).data ??
+      null);
   const trafficByDate = new Map(operational?.dailyTraffic.map((day) => [day.date, day]) ?? []);
   return {
     ...base,

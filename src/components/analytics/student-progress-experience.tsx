@@ -5,6 +5,7 @@ import type { Route } from "next";
 import { useMemo } from "react";
 import { LineChart } from "@/components/analytics/line-chart";
 import { useLocale } from "@/components/providers/locale-provider";
+import { examDisplayTitle } from "@/lib/exams/display-title";
 import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
 import { deriveStudentPersonalization } from "@/lib/analytics/personalization";
@@ -78,7 +79,9 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
             <div>
               <p className="eyebrow">{copy.scoreTrend}</p>
               <h2>{scoreGoalMessage.title}</h2>
-              {scoreGoalMessage.body ? <p className="account-score-message">{scoreGoalMessage.body}</p> : null}
+              {scoreGoalMessage.body ? (
+                <p className="account-score-message">{scoreGoalMessage.body}</p>
+              ) : null}
             </div>
             <span className={`analytics-trend-badge analytics-trend-badge--${summary.scoreTrend}`}>
               {trendLabel}
@@ -90,7 +93,8 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
               labels={chartLabels}
               pointDetails={[
                 data.trend.map(
-                  (point) => `${point.examTitle} · ${formatDateTime(point.submittedAt, locale)}`,
+                  (point) =>
+                    `${examDisplayTitle(point.examTitle, locale)} · ${formatDateTime(point.submittedAt, locale)}`,
                 ),
               ]}
               series={[
@@ -101,12 +105,14 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
                 },
                 ...(data.targetScore === null
                   ? []
-                  : [{
-                      label: copy.targetScore,
-                      color: "#273247",
-                      dashed: true,
-                      values: data.trend.map(() => data.targetScore!),
-                    }]),
+                  : [
+                      {
+                        label: copy.targetScore,
+                        color: "#273247",
+                        dashed: true,
+                        values: data.trend.map(() => data.targetScore!),
+                      },
+                    ]),
               ]}
               formatValue={(value) => formatNumber(value, locale)}
             />
@@ -267,7 +273,7 @@ export function StudentProgressExperience({ data, page }: { data: StudentProgres
                   <span className="analytics-history-status">
                     {attempt.status === "submitted" ? copy.submitted : copy.autoSubmitted}
                   </span>
-                  <h3>{attempt.examTitle}</h3>
+                  <h3>{examDisplayTitle(attempt.examTitle, locale)}</h3>
                   <time dateTime={attempt.submittedAt}>
                     {formatDateTime(attempt.submittedAt, locale)}
                   </time>

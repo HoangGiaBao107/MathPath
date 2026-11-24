@@ -2,9 +2,9 @@ import type {
   ProblemSetFilters,
   ProblemSetPage,
   ProblemSetPageQuery,
-  ProblemSetRepository,
   PublicProblemSet,
 } from "./types";
+import { examDisplayTitle } from "@/lib/exams/display-title";
 
 function normalizeSearch(value: string): string {
   return value
@@ -21,7 +21,12 @@ export function filterAndSortProblemSets(
   const query = normalizeSearch(filters.query?.trim() ?? "");
   const filtered = problemSets.filter((problemSet) => {
     const text = normalizeSearch(
-      [problemSet.title, problemSet.description, ...problemSet.topicNames].join(" "),
+      [
+        problemSet.title,
+        examDisplayTitle(problemSet.title, "en"),
+        problemSet.description,
+        ...problemSet.topicNames,
+      ].join(" "),
     );
 
     return (
@@ -41,18 +46,30 @@ export function filterAndSortProblemSets(
   const locale = filters.locale === "en" ? "en" : "vi";
   switch (filters.sort ?? "newest") {
     case "title":
-      return filtered.sort((left, right) => left.title.localeCompare(right.title, locale));
+      return filtered.sort((left, right) =>
+        examDisplayTitle(left.title, locale).localeCompare(
+          examDisplayTitle(right.title, locale),
+          locale,
+        ),
+      );
     case "question_count":
       return filtered.sort(
         (left, right) =>
-          right.questionCount - left.questionCount || left.title.localeCompare(right.title, locale),
+          right.questionCount - left.questionCount ||
+          examDisplayTitle(left.title, locale).localeCompare(
+            examDisplayTitle(right.title, locale),
+            locale,
+          ),
       );
     case "duration":
       return filtered.sort(
         (left, right) =>
           (left.timeLimitMinutes ?? left.estimatedDurationMinutes ?? 0) -
             (right.timeLimitMinutes ?? right.estimatedDurationMinutes ?? 0) ||
-          left.title.localeCompare(right.title, locale),
+          examDisplayTitle(left.title, locale).localeCompare(
+            examDisplayTitle(right.title, locale),
+            locale,
+          ),
       );
     case "newest":
     default:
@@ -77,14 +94,4 @@ export function paginateProblemSets(
     nextCursor: nextOffset < problemSets.length ? String(nextOffset) : null,
     totalCount: problemSets.length,
   };
-}
-
-/** Demo adapter only. Replace with a server-side Supabase repository after project approval. */
-export class DemoProblemSetRepository implements ProblemSetRepository {
-  constructor(private readonly demoRecords: readonly PublicProblemSet[]) {}
-
-  async listPublicProblemSets(query: ProblemSetPageQuery = {}): Promise<ProblemSetPage> {
-    const sorted = filterAndSortProblemSets(this.demoRecords, query);
-    return paginateProblemSets(sorted, query);
-  }
 }

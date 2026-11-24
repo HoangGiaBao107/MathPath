@@ -1,17 +1,17 @@
 export type ExamMode = "official_thptqg" | "practice" | "school_mock";
 export type ExamTimingMode = "countdown" | "elapsed";
 
-export type ExamOption = { key: string; text: string; displayTextEn?: string | null };
-export type ExamStatement = { key: string; text: string; displayTextEn?: string | null };
+export type ExamOption = { key: string; text: string | null; displayTextEn?: string | null };
+export type ExamStatement = { key: string; text: string | null; displayTextEn?: string | null };
 export type ExamFigure = { url: string; alt: string };
 
 export type MultipleChoiceQuestion = {
   figures?: ExamFigure[];
   id: string;
-  sectionId: string;
-  number: string;
+  sectionId: string | null;
+  number: string | null;
   type: "multiple_choice";
-  stem: string;
+  stem: string | null;
   topic?: string | null;
   subtopic?: string | null;
   displayStemVi?: string | null;
@@ -24,10 +24,10 @@ export type MultipleChoiceQuestion = {
 export type TrueFalseQuestion = {
   figures?: ExamFigure[];
   id: string;
-  sectionId: string;
-  number: string;
+  sectionId: string | null;
+  number: string | null;
   type: "true_false";
-  stem: string;
+  stem: string | null;
   topic?: string | null;
   subtopic?: string | null;
   displayStemVi?: string | null;
@@ -41,17 +41,17 @@ export type TrueFalseQuestion = {
 export type ShortAnswerQuestion = {
   figures?: ExamFigure[];
   id: string;
-  sectionId: string;
-  number: string;
+  sectionId: string | null;
+  number: string | null;
   type: "short_answer";
-  stem: string;
+  stem: string | null;
   topic?: string | null;
   subtopic?: string | null;
   displayStemVi?: string | null;
   displayStemEn?: string | null;
   points: number;
-  canonicalAnswer: string;
-  acceptedNormalizedAnswers?: string[];
+  canonicalAnswer?: string | null;
+  acceptedNormalizedAnswers?: string[] | null;
   inputPolicy?: import("./short-answer").ShortAnswerPolicy;
 };
 
@@ -84,15 +84,20 @@ export type ExamDefinition = {
 
 export type QuestionOutcome = {
   questionId: string;
-  sectionId: string;
-  questionNumber: string;
+  sectionId: string | null;
+  questionNumber: string | null;
   topic: string | null;
   subtopic: string | null;
   state: "unanswered" | "correct" | "partially_correct" | "incorrect";
   pointsEarned: number;
   pointsPossible: number;
   gradingStatus?: "graded" | "needs_review";
-  statementResults?: { key: string; selected: boolean | null; correct: boolean; matched: boolean }[];
+  statementResults?: {
+    key: string;
+    selected: boolean | null;
+    correct: boolean;
+    matched: boolean;
+  }[];
   correctStatementCount?: number;
   scoringRule?: number[];
 };

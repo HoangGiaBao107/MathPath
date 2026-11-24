@@ -4,7 +4,8 @@ import { z } from "zod";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/problems/database.types";
 import { scoreExam } from "./scoring";
-import { shortAnswerPolicySchema } from "./short-answer-policy-schema";
+import { examRuntimeSchema } from "./exam-runtime-schema";
+import { postgresUuidSchema } from "./postgres-uuid-schema";
 import { toExamPublicSummary, toSafeQuestion } from "./demo-data.mock";
 import type {
   AttemptOwner,
@@ -15,89 +16,12 @@ import type {
 } from "./types";
 import type { AttemptRepository } from "./attempt-repository";
 
-const questionSchema = z.discriminatedUnion("type", [
-  z.object({
-    id: z.string(),
-    sectionId: z.string(),
-    number: z.string(),
-    type: z.literal("multiple_choice"),
-    stem: z.string(),
-    figures: z.array(z.object({url:z.string().regex(/^\/problem-assets\/[A-Za-z0-9._/-]+$/),alt:z.string()})).optional(),
-    topic: z.string().nullable().optional(),
-    subtopic: z.string().nullable().optional(),
-    options: z.array(z.object({ key: z.string(), text: z.string() })),
-    points: z.number().nonnegative(),
-    correctOptionKey: z.string(),
-  }),
-  z.object({
-    id: z.string(),
-    sectionId: z.string(),
-    number: z.string(),
-    type: z.literal("true_false"),
-    stem: z.string(),
-    figures: z.array(z.object({url:z.string().regex(/^\/problem-assets\/[A-Za-z0-9._/-]+$/),alt:z.string()})).optional(),
-    topic: z.string().nullable().optional(),
-    subtopic: z.string().nullable().optional(),
-    statements: z.array(z.object({ key: z.string(), text: z.string() })),
-    points: z.number().nonnegative(),
-    correctStatements: z.record(z.string(), z.boolean()),
-    scoring: z.discriminatedUnion("kind", [
-      z.object({ kind: z.literal("all_or_nothing") }),
-      z.object({ kind: z.literal("partial"), pointsByCorrectCount: z.array(z.number()) }),
-    ]),
-  }),
-  z.object({
-    id: z.string(),
-    sectionId: z.string(),
-    number: z.string(),
-    type: z.literal("short_answer"),
-    stem: z.string(),
-    figures: z.array(z.object({url:z.string().regex(/^\/problem-assets\/[A-Za-z0-9._/-]+$/),alt:z.string()})).optional(),
-    topic: z.string().nullable().optional(),
-    subtopic: z.string().nullable().optional(),
-    points: z.number().nonnegative(),
-    canonicalAnswer: z.string(),
-    acceptedNormalizedAnswers: z.array(z.string()).optional(),
-    inputPolicy: shortAnswerPolicySchema.optional(),
-  }),
-]);
-
-const examSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  mode: z.enum(["official_thptqg", "practice", "school_mock"]),
-  demo: z.boolean(),
-  timingMode: z.enum(["countdown", "elapsed"]),
-  durationSeconds: z.number().positive().nullable(),
-  totalScore: z.number().positive(),
-  sections: z.array(
-    z.object({
-      id: z.string(),
-      title: z.string(),
-      description: z.string(),
-      maxScore: z.number().nonnegative(),
-    }),
-  ),
-  questions: z.array(questionSchema),
-}).superRefine((exam, ctx) => {
-  if (exam.mode !== "official_thptqg") return;
-  const mc = exam.questions.filter(q => q.type === "multiple_choice");
-  const tf = exam.questions.filter(q => q.type === "true_false");
-  const sa = exam.questions.filter(q => q.type === "short_answer");
-  if (mc.length !== 12 || tf.length !== 4 || sa.length !== 6 || exam.totalScore !== 10 ||
-    mc.some(q => q.points !== 0.25) || sa.some(q => q.points !== 0.5 || (q.inputPolicy && q.inputPolicy.kind !== "thptqg_numeric")) ||
-    tf.some(q => q.points !== 1 || q.statements.length !== 4 || q.scoring.kind !== "partial" || JSON.stringify(q.scoring.pointsByCorrectCount) !== "[0,0.1,0.25,0.5,1]")) {
-    ctx.addIssue({ code: "custom", message: "Invalid official THPTQG scoring/input configuration" });
-  }
-});
-
 const attemptPayloadSchema = z.object({
   attempt: z.object({
     id: z.string().uuid(),
     examId: z.string(),
     status: z.enum(["in_progress", "submitted", "auto_submitted", "expired", "abandoned"]),
-    questionIdsInOrder: z.array(z.string().uuid()),
+    questionIdsInOrder: z.array(postgresUuidSchema),
     startedAt: z.string(),
     deadlineAt: z.string().nullable(),
     submittedAt: z.string().nullable(),
@@ -113,7 +37,7 @@ const attemptPayloadSchema = z.object({
     ),
     result: z.unknown().nullable(),
   }),
-  exam: examSchema,
+  exam: examRuntimeSchema,
 });
 
 export class SupabaseAttemptRepository implements AttemptRepository {
@@ -121,9 +45,24 @@ export class SupabaseAttemptRepository implements AttemptRepository {
 
   async getExam(examId: string): Promise<ExamDefinition | null> {
     const { data, error } = await this.client.rpc("get_exam_runtime", { p_slug: examId });
-    if (error) throw new Error("exam_data_unavailable");
+    if (error) {
+      console.error("Exam runtime RPC failed", { slug: examId, code: error.code || "unknown" });
+      throw new Error("exam_data_unavailable");
+    }
     if (!data) return null;
-    return examSchema.parse(data);
+    try {
+      return examRuntimeSchema.parse(data);
+    } catch (validationError) {
+      const issues =
+        validationError instanceof z.ZodError
+          ? validationError.issues.map((issue) => ({
+              path: issue.path.join("."),
+              code: issue.code,
+            }))
+          : [];
+      console.error("Exam runtime payload failed validation", { slug: examId, issues });
+      throw new Error("exam_data_invalid");
+    }
   }
 
   async getGuestQuestionUsage(owner: AttemptOwner): Promise<number> {
@@ -140,7 +79,13 @@ export class SupabaseAttemptRepository implements AttemptRepository {
       ...ownerArgs(owner),
       p_slug: examId,
     });
-    if (error) throw new Error("attempt_storage_unavailable");
+    if (error) {
+      console.error("Find current exam attempt RPC failed", {
+        slug: examId,
+        code: error.code || "unknown",
+      });
+      throw new Error("attempt_storage_unavailable");
+    }
     const attemptId = z.string().uuid().nullable().parse(data);
     return attemptId ? this.get(attemptId, owner) : null;
   }
@@ -157,6 +102,16 @@ export class SupabaseAttemptRepository implements AttemptRepository {
     });
     if (error) {
       if (error.message.includes("exam_not_found")) return null;
+      console.error("Exam attempt start RPC failed", {
+        slug: examId,
+        code: error.code || "unknown",
+        category: error.message.includes("profile_not_found")
+          ? "profile_not_found"
+          : error.message.includes("service_role_required")
+            ? "service_role_required"
+            : "database_error",
+      });
+      if (error.message.includes("profile_not_found")) throw new Error("attempt_profile_missing");
       throw new Error("attempt_storage_unavailable");
     }
     const attemptId = z.string().uuid().parse(data);
@@ -168,9 +123,15 @@ export class SupabaseAttemptRepository implements AttemptRepository {
       p_attempt_id: attemptId,
       ...ownerArgs(owner),
     });
-    if (error) throw new Error("attempt_storage_unavailable");
+    if (error) {
+      console.error("Get exam attempt RPC failed", {
+        attemptId,
+        code: error.code || "unknown",
+      });
+      throw new Error("attempt_storage_unavailable");
+    }
     if (!data) return null;
-    return this.toPublic(attemptPayloadSchema.parse(data));
+    return this.toPublic(this.parseAttemptPayload(data, attemptId));
   }
 
   async save(
@@ -271,8 +232,29 @@ export class SupabaseAttemptRepository implements AttemptRepository {
       p_attempt_id: attemptId,
       ...ownerArgs(owner),
     });
-    if (error) throw new Error("attempt_storage_unavailable");
-    return data ? attemptPayloadSchema.parse(data) : null;
+    if (error) {
+      console.error("Load full exam attempt RPC failed", {
+        attemptId,
+        code: error.code || "unknown",
+      });
+      throw new Error("attempt_storage_unavailable");
+    }
+    return data ? this.parseAttemptPayload(data, attemptId) : null;
+  }
+
+  private parseAttemptPayload(data: unknown, attemptId: string) {
+    const parsed = attemptPayloadSchema.safeParse(data);
+    if (!parsed.success) {
+      console.error("Exam attempt payload failed validation", {
+        attemptId,
+        issues: parsed.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          code: issue.code,
+        })),
+      });
+      throw new Error("attempt_data_invalid");
+    }
+    return parsed.data;
   }
 
   private toPublic(payload: z.infer<typeof attemptPayloadSchema>): PublicExamAttempt {

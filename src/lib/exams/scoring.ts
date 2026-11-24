@@ -41,27 +41,43 @@ export function scoreExam(
           Number(answer.statements[statement.key] === question.correctStatements[statement.key]),
         0,
       );
-      statementResults = question.statements.map(statement => ({
+      statementResults = question.statements.map((statement) => ({
         key: statement.key,
         selected: answer.statements[statement.key] ?? null,
         correct: question.correctStatements[statement.key],
         matched: answer.statements[statement.key] === question.correctStatements[statement.key],
       }));
       correctStatementCount = correctCount;
-      scoringRule = exam.mode === "official_thptqg" ? [0, 0.1, 0.25, 0.5, 1]
-        : question.scoring.kind === "partial" ? question.scoring.pointsByCorrectCount
-        : question.statements.map(() => 0).concat(question.points);
+      scoringRule =
+        exam.mode === "official_thptqg"
+          ? [0, 0.1, 0.25, 0.5, 1]
+          : question.scoring.kind === "partial"
+            ? question.scoring.pointsByCorrectCount
+            : question.statements.map(() => 0).concat(question.points);
       if (exam.mode !== "official_thptqg" && question.scoring.kind === "all_or_nothing") {
         earned = correctCount === question.statements.length ? question.points : 0;
       } else {
         earned = scoringRule[correctCount] ?? 0;
       }
     } else if (question.type === "short_answer" && answer?.type === "short_answer") {
-      const accepted = question.acceptedNormalizedAnswers ?? [question.canonicalAnswer];
-      const comparison = compareShortAnswer(answer.raw, accepted,
-        exam.mode === "official_thptqg" ? { kind: "thptqg_numeric" } : question.inputPolicy);
-      earned = comparison === "equivalent" ? question.points : 0;
-      if (comparison === "unverified") gradingStatus = "needs_review";
+      const acceptedValues = question.acceptedNormalizedAnswers?.filter(Boolean) ?? [];
+      const accepted =
+        acceptedValues.length > 0
+          ? acceptedValues
+          : question.canonicalAnswer
+            ? [question.canonicalAnswer]
+            : [];
+      if (accepted.length === 0) {
+        gradingStatus = "needs_review";
+      } else {
+        const comparison = compareShortAnswer(
+          answer.raw,
+          accepted,
+          exam.mode === "official_thptqg" ? { kind: "thptqg_numeric" } : question.inputPolicy,
+        );
+        earned = comparison === "equivalent" ? question.points : 0;
+        if (comparison === "unverified") gradingStatus = "needs_review";
+      }
     }
 
     return {

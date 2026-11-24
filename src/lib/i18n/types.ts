@@ -173,6 +173,7 @@ export type TranslationMessages = {
     previous: string;
     next: string;
     navigator: string;
+    unsectionedQuestions: string;
     answered: string;
     unanswered: string;
     marked: string;
@@ -221,6 +222,8 @@ export type TranslationMessages = {
     goToBank: string;
     retake: string;
     startError: string;
+    examDataInvalid: string;
+    profileMissing: string;
     submitError: string;
     loadError: string;
     attemptClosed: string;

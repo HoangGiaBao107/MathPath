@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PreviewQuestionnaire } from "@/components/previews/preview-questionnaire";
 import { PreviewFrame } from "@/components/previews/preview-frame";
 import { ElapsedPracticeTimer } from "@/components/exams/elapsed-practice-timer";
+import { TopicPracticeTitle } from "@/components/exams/topic-practice-title";
 import {
   getTopicPracticePreview,
   listTopicPracticePreviews,
@@ -46,7 +47,7 @@ export default async function TopicPracticePage({ params }: { params: Promise<{ 
           <p className="eyebrow">
             <span className="eyebrow-dot" /> ÔN TẬP {exam.topic.toLocaleUpperCase("vi-VN")}
           </p>
-          <h1>{exam.title}</h1>
+          <TopicPracticeTitle title={exam.title} />
           <p>
             {exam.questionCount} câu · {exam.totalScore} điểm · Tính thời gian đã học
           </p>

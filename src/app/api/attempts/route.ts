@@ -29,6 +29,7 @@ export async function GET(request: Request) {
       { headers: noStoreHeaders },
     );
   } catch (error) {
+    logAttemptApiFailure("GET", error);
     return apiError(storageErrorCode(error), 503);
   }
 }
@@ -51,6 +52,9 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof Error && error.message === "guest_question_limit_reached")
       return apiError("guest_question_limit_reached", 403);
+    if (error instanceof Error && error.message === "attempt_profile_missing")
+      return apiError("profile_missing", 409);
+    logAttemptApiFailure("POST", error);
     return apiError(storageErrorCode(error), 503);
   }
 }
@@ -62,7 +66,20 @@ function apiError(code: string, status: number) {
 }
 
 function storageErrorCode(error: unknown): string {
+  if (
+    error instanceof Error &&
+    ["exam_data_invalid", "attempt_data_invalid"].includes(error.message)
+  )
+    return "exam_data_invalid";
   return error instanceof Error && error.message.includes("Supabase")
     ? "supabase_configuration_required"
     : "attempt_storage_unavailable";
+}
+
+function logAttemptApiFailure(method: "GET" | "POST", error: unknown): void {
+  console.error("Exam attempt API request failed", {
+    method,
+    category: storageErrorCode(error),
+    errorType: error instanceof Error ? error.name : "unknown",
+  });
 }

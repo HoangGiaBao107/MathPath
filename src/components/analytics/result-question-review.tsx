@@ -33,30 +33,40 @@ export function ResultQuestionReview({
   const copy = messages.progress;
   const missedQuestions = outcomes
     .filter((outcome) => outcome.review && outcome.state !== "correct")
-    .map((outcome) => ({ id: outcome.questionId, number: outcome.questionNumber,
-      section: sections.find(s => s.sectionId === outcome.sectionId)?.title }));
+    .map((outcome, index) => ({
+      id: outcome.questionId,
+      number: outcome.questionNumber ?? String(index + 1),
+      section: sections.find((s) => s.sectionId === outcome.sectionId)?.title,
+    }));
 
   return (
     <>
-      {mode === "review" ? <Card className="analytics-panel analytics-question-results">
-        <p className="eyebrow">{copy.reviewQuestions}</p>
-        <h2>{copy.reviewQuestions}</h2>
-        <div className="result-question-list">
-          {outcomes.map((outcome) => (
-            <QuestionReview
-              attemptId={attemptId}
-              key={outcome.questionId}
-              locale={locale}
-              outcome={outcome}
-              sectionTitle={sections.find(s => s.sectionId === outcome.sectionId)?.title}
-            />
-          ))}
-        </div>
-      </Card> : null}
+      {mode === "review" ? (
+        <Card className="analytics-panel analytics-question-results">
+          <p className="eyebrow">{copy.reviewQuestions}</p>
+          <h2>{copy.reviewQuestions}</h2>
+          <div className="result-question-list">
+            {outcomes.map((outcome, index) => (
+              <QuestionReview
+                attemptId={attemptId}
+                key={outcome.questionId}
+                locale={locale}
+                outcome={outcome}
+                displayNumber={outcome.questionNumber ?? String(index + 1)}
+                sectionTitle={sections.find((s) => s.sectionId === outcome.sectionId)?.title}
+              />
+            ))}
+          </div>
+        </Card>
+      ) : null}
       {mode === "study" && missedQuestions.length ? (
         <ResultStudyChat attemptId={attemptId} questions={missedQuestions} />
       ) : null}
-      {mode === "study" && !missedQuestions.length ? <Card><p>{messages.ai.resultNoWeakTopic}</p></Card> : null}
+      {mode === "study" && !missedQuestions.length ? (
+        <Card>
+          <p>{messages.ai.resultNoWeakTopic}</p>
+        </Card>
+      ) : null}
     </>
   );
 }
@@ -65,24 +75,28 @@ function QuestionReview({
   attemptId,
   locale,
   outcome,
+  displayNumber,
   sectionTitle,
 }: {
   attemptId: string;
   locale: Locale;
   outcome: QuestionOutcome;
+  displayNumber: string;
   sectionTitle?: string;
 }) {
   const { messages } = useLocale();
   const copy = messages.progress;
   const review = outcome.review;
   const stateLabel =
-    outcome.gradingStatus === "needs_review" ? copy.gradingNeedsReview : outcome.state === "correct"
-      ? copy.correct
-      : outcome.state === "partially_correct"
-        ? copy.partial
-        : outcome.state === "incorrect"
-          ? copy.incorrect
-          : messages.exam.unansweredCount;
+    outcome.gradingStatus === "needs_review"
+      ? copy.gradingNeedsReview
+      : outcome.state === "correct"
+        ? copy.correct
+        : outcome.state === "partially_correct"
+          ? copy.partial
+          : outcome.state === "incorrect"
+            ? copy.incorrect
+            : messages.exam.unansweredCount;
   const selectedOption = review?.options.find((option) =>
     isSelectedOption(review.selectedAnswer, option.key),
   );
@@ -95,7 +109,7 @@ function QuestionReview({
       <summary className="result-question-summary">
         <span className="result-question-title">
           <strong>
-            {messages.exam.question} {outcome.questionNumber}
+            {messages.exam.question} {displayNumber}
             {sectionTitle ? ` · ${sectionTitle}` : ""}
           </strong>
           {outcome.topic ? (
@@ -109,14 +123,21 @@ function QuestionReview({
           {stateLabel}
         </span>
         <span className="result-question-points">
-          {formatNumber(outcome.pointsEarned, locale)} / {formatNumber(outcome.pointsPossible, locale)}
+          {formatNumber(outcome.pointsEarned, locale)} /{" "}
+          {formatNumber(outcome.pointsPossible, locale)}
         </span>
-        <span className="result-question-chevron" aria-hidden="true">⌄</span>
+        <span className="result-question-chevron" aria-hidden="true">
+          ⌄
+        </span>
       </summary>
       <div className="result-question-content">
         {review ? (
           <>
-            {outcome.gradingStatus === "needs_review" ? <p role="status" className="result-unverified-note">{copy.gradingNeedsReviewNote}</p> : null}
+            {outcome.gradingStatus === "needs_review" ? (
+              <p role="status" className="result-unverified-note">
+                {copy.gradingNeedsReviewNote}
+              </p>
+            ) : null}
             <p
               className={`result-answer-verification ${review.correctAnswer ? "is-verified" : "is-unverified"}`}
               role="status"
@@ -128,7 +149,10 @@ function QuestionReview({
               {review.statement ? <MathContentView value={review.statement} /> : null}
               <ExamQuestionAssets
                 figures={review.assets
-                  .filter((asset) => asset.placement === "stem" && asset.path.startsWith("/problem-assets/"))
+                  .filter(
+                    (asset) =>
+                      asset.placement === "stem" && asset.path.startsWith("/problem-assets/"),
+                  )
                   .map((asset) => ({ url: asset.path, alt: asset.altText }))}
               />
             </div>
@@ -138,7 +162,8 @@ function QuestionReview({
                 <AnswerLine label={copy.yourAnswer}>
                   {selectedOption ? (
                     <>
-                      <strong>{selectedOption.key}.</strong> <MathContentView value={selectedOption.text} />
+                      <strong>{selectedOption.key}.</strong>{" "}
+                      {selectedOption.text ? <MathContentView value={selectedOption.text} /> : null}
                     </>
                   ) : (
                     copy.noAnswer
@@ -147,7 +172,8 @@ function QuestionReview({
                 <AnswerLine label={copy.correctAnswer}>
                   {correctOption ? (
                     <>
-                      <strong>{correctOption.key}.</strong> <MathContentView value={correctOption.text} />
+                      <strong>{correctOption.key}.</strong>{" "}
+                      {correctOption.text ? <MathContentView value={correctOption.text} /> : null}
                     </>
                   ) : (
                     copy.answerKeyUnavailable
@@ -163,10 +189,13 @@ function QuestionReview({
                   const correct = isCorrectOption(review.correctAnswer, option.key);
                   return (
                     <li
-                      className={correct ? "is-correct-answer" : selected ? "is-selected-answer" : ""}
+                      className={
+                        correct ? "is-correct-answer" : selected ? "is-selected-answer" : ""
+                      }
                       key={option.key}
                     >
-                      <strong>{option.key}.</strong> <MathContentView value={option.text} />
+                      <strong>{option.key}.</strong>{" "}
+                      {option.text ? <MathContentView value={option.text} /> : null}
                       {selected ? <span>{copy.yourAnswer}</span> : null}
                       {correct ? <span>{copy.correctAnswer}</span> : null}
                     </li>
@@ -178,28 +207,54 @@ function QuestionReview({
             {review.questionType === "true_false" ? (
               <div className="result-review-statements">
                 <p className="result-review-label">
-                        {copy.yourAnswer} · {copy.correctAnswer} · {copy.pointsReceived}: {formatNumber(outcome.pointsEarned, locale)} / {formatNumber(outcome.pointsPossible, locale)}
+                  {copy.yourAnswer} · {copy.correctAnswer} · {copy.pointsReceived}:{" "}
+                  {formatNumber(outcome.pointsEarned, locale)} /{" "}
+                  {formatNumber(outcome.pointsPossible, locale)}
                 </p>
                 {review.substatements.map((item) => {
                   const selected = getTrueFalseAnswer(review.selectedAnswer, item.key);
                   const correct = getTrueFalseAnswer(review.correctAnswer, item.key);
-                  const itemState = selected === null || correct === null ? "unverified" : selected === correct ? "correct" : "incorrect";
+                  const itemState =
+                    selected === null || correct === null
+                      ? "unverified"
+                      : selected === correct
+                        ? "correct"
+                        : "incorrect";
                   return (
-                    <div className={`result-review-statement result-review-statement--${itemState}`} key={item.key}>
+                    <div
+                      className={`result-review-statement result-review-statement--${itemState}`}
+                      key={item.key}
+                    >
                       <strong>{item.key.toUpperCase()}.</strong>
-                      <div><MathContentView value={item.text} /></div>
+                      <div>{item.text ? <MathContentView value={item.text} /> : null}</div>
                       <small>
-                        {copy.yourAnswer}: {selected === null ? copy.noAnswer : selected ? messages.exam.trueLabel : messages.exam.falseLabel}
-                        {correct === null ? "" : ` · ${copy.correctAnswer}: ${correct ? messages.exam.trueLabel : messages.exam.falseLabel}`}
+                        {copy.yourAnswer}:{" "}
+                        {selected === null
+                          ? copy.noAnswer
+                          : selected
+                            ? messages.exam.trueLabel
+                            : messages.exam.falseLabel}
+                        {correct === null
+                          ? ""
+                          : ` · ${copy.correctAnswer}: ${correct ? messages.exam.trueLabel : messages.exam.falseLabel}`}
                       </small>
                     </div>
                   );
                 })}
-                {!review.correctAnswer ? <p className="result-unverified-note">{copy.answerKeyUnavailable}</p> : null}
-                {outcome.scoringRule ? <p className="result-review-label">
-                  {copy.trueFalseScoring.replace("{correct}", String(outcome.correctStatementCount ?? 0))}
-                  {" "}{outcome.scoringRule.map((points, count) => `${count} → ${formatNumber(points, locale)}`).join(" · ")}
-                </p> : null}
+                {!review.correctAnswer ? (
+                  <p className="result-unverified-note">{copy.answerKeyUnavailable}</p>
+                ) : null}
+                {outcome.scoringRule ? (
+                  <p className="result-review-label">
+                    {copy.trueFalseScoring.replace(
+                      "{correct}",
+                      String(outcome.correctStatementCount ?? 0),
+                    )}{" "}
+                    {outcome.scoringRule
+                      .map((points, count) => `${count} → ${formatNumber(points, locale)}`)
+                      .join(" · ")}
+                  </p>
+                ) : null}
               </div>
             ) : null}
 
@@ -210,9 +265,17 @@ function QuestionReview({
                 </AnswerLine>
                 <AnswerLine label={copy.correctAnswer}>
                   {getAcceptedAnswers(review.correctAnswer).length ? (
-                    <MathContentView value={getAcceptedAnswers(review.correctAnswer).map(value =>
-                      review.correctAnswer?.input_policy && (review.correctAnswer.input_policy as { kind?: string }).kind === "expression"
-                        ? `$${value}$` : value).join(" ; ")} />
+                    <MathContentView
+                      value={getAcceptedAnswers(review.correctAnswer)
+                        .map((value) =>
+                          review.correctAnswer?.input_policy &&
+                          (review.correctAnswer.input_policy as { kind?: string }).kind ===
+                            "expression"
+                            ? `$${value}$`
+                            : value,
+                        )
+                        .join(" ; ")}
+                    />
                   ) : (
                     copy.answerKeyUnavailable
                   )}
@@ -285,7 +348,15 @@ function QuestionAiHint({
         quota?: { remaining?: number | null };
       };
       if (!response.ok || !payload.answer) {
-        setError(aiErrorMessage(payload.error, messages.ai.errorGeneric, messages.ai.errorQuota, messages.ai.errorSetup, messages.ai.errorTimeout));
+        setError(
+          aiErrorMessage(
+            payload.error,
+            messages.ai.errorGeneric,
+            messages.ai.errorQuota,
+            messages.ai.errorSetup,
+            messages.ai.errorTimeout,
+          ),
+        );
         return;
       }
       setHint(payload.answer);
@@ -302,7 +373,9 @@ function QuestionAiHint({
       <div className="result-ai-hint-heading">
         <div>
           <p className="result-review-label">{copy.hintHeading}</p>
-          {remaining !== null ? <small>{copy.aiQuotaRemaining.replace("{remaining}", String(remaining))}</small> : null}
+          {remaining !== null ? (
+            <small>{copy.aiQuotaRemaining.replace("{remaining}", String(remaining))}</small>
+          ) : null}
         </div>
         <div className="result-ai-hint-buttons">
           {labels.map((label, index) => {
@@ -323,8 +396,16 @@ function QuestionAiHint({
         </div>
       </div>
       {loading ? <p role="status">{copy.hintLoading}</p> : null}
-      {hint ? <div className="result-ai-hint-answer"><MathContentView value={hint} /></div> : null}
-      {error ? <p className="result-ai-hint-error" role="alert">{error}</p> : null}
+      {hint ? (
+        <div className="result-ai-hint-answer">
+          <MathContentView value={hint} />
+        </div>
+      ) : null}
+      {error ? (
+        <p className="result-ai-hint-error" role="alert">
+          {error}
+        </p>
+      ) : null}
     </section>
   );
 }
@@ -339,8 +420,12 @@ export function ResultStudyChat({
   const { locale, messages } = useLocale();
   const copy = messages.progress;
   const design = resultDesignCopy[locale];
-  const [selectedIds, setSelectedIds] = useState<string[]>(questions.slice(0, 1).map((question) => question.id));
-  const [chatMessages, setChatMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>(
+    questions.slice(0, 1).map((question) => question.id),
+  );
+  const [chatMessages, setChatMessages] = useState<
+    { role: "user" | "assistant"; content: string }[]
+  >([]);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -371,7 +456,12 @@ export function ResultStudyChat({
       const response = await fetch(`/api/attempts/${encodeURIComponent(attemptId)}/ai-review`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ mode: "chat", locale, questionIds: selectedIds, messages: nextMessages }),
+        body: JSON.stringify({
+          mode: "chat",
+          locale,
+          questionIds: selectedIds,
+          messages: nextMessages,
+        }),
       });
       const payload = (await response.json()) as {
         answer?: string;
@@ -379,7 +469,15 @@ export function ResultStudyChat({
         quota?: { remaining?: number | null };
       };
       if (!response.ok || !payload.answer) {
-        setError(aiErrorMessage(payload.error, messages.ai.errorGeneric, messages.ai.errorQuota, messages.ai.errorSetup, messages.ai.errorTimeout));
+        setError(
+          aiErrorMessage(
+            payload.error,
+            messages.ai.errorGeneric,
+            messages.ai.errorQuota,
+            messages.ai.errorSetup,
+            messages.ai.errorTimeout,
+          ),
+        );
         return;
       }
       setChatMessages([...nextMessages, { role: "assistant", content: payload.answer }]);
@@ -394,61 +492,115 @@ export function ResultStudyChat({
   return (
     <Card className="result-study-chat" aria-labelledby="result-study-chat-heading">
       <header className="result-study-chat-header">
-      <span className="result-study-avatar" aria-hidden="true">✳</span>
-      <div>
-      <h2 id="result-study-chat-heading">{copy.studyChatHeading}</h2>
-      <p>{copy.studyChatDescription}</p>
-      </div></header>
-      <div className="result-study-layout">
-      <aside className="result-study-sidebar">
-      <h3>{design.picker}</h3>
-      <p className="result-study-selected" aria-live="polite">{design.selected.replace("{count}", String(selectedIds.length))}</p>
-      <p className="result-study-picker-note">{design.pickerNote}</p>
-      <div className="result-study-question-picker" aria-label={copy.reviewQuestions}>
-        {[...new Set(questions.map(question => question.section ?? ""))].map(section => <fieldset key={section}>
-          <legend>{section || copy.reviewQuestions}</legend>
-        {questions.filter(question => (question.section ?? "") === section).map((question) => (
-          <label key={question.id}>
-            <input
-              checked={selectedIds.includes(question.id)}
-              disabled={loading || (selectedIds.length >= 8 && !selectedIds.includes(question.id))}
-              onChange={() => toggleQuestion(question.id)}
-              type="checkbox"
-            />
-            {messages.exam.question} {question.number}
-          </label>
-        ))}</fieldset>)}
-      </div>
-      </aside>
-      <div className="result-study-conversation">
-      {chatMessages.length ? (
-        <div className="result-study-chat-thread" aria-live="polite">
-          {chatMessages.map((message, index) => (
-            <div className={`result-study-chat-message result-study-chat-message--${message.role}`} key={`${message.role}-${index}`}>
-              <MathContentView value={message.content} />
-            </div>
-          ))}
+        <span className="result-study-avatar" aria-hidden="true">
+          ✳
+        </span>
+        <div>
+          <h2 id="result-study-chat-heading">{copy.studyChatHeading}</h2>
+          <p>{copy.studyChatDescription}</p>
         </div>
-      ) : (
-        <div className="result-study-chat-empty"><span className="result-study-avatar" aria-hidden="true">✳</span><h3>{design.ready}</h3><p>{copy.studyChatEmpty}</p><div className="result-study-prompts">{[[design.promptLabel, design.prompt], [design.formulaLabel, design.formula]].map(([label, prompt]) => <button key={label} type="button" onClick={() => {setDraft(prompt); document.getElementById("result-study-chat-input")?.focus();}}>{label} <span aria-hidden="true">↗</span></button>)}</div></div>
-      )}
-      {remaining !== null ? <p className="result-study-chat-quota">{copy.aiQuotaRemaining.replace("{remaining}", String(remaining))}</p> : null}
-      {error ? <p className="result-study-chat-error" role="alert">{error}</p> : null}
-      <form className="result-study-chat-form" onSubmit={sendMessage}>
-        <label htmlFor="result-study-chat-input">{design.composer}</label>
-        <textarea
-          id="result-study-chat-input"
-          maxLength={4000}
-          onChange={(event) => setDraft(event.currentTarget.value)}
-          placeholder={copy.studyChatPlaceholder}
-          rows={3}
-          value={draft}
-        />
-        <div className="result-study-composer-footer"><small>{design.sendNote}</small><button className="button button--primary" disabled={loading || !draft.trim() || !selectedIds.length} type="submit">
-          {loading ? messages.ai.thinking : copy.studyChatSend}
-        </button></div>
-      </form>
-      </div></div>
+      </header>
+      <div className="result-study-layout">
+        <aside className="result-study-sidebar">
+          <h3>{design.picker}</h3>
+          <p className="result-study-selected" aria-live="polite">
+            {design.selected.replace("{count}", String(selectedIds.length))}
+          </p>
+          <p className="result-study-picker-note">{design.pickerNote}</p>
+          <div className="result-study-question-picker" aria-label={copy.reviewQuestions}>
+            {[...new Set(questions.map((question) => question.section ?? ""))].map((section) => (
+              <fieldset key={section}>
+                <legend>{section || copy.reviewQuestions}</legend>
+                {questions
+                  .filter((question) => (question.section ?? "") === section)
+                  .map((question) => (
+                    <label key={question.id}>
+                      <input
+                        checked={selectedIds.includes(question.id)}
+                        disabled={
+                          loading || (selectedIds.length >= 8 && !selectedIds.includes(question.id))
+                        }
+                        onChange={() => toggleQuestion(question.id)}
+                        type="checkbox"
+                      />
+                      {messages.exam.question} {question.number}
+                    </label>
+                  ))}
+              </fieldset>
+            ))}
+          </div>
+        </aside>
+        <div className="result-study-conversation">
+          {chatMessages.length ? (
+            <div className="result-study-chat-thread" aria-live="polite">
+              {chatMessages.map((message, index) => (
+                <div
+                  className={`result-study-chat-message result-study-chat-message--${message.role}`}
+                  key={`${message.role}-${index}`}
+                >
+                  <MathContentView value={message.content} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="result-study-chat-empty">
+              <span className="result-study-avatar" aria-hidden="true">
+                ✳
+              </span>
+              <h3>{design.ready}</h3>
+              <p>{copy.studyChatEmpty}</p>
+              <div className="result-study-prompts">
+                {[
+                  [design.promptLabel, design.prompt],
+                  [design.formulaLabel, design.formula],
+                ].map(([label, prompt]) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => {
+                      setDraft(prompt);
+                      document.getElementById("result-study-chat-input")?.focus();
+                    }}
+                  >
+                    {label} <span aria-hidden="true">↗</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          {remaining !== null ? (
+            <p className="result-study-chat-quota">
+              {copy.aiQuotaRemaining.replace("{remaining}", String(remaining))}
+            </p>
+          ) : null}
+          {error ? (
+            <p className="result-study-chat-error" role="alert">
+              {error}
+            </p>
+          ) : null}
+          <form className="result-study-chat-form" onSubmit={sendMessage}>
+            <label htmlFor="result-study-chat-input">{design.composer}</label>
+            <textarea
+              id="result-study-chat-input"
+              maxLength={4000}
+              onChange={(event) => setDraft(event.currentTarget.value)}
+              placeholder={copy.studyChatPlaceholder}
+              rows={3}
+              value={draft}
+            />
+            <div className="result-study-composer-footer">
+              <small>{design.sendNote}</small>
+              <button
+                className="button button--primary"
+                disabled={loading || !draft.trim() || !selectedIds.length}
+                type="submit"
+              >
+                {loading ? messages.ai.thinking : copy.studyChatSend}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </Card>
   );
 }

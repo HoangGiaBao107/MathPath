@@ -14,7 +14,10 @@ function allCorrectAnswers(exam: ExamDefinition): Record<string, ExamAnswer> {
         ? { type: "multiple_choice", optionKey: question.correctOptionKey }
         : question.type === "true_false"
           ? { type: "true_false", statements: question.correctStatements }
-          : { type: "short_answer", raw: question.canonicalAnswer },
+          : {
+              type: "short_answer",
+              raw: question.acceptedNormalizedAnswers?.[0] ?? question.canonicalAnswer ?? "",
+            },
     ]),
   );
 }
@@ -123,6 +126,63 @@ describe("server-side exam scoring", () => {
         q2: { type: "short_answer", raw: "4" },
       }),
     ).toMatchObject({ score: 2, totalScore: 2 });
+  });
+
+  it("uses verified accepted values without requiring a separate canonical answer", () => {
+    const question = {
+      id: "q-no-canonical",
+      sectionId: null,
+      number: null,
+      type: "short_answer" as const,
+      stem: null,
+      points: 1,
+      canonicalAnswer: null,
+      acceptedNormalizedAnswers: ["4"],
+    };
+    const exam: ExamDefinition = {
+      id: "image-backed-practice",
+      title: "Image-backed practice",
+      description: "",
+      mode: "practice",
+      demo: false,
+      timingMode: "elapsed",
+      durationSeconds: null,
+      totalScore: 1,
+      sections: [],
+      questions: [question],
+    };
+
+    expect(scoreExam(exam, { [question.id]: { type: "short_answer", raw: "4" } })).toMatchObject({
+      score: 1,
+      questionOutcomes: [{ sectionId: null, questionNumber: null, state: "correct" }],
+    });
+  });
+
+  it("falls back to the canonical answer when the verified accepted-value list is empty", () => {
+    const question = {
+      id: "q-empty-accepted-list",
+      sectionId: null,
+      number: null,
+      type: "short_answer" as const,
+      stem: null,
+      points: 1,
+      canonicalAnswer: "4",
+      acceptedNormalizedAnswers: [],
+    };
+    const exam: ExamDefinition = {
+      id: "empty-accepted-list-practice",
+      title: "Canonical answer fallback",
+      description: "",
+      mode: "practice",
+      demo: false,
+      timingMode: "elapsed",
+      durationSeconds: null,
+      totalScore: 1,
+      sections: [],
+      questions: [question],
+    };
+
+    expect(scoreExam(exam, { [question.id]: { type: "short_answer", raw: "4" } }).score).toBe(1);
   });
 
   it("counts incorrect, partial, and blank answers by knowledge subtopic", () => {

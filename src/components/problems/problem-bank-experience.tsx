@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { interpolate } from "@/lib/i18n/messages";
+import { examDisplayTitle } from "@/lib/exams/display-title";
 import { filterAndSortProblemSets, paginateProblemSets } from "@/lib/problems/catalog";
 import type {
   ProblemSetCurriculumLevel,
@@ -49,20 +50,60 @@ export function ProblemBankExperience({
   const pageSize = 12;
   const totalPages = Math.max(1, Math.ceil(visibleSets.length / pageSize));
   const currentPage = Math.min(page, totalPages);
-  const pageSets = paginateProblemSets(visibleSets, { limit: pageSize, cursor: String((currentPage - 1) * pageSize) }).items;
-  const paging = locale === "vi"
-    ? { label: "Phân trang bộ đề", page: "Trang", previous: "Trang trước", next: "Trang sau", showing: "Đang hiển thị" }
-    : { label: "Exam pages", page: "Page", previous: "Previous", next: "Next", showing: "Showing" };
+  const pageSets = paginateProblemSets(visibleSets, {
+    limit: pageSize,
+    cursor: String((currentPage - 1) * pageSize),
+  }).items;
+  const paging =
+    locale === "vi"
+      ? {
+          label: "Phân trang bộ đề",
+          page: "Trang",
+          previous: "Trang trước",
+          next: "Trang sau",
+          showing: "Đang hiển thị",
+        }
+      : {
+          label: "Exam pages",
+          page: "Page",
+          previous: "Previous",
+          next: "Next",
+          showing: "Showing",
+        };
   function goToPage(next: number) {
     setPage(next);
     document.getElementById("problem-bank-list")?.scrollIntoView({ block: "start" });
   }
   function pagination() {
-    return totalPages > 1 ? <nav className="bank-pagination" aria-label={paging.label}>
-      <button type="button" disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}>← {paging.previous}</button>
-      {Array.from({ length: totalPages }, (_, index) => index + 1).map(number => <button type="button" key={number} aria-label={`${paging.page} ${number}`} aria-current={number === currentPage ? "page" : undefined} onClick={() => goToPage(number)}>{number}</button>)}
-      <button type="button" disabled={currentPage === totalPages} onClick={() => goToPage(currentPage + 1)}>{paging.next} →</button>
-    </nav> : null;
+    return totalPages > 1 ? (
+      <nav className="bank-pagination" aria-label={paging.label}>
+        <button
+          type="button"
+          disabled={currentPage === 1}
+          onClick={() => goToPage(currentPage - 1)}
+        >
+          ← {paging.previous}
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
+          <button
+            type="button"
+            key={number}
+            aria-label={`${paging.page} ${number}`}
+            aria-current={number === currentPage ? "page" : undefined}
+            onClick={() => goToPage(number)}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          type="button"
+          disabled={currentPage === totalPages}
+          onClick={() => goToPage(currentPage + 1)}
+        >
+          {paging.next} →
+        </button>
+      </nav>
+    ) : null;
   }
 
   function clearFilters() {
@@ -106,13 +147,20 @@ export function ProblemBankExperience({
           </aside>
         ) : null}
 
-        <div className="problem-bank-level-switch" role="group" aria-label={copy.curriculumLevelLabel}>
+        <div
+          className="problem-bank-level-switch"
+          role="group"
+          aria-label={copy.curriculumLevelLabel}
+        >
           {(["basic", "advanced"] as const).map((level) => (
             <button
               aria-pressed={curriculumLevel === level}
               className="problem-bank-level-button"
               key={level}
-              onClick={() => { setCurriculumLevel(level); setPage(1); }}
+              onClick={() => {
+                setCurriculumLevel(level);
+                setPage(1);
+              }}
               type="button"
             >
               {copy.curriculumLevels[level]}
@@ -131,7 +179,10 @@ export function ProblemBankExperience({
                 autoComplete="off"
                 className="input"
                 id="problem-search"
-                onChange={(event) => { setQuery(event.target.value); setPage(1); }}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setPage(1);
+                }}
                 placeholder={copy.searchPlaceholder}
                 type="search"
                 value={query}
@@ -142,20 +193,37 @@ export function ProblemBankExperience({
             label={copy.categoryLabel}
             value={category}
             options={categoryOptions}
-            onChange={(value) => { setCategory(value as ProblemSetCategory | "all"); setPage(1); }}
+            onChange={(value) => {
+              setCategory(value as ProblemSetCategory | "all");
+              setPage(1);
+            }}
           />
           <StyledDropdown
             label={copy.sortLabel}
             value={sort}
             options={sortOptions}
             className="problem-bank-sort"
-            onChange={(value) => { setSort(value as NonNullable<ProblemSetFilters["sort"]>); setPage(1); }}
+            onChange={(value) => {
+              setSort(value as NonNullable<ProblemSetFilters["sort"]>);
+              setPage(1);
+            }}
           />
         </section>
 
-        <div className="problem-bank-results" id="problem-bank-list" aria-live="polite" aria-atomic="true">
+        <div
+          className="problem-bank-results"
+          id="problem-bank-list"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {interpolate(copy.resultCount, { count: visibleSets.length })}
-          {visibleSets.length > 0 ? <span className="bank-page-range">{paging.showing} {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, visibleSets.length)} / {visibleSets.length} · {paging.page} {currentPage}/{totalPages}</span> : null}
+          {visibleSets.length > 0 ? (
+            <span className="bank-page-range">
+              {paging.showing} {(currentPage - 1) * pageSize + 1}–
+              {Math.min(currentPage * pageSize, visibleSets.length)} / {visibleSets.length} ·{" "}
+              {paging.page} {currentPage}/{totalPages}
+            </span>
+          ) : null}
         </div>
         {pagination()}
 
@@ -168,7 +236,9 @@ export function ProblemBankExperience({
                   : problemSet.id.startsWith("practice-")
                     ? `/exams/practice/${problemSet.slug}`
                     : null
-                : `/exams/${problemSet.slug}`;
+                : problemSet.questionCount > 0
+                  ? `/exams/${problemSet.slug}`
+                  : null;
               return (
                 <Card className="problem-set-card" interactive key={problemSet.id}>
                   <div className="problem-set-card-top">
@@ -176,12 +246,20 @@ export function ProblemBankExperience({
                       {problemSet.category === "mock_exam" ? "▤" : "∑"}
                     </span>
                     <div className="problem-set-card-labels">
-                      <Badge tone="neutral">{copy.curriculumLevels[problemSet.curriculumLevel]}</Badge>
+                      <Badge tone="neutral">
+                        {copy.curriculumLevels[problemSet.curriculumLevel]}
+                      </Badge>
                       <Badge tone="primary">{copy.categories[problemSet.category]}</Badge>
                     </div>
                   </div>
-                  <h2>{problemSet.title}</h2>
-                  <p className="problem-set-description">{problemSet.description === "Bộ câu hỏi MathPath biên soạn mới." ? (problemSet.category === "mock_exam" ? copy.mockDescription : copy.practiceDescription) : problemSet.description}</p>
+                  <h2>{examDisplayTitle(problemSet.title, locale)}</h2>
+                  <p className="problem-set-description">
+                    {problemSet.description === "Bộ câu hỏi MathPath biên soạn mới."
+                      ? problemSet.category === "mock_exam"
+                        ? copy.mockDescription
+                        : copy.practiceDescription
+                      : problemSet.description}
+                  </p>
 
                   <div className="problem-set-topics" aria-label={copy.categoryLabel}>
                     {problemSet.topicNames.map((topic) => (
@@ -258,7 +336,7 @@ export function ProblemBankExperience({
                         className="button button--primary problem-set-start-link"
                         href={examHref as Route}
                       >
-                        Mở đề
+                        {copy.startMock}
                       </Link>
                     ) : (
                       <span className="problem-set-not-ready">{copy.noQuestions}</span>
@@ -314,7 +392,9 @@ function StyledDropdown<Value extends string>({
 
   function openMenu() {
     setOpen(true);
-    requestAnimationFrame(() => rootRef.current?.querySelector<HTMLButtonElement>("[role=option]")?.focus());
+    requestAnimationFrame(() =>
+      rootRef.current?.querySelector<HTMLButtonElement>("[role=option]")?.focus(),
+    );
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -324,7 +404,9 @@ function StyledDropdown<Value extends string>({
       return;
     }
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
-    const optionsInMenu = Array.from(rootRef.current?.querySelectorAll<HTMLButtonElement>("[role=option]") ?? []);
+    const optionsInMenu = Array.from(
+      rootRef.current?.querySelectorAll<HTMLButtonElement>("[role=option]") ?? [],
+    );
     const currentIndex = optionsInMenu.indexOf(document.activeElement as HTMLButtonElement);
     if (currentIndex < 0) {
       event.preventDefault();
@@ -337,7 +419,11 @@ function StyledDropdown<Value extends string>({
   }
 
   return (
-    <div className={`field problem-bank-filter problem-bank-custom-select${open ? " is-open" : ""} ${className}`} ref={rootRef} onKeyDown={handleKeyDown}>
+    <div
+      className={`field problem-bank-filter problem-bank-custom-select${open ? " is-open" : ""} ${className}`}
+      ref={rootRef}
+      onKeyDown={handleKeyDown}
+    >
       <span className="field-label">{label}</span>
       <button
         aria-expanded={open}
@@ -349,7 +435,9 @@ function StyledDropdown<Value extends string>({
         type="button"
       >
         <span>{selected?.label}</span>
-        <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m5 7.5 5 5 5-5" /></svg>
+        <svg aria-hidden="true" viewBox="0 0 20 20">
+          <path d="m5 7.5 5 5 5-5" />
+        </svg>
       </button>
       {open ? (
         <div className="problem-bank-select-menu" role="listbox" aria-label={label}>
@@ -358,7 +446,11 @@ function StyledDropdown<Value extends string>({
               aria-selected={option.value === value}
               className={`problem-bank-select-option${option.value === value ? " is-selected" : ""}`}
               key={option.value}
-              onClick={() => { onChange(option.value); setOpen(false); triggerRef.current?.focus(); }}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+                triggerRef.current?.focus();
+              }}
               role="option"
               tabIndex={0}
               type="button"

@@ -115,8 +115,8 @@ export type StudentAttemptResult = {
     percentage: number;
     questionOutcomes: {
       questionId: string;
-      sectionId: string;
-      questionNumber: string;
+      sectionId: string | null;
+      questionNumber: string | null;
       topic: string | null;
       subtopic: string | null;
       state: "unanswered" | "correct" | "partially_correct" | "incorrect";
@@ -128,8 +128,8 @@ export type StudentAttemptResult = {
       review: {
         questionType: "multiple_choice" | "true_false" | "short_answer" | null;
         statement: string | null;
-        options: { key: string; text: string }[];
-        substatements: { key: string; text: string }[];
+        options: { key: string; text: string | null }[];
+        substatements: { key: string; text: string | null }[];
         assets: { path: string; altText: string; placement: "stem" }[];
         selectedAnswer: Record<string, unknown> | null;
         correctAnswer: Record<string, unknown> | null;

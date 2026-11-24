@@ -21,17 +21,27 @@ import { Modal } from "@/components/ui/modal";
 import { interpolate } from "@/lib/i18n/messages";
 import { MathContentView } from "@/components/problems/math-content-view";
 import { ExamQuestionAssets } from "@/components/exams/question-assets";
-import { validateShortAnswer, shortAnswerMaxLength, type ShortAnswerPolicy } from "@/lib/exams/short-answer";
+import {
+  validateShortAnswer,
+  shortAnswerMaxLength,
+  type ShortAnswerPolicy,
+} from "@/lib/exams/short-answer";
 import type { ExamAnswer, ExamPublicSummary, PublicExamAttempt } from "@/lib/exams/types";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 type Phase = "loading" | "intro" | "active" | "submitted" | "error";
 type DraftState = { answer: ExamAnswer | null; markedForReview: boolean };
 
-export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSummary; resultPathPrefix?: string }) {
+export function ExamExperience({
+  exam,
+  resultPathPrefix,
+}: {
+  exam: ExamPublicSummary;
+  resultPathPrefix?: string;
+}) {
   const { locale, messages } = useLocale();
   const copy = messages.exam;
-  const title = examDisplayTitle(exam.title);
+  const title = examDisplayTitle(exam.title, locale);
   const router = useRouter();
   const description = exam.description;
   const [phase, setPhase] = useState<Phase>("loading");
@@ -110,32 +120,38 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
     setPhase(nextAttempt.status === "in_progress" ? "active" : "submitted");
   }, []);
 
-  const loadCurrent = useCallback(
-    async () => {
-      setRequestError("");
-      try {
-        const response = await fetchExamApi(`/api/attempts?examId=${encodeURIComponent(exam.id)}`, {
-          cache: "no-store",
-        });
-        if (!response.ok) throw new Error("load");
-        const data = (await response.json()) as {
-          attempt: PublicExamAttempt | null;
-          guestQuestionUsage?: number;
-          isGuest?: boolean;
-        };
-        guestQuestionUsageRef.current = data.guestQuestionUsage ?? 0;
-        guestLimitReachedRef.current = data.isGuest === true && guestQuestionUsageRef.current >= 10;
-        setIsGuest(data.isGuest === true);
-        setGuestLimitReached(guestLimitReachedRef.current);
-        if (data.attempt) applyAttempt(data.attempt);
-        else setPhase("intro");
-      } catch {
-        setRequestError(copy.loadError);
+  const loadCurrent = useCallback(async () => {
+    setRequestError("");
+    try {
+      const response = await fetchExamApi(`/api/attempts?examId=${encodeURIComponent(exam.id)}`, {
+        cache: "no-store",
+      });
+      if (!response.ok) {
+        const data = (await response.json().catch(() => null)) as {
+          error?: { code?: string };
+        } | null;
+        setRequestError(
+          data?.error?.code === "exam_data_invalid" ? copy.examDataInvalid : copy.loadError,
+        );
         setPhase("error");
+        return;
       }
-    },
-    [applyAttempt, copy.loadError, exam.id],
-  );
+      const data = (await response.json()) as {
+        attempt: PublicExamAttempt | null;
+        guestQuestionUsage?: number;
+        isGuest?: boolean;
+      };
+      guestQuestionUsageRef.current = data.guestQuestionUsage ?? 0;
+      guestLimitReachedRef.current = data.isGuest === true && guestQuestionUsageRef.current >= 10;
+      setIsGuest(data.isGuest === true);
+      setGuestLimitReached(guestLimitReachedRef.current);
+      if (data.attempt) applyAttempt(data.attempt);
+      else setPhase("intro");
+    } catch {
+      setRequestError(copy.loadError);
+      setPhase("error");
+    }
+  }, [applyAttempt, copy.examDataInvalid, copy.loadError, exam.id]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => void loadCurrent(), 0);
@@ -274,6 +290,14 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
           setRequestError(copy.guestLimitReached);
           return;
         }
+        if (data?.error?.code === "profile_missing") {
+          setRequestError(copy.profileMissing);
+          return;
+        }
+        if (data?.error?.code === "exam_data_invalid") {
+          setRequestError(copy.examDataInvalid);
+          return;
+        }
         throw new Error("start");
       }
       const data = (await response.json()) as { attempt: PublicExamAttempt; isGuest?: boolean };
@@ -368,9 +392,13 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
           }
           if (
             response.status === 400 &&
-            ["too_long", "invalid_characters", "invalid_number", "invalid_answer", "unsupported_expression"].includes(
-              data?.error?.code ?? "",
-            )
+            [
+              "too_long",
+              "invalid_characters",
+              "invalid_number",
+              "invalid_answer",
+              "unsupported_expression",
+            ].includes(data?.error?.code ?? "")
           ) {
             setValidationErrors((errors) => ({ ...errors, [questionId]: copy.invalidAnswer }));
             dirtyIdsRef.current.delete(questionId);
@@ -553,12 +581,15 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
             <div className="exam-workspace">
               <section className="exam-question-column" aria-label={title}>
                 <div className="exam-section-heading">
-                  <span>
-                    {
-                      exam.sections.find((section) => section.id === currentQuestion.sectionId)
-                        ?.title
-                    }
-                  </span>
+                  {exam.sections.find((section) => section.id === currentQuestion.sectionId)
+                    ?.title ? (
+                    <span>
+                      {
+                        exam.sections.find((section) => section.id === currentQuestion.sectionId)
+                          ?.title
+                      }
+                    </span>
+                  ) : null}
                   <span>
                     {interpolate(copy.questionOf, {
                       current: currentIndex + 1,
@@ -569,7 +600,7 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                 <Card className="exam-question-card">
                   <div className="exam-question-header">
                     <span className="exam-question-number">
-                      {copy.question} {currentQuestion.number}
+                      {copy.question} {currentQuestion.number ?? currentIndex + 1}
                     </span>
                     <span className="exam-save-status" aria-live="polite" role="status">
                       {dirtyCount > 0 ? copy.saving : copy.answerSaved}
@@ -588,49 +619,53 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                     </Button>
                   </div>
                   <div ref={currentQuestionRef} className="exam-question-body" tabIndex={-1}>
-                    {((locale === "en" && currentQuestion.displayStemEn) ||
-                      (currentQuestion.displayStemVi ?? currentQuestion.stem).trim()) ? <h2>
-                      <MathContentView
-                        value={
-                          locale === "en" && currentQuestion.displayStemEn
-                            ? currentQuestion.displayStemEn
-                            : (currentQuestion.displayStemVi ?? currentQuestion.stem)
-                        }
-                      />
-                    </h2> : null}
+                    {(locale === "en" && currentQuestion.displayStemEn?.trim()) ||
+                    (currentQuestion.displayStemVi ?? currentQuestion.stem ?? "").trim() ? (
+                      <h2>
+                        <MathContentView
+                          value={
+                            locale === "en" && currentQuestion.displayStemEn
+                              ? currentQuestion.displayStemEn
+                              : (currentQuestion.displayStemVi ?? currentQuestion.stem ?? "")
+                          }
+                        />
+                      </h2>
+                    ) : null}
                     <ExamQuestionAssets figures={currentQuestion.figures} />
                     {currentQuestion.type === "multiple_choice" ? (
                       <fieldset className="exam-options">
                         <legend>{copy.answerOptions}</legend>
-                        {currentQuestion.options.map((option) => (
-                          <label className="exam-option" key={option.key}>
-                            <input
-                              checked={
-                                currentDraft?.answer?.type === "multiple_choice" &&
-                                currentDraft.answer.optionKey === option.key
-                              }
-                              name={`answer-${currentQuestion.id}`}
-                              onChange={() =>
-                                updateDraft(currentQuestion.id, {
-                                  answer: { type: "multiple_choice", optionKey: option.key },
-                                })
-                              }
-                              type="radio"
-                              disabled={guestLimitReached}
-                              value={option.key}
-                            />
-                            <span className="exam-option-key">{option.key}</span>
-                            {option.text.trim() ? <span>
-                              <MathContentView
-                                value={
-                                  locale === "en" && option.displayTextEn
-                                    ? option.displayTextEn
-                                    : option.text
+                        {currentQuestion.options.map((option) => {
+                          const optionText =
+                            locale === "en" && option.displayTextEn
+                              ? option.displayTextEn
+                              : (option.text ?? "");
+                          return (
+                            <label className="exam-option" key={option.key}>
+                              <input
+                                checked={
+                                  currentDraft?.answer?.type === "multiple_choice" &&
+                                  currentDraft.answer.optionKey === option.key
                                 }
+                                name={`answer-${currentQuestion.id}`}
+                                onChange={() =>
+                                  updateDraft(currentQuestion.id, {
+                                    answer: { type: "multiple_choice", optionKey: option.key },
+                                  })
+                                }
+                                type="radio"
+                                disabled={guestLimitReached}
+                                value={option.key}
                               />
-                            </span> : null}
-                          </label>
-                        ))}
+                              <span className="exam-option-key">{option.key}</span>
+                              {optionText.trim() ? (
+                                <span>
+                                  <MathContentView value={optionText} />
+                                </span>
+                              ) : null}
+                            </label>
+                          );
+                        })}
                       </fieldset>
                     ) : null}
 
@@ -655,13 +690,16 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                                 <tr key={statement.key}>
                                   <th scope="row">
                                     <span className="exam-statement-key">{statement.key}</span>
-                                    <MathContentView
-                                      value={
-                                        locale === "en" && statement.displayTextEn
-                                          ? statement.displayTextEn
-                                          : statement.text
-                                      }
-                                    />
+                                    {(locale === "en" && statement.displayTextEn) ||
+                                    statement.text ? (
+                                      <MathContentView
+                                        value={
+                                          locale === "en" && statement.displayTextEn
+                                            ? statement.displayTextEn
+                                            : (statement.text ?? "")
+                                        }
+                                      />
+                                    ) : null}
                                   </th>
                                   {[true, false].map((value) => (
                                     <td key={String(value)}>
@@ -740,10 +778,18 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                               : ""
                           }
                         />
-                        <span id={`short-hint-${currentQuestion.id}`}>{currentQuestion.inputPolicy?.kind === "expression"
-                          ? copy.expressionAnswerHint : currentQuestion.inputPolicy?.kind === "numeric"
-                            ? copy.numericAnswerHint.replace("{max}", String(shortAnswerMaxLength(currentQuestion.inputPolicy))) : currentQuestion.inputPolicy?.kind === "text"
-                              ? copy.textAnswerHint : copy.shortAnswerHint}</span>
+                        <span id={`short-hint-${currentQuestion.id}`}>
+                          {currentQuestion.inputPolicy?.kind === "expression"
+                            ? copy.expressionAnswerHint
+                            : currentQuestion.inputPolicy?.kind === "numeric"
+                              ? copy.numericAnswerHint.replace(
+                                  "{max}",
+                                  String(shortAnswerMaxLength(currentQuestion.inputPolicy)),
+                                )
+                              : currentQuestion.inputPolicy?.kind === "text"
+                                ? copy.textAnswerHint
+                                : copy.shortAnswerHint}
+                        </span>
                         {validationErrors[currentQuestion.id] ? (
                           <span
                             className="exam-validation-error"
@@ -801,13 +847,13 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                         return (
                           <button
                             aria-current={currentIndex === index ? "step" : undefined}
-                            aria-label={`${copy.question} ${question.number}, ${answered ? copy.answered : copy.unanswered}${marked ? `, ${copy.marked}` : ""}`}
+                            aria-label={`${copy.question} ${question.number ?? index + 1}, ${answered ? copy.answered : copy.unanswered}${marked ? `, ${copy.marked}` : ""}`}
                             className={`exam-question-index${currentIndex === index ? " is-current" : ""}${answered ? " is-answered" : ""}${marked ? " is-marked" : ""}`}
                             key={question.id}
                             onClick={() => setCurrentIndex(index)}
                             type="button"
                           >
-                            {question.number}
+                            {question.number ?? index + 1}
                             {marked ? <span aria-hidden="true">*</span> : null}
                           </button>
                         );
@@ -815,6 +861,32 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
                     </div>
                   </div>
                 ))}
+                {orderedQuestions.some((question) => question.sectionId === null) ? (
+                  <div className="exam-navigator-section">
+                    <h3>{copy.unsectionedQuestions}</h3>
+                    <div className="exam-question-grid">
+                      {orderedQuestions.map((question, index) => {
+                        if (question.sectionId !== null) return null;
+                        const state = drafts[question.id];
+                        const answered = state ? hasDraftAnswer(state.answer) : false;
+                        const marked = state?.markedForReview ?? false;
+                        return (
+                          <button
+                            aria-current={currentIndex === index ? "step" : undefined}
+                            aria-label={`${copy.question} ${question.number ?? index + 1}, ${answered ? copy.answered : copy.unanswered}${marked ? `, ${copy.marked}` : ""}`}
+                            className={`exam-question-index${currentIndex === index ? " is-current" : ""}${answered ? " is-answered" : ""}${marked ? " is-marked" : ""}`}
+                            key={question.id}
+                            onClick={() => setCurrentIndex(index)}
+                            type="button"
+                          >
+                            {question.number ?? index + 1}
+                            {marked ? <span aria-hidden="true">*</span> : null}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
                 <div className="exam-legend">
                   <span>
                     <i className="is-answered" />
@@ -948,9 +1020,14 @@ export function ExamExperience({ exam, resultPathPrefix }: { exam: ExamPublicSum
             <Link className="button button--secondary exam-result-link" href="/problems">
               {copy.goToBank}
             </Link>
-            {(!attempt.exam.demo || resultPathPrefix) ? <Link className="button button--primary" href={`${resultPathPrefix ?? "/progress/attempts/"}${attempt.id}` as Route}>
-              {messages.progress.reviewQuestions}
-            </Link> : null}
+            {!attempt.exam.demo || resultPathPrefix ? (
+              <Link
+                className="button button--primary"
+                href={`${resultPathPrefix ?? "/progress/attempts/"}${attempt.id}` as Route}
+              >
+                {messages.progress.reviewQuestions}
+              </Link>
+            ) : null}
             <Button className="exam-retake-button" disabled={isStarting} onClick={retakeAttempt}>
               {isStarting ? copy.starting : copy.retake}
             </Button>
